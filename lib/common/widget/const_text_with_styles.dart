@@ -44,6 +44,7 @@ Text const12TextBold(String text, {Color textColor = AppColors.white100}) {
   );
 }
 
+
 Text const10TextBold(String text, {Color textColor = AppColors.white100}) {
   return Text(
     text,

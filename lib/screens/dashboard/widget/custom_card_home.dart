@@ -15,6 +15,7 @@ class CustomHomeCard extends StatelessWidget {
   final EdgeInsetsGeometry ?padding;
   final BorderRadiusGeometry? borderRadius;
   final List<BoxShadow> ?boxShadow;
+  final IconButton? iconButton;
 
   const CustomHomeCard({super.key,
     this.icon,
@@ -29,6 +30,7 @@ class CustomHomeCard extends StatelessWidget {
     this.boxShadow,
     required this.subTitle,
     required this.text1,
+    this.iconButton,
   });
 
   @override

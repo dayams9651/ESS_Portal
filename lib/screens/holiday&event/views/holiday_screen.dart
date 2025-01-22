@@ -35,7 +35,7 @@ class _HolidayEventPageState extends State<HolidayScreen> {
       "description": "A day to celebrate the start of the new year."
     },
     {
-      "date": "2025-01-25",
+      "date": "2025-01-26",
       "event": "Republic Day",
       "description": "A national holiday to celebrate the republic."
     },
@@ -44,7 +44,6 @@ class _HolidayEventPageState extends State<HolidayScreen> {
       "event": "Christmas",
       "description": "A holiday to celebrate the birth of Jesus Christ."
     },
-    // Add more events here...
   ];
 
   @override

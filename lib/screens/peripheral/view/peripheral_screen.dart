@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ms_ess_potal/screens/peripheral/controller/peripheral_controller.dart';
-
-import '../../../common/widget/const_text_with_styles.dart';
 import '../../../const/image_strings.dart';
 import '../../../style/color.dart';
 import '../../../style/text_style.dart';
@@ -38,13 +36,13 @@ class PeripheralScreen extends GetView<PeripheralController> {
                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
                      child: ClipRRect(
                        child: Padding(
-                         padding: const EdgeInsets.all(2.0),
+                         padding: const EdgeInsets.all(5.0),
                          child: Container(
                              width: 400,
                              decoration: BoxDecoration(
                                // color: Colors.blueAccent,
                                  borderRadius: BorderRadius.circular(8),
-                                 border: Border.all(color: AppColors.white70, width: 2)
+                                 // border: Border.all(color: AppColors.white70, width: 2)
                              ),
                              child: Padding(
                                padding: const EdgeInsets.all(2.0),
@@ -70,14 +68,11 @@ class PeripheralScreen extends GetView<PeripheralController> {
                                                        // border: Border.all(color: AppColors.white60,)
                                                        border: Border.symmetric(vertical: BorderSide(color: AppColors.white100))
                                                    ),
-                                                   child: Padding(
-                                                     padding: const EdgeInsets.all(1.0),
-                                                     child: Column(
-                                                       children: [
-                                                         Image.asset(testing,
-                                                         height: 190,)
-                                                       ],
-                                                     ),
+                                                   child: Column(
+                                                     children: [
+                                                       Image.asset(testing,
+                                                       height: 150,)
+                                                     ],
                                                    )
                                                ),
                                              ),

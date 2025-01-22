@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ms_ess_potal/screens/dashboard/dashboard_screen.dart';
 import 'package:ms_ess_potal/screens/forgetPassword/forget_password.dart';
 import 'package:ms_ess_potal/style/color.dart';
 import '../../common/widget/round_button.dart';
 import '../../const/image_strings.dart';
+import '../../service/logInApi.dart';
 import '../../style/text_style.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -18,8 +18,12 @@ class _SignupScreenState extends State<SignupScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool _isPasswordVisible = false;
+  bool _isLoading = false;
   final TextEditingController employeeCodeController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final UserLogInService userLogService = Get.put(UserLogInService());
+
+
 
   @override
   void dispose() {
@@ -27,6 +31,7 @@ class _SignupScreenState extends State<SignupScreen> {
     passwordController.dispose();
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -105,18 +110,6 @@ class _SignupScreenState extends State<SignupScreen> {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a password';
                         }
-                        // if (value.length < 8) {
-                        //   return 'Password must be at least 8 characters';
-                        // }
-                        // if (!RegExp(r'^(?=.*?[A-Z])').hasMatch(value)) {
-                        //   return 'Password must contain at least one uppercase letter';
-                        // }
-                        // if (!RegExp(r'^(?=.*?[a-z])').hasMatch(value)) {
-                        //   return 'Password must contain at least one lowercase letter';
-                        // }
-                        // if (!RegExp(r'^(?=.*?[0-9])').hasMatch(value)) {
-                        //   return 'Password must contain at least one digit';
-                        // }
                         return null;
                       },
                     ),
@@ -135,8 +128,30 @@ class _SignupScreenState extends State<SignupScreen> {
                       height: 50,
                       child: RoundButton(
                         title: 'Login',
-                        onTap: () {
-                             Get.to(()=>const DashboardScreen());
+                        onTap: ()  {
+                          if (_formKey.currentState!.validate()) {
+                            setState(() {
+                              _isLoading = true; // Show loader
+                            });
+                            String username = employeeCodeController.text.trim();
+                            String password = passwordController.text.trim();
+                            if (username.isEmpty) {
+                              setState(() {
+                                _isLoading = false; // Hide loader on error
+                              });
+                            } else {
+                              userLogService.logInUser(username, password)
+                                  .then((_) {
+                                setState(() {
+                                  _isLoading = false; // Hide loader after success
+                                });
+                              }).catchError((error) {
+                                setState(() {
+                                  _isLoading = false; // Hide loader on error
+                                });
+                              });
+                            }
+                          }
                         },
                       ),
                     ),

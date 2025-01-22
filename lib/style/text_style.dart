@@ -74,8 +74,9 @@ class AppTextStyles {
 
   static TextStyle kCaption14SemiBoldTextStyle = GoogleFonts.robotoSlab(
     fontWeight: FontWeight.w600,
-    fontSize: 14.sp, // Larger font size for desktop/laptop
+    fontSize: 13.sp, // Larger font size for desktop/laptop
   );
+
 
   static TextStyle kCaption13RegularTextStyle = GoogleFonts.robotoSlab(
     fontWeight: FontWeight.w600,

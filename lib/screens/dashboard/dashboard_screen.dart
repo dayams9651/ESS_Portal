@@ -20,7 +20,6 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   final _pageController = PageController(initialPage: 0);
   final NotchBottomBarController _controller = NotchBottomBarController(index: 0);
-
   int maxCount = 5;
   int _selectedIndex = 0;
 
@@ -71,76 +70,81 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-             UserAccountsDrawerHeader(
-              decoration: const BoxDecoration(
-                color: AppColors.white
-              ),
-              accountName: Text('Daya Kumar',style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.white100),),
-              accountEmail: Text('Software Developer', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white100),),
-              currentAccountPicture: const CircleAvatar(
-                backgroundColor: AppColors.primary1,
-                child: Icon(Icons.person, color: Colors.black, size: 35,),
-              ),
-            ),
-
             Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildDrawerItem(
-                    icon: Icons.home_outlined,
-                    text: 'Home',
-                    onTap: () {},
-                    subItems: [
-                      _buildDrawerSubItem('Announcement', onTap: () {
-                        Get.toNamed(ApplicationPages.announcementScreen);
-                      }),
-                      _buildDrawerSubItem('Hierarchy', onTap: () {
-                        // Get.toNamed(ApplicationPages.lawyerPaymentRequest);
-                      }),
-                    ]),
-                _buildDrawerItem(icon: Icons.festival_outlined, text: 'Holiday / Event', onTap: (){
-                  Get.toNamed(ApplicationPages.holidayScreen);
-                }),
-                _buildDrawerItem(
-                    icon: Icons.self_improvement_outlined,
-                    text: 'Self Service',
-                    onTap: () {},
-                    subItems: [
-                      _buildDrawerSubItem('Leave Status', onTap: () {
-                        Get.toNamed(ApplicationPages.leaveStatusScreen);
-                      }),
-                      _buildDrawerSubItem('Leave Grant', onTap: () {
-                        Get.toNamed(ApplicationPages.leaveGrantScreen);
-                      }),
-                      _buildDrawerSubItem('WFH Update', onTap: () {
-                        Get.toNamed(ApplicationPages.leaveWFHScreen);
-                      }),
-                      _buildDrawerSubItem('Payslip', onTap: () {
-                        Get.toNamed(ApplicationPages.paySlipScreen);
-                      }),
-                    ]),
+                Column(
+                  children: [
+                    UserAccountsDrawerHeader(
+                      decoration: const BoxDecoration(
+                          color: AppColors.white
+                      ),
+                      accountName: Text('Daya Kumar',style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.white100),),
+                      accountEmail: Text('Software Developer', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white100),),
+                      currentAccountPicture: const CircleAvatar(
+                        backgroundColor: AppColors.primary1,
+                        child: Icon(Icons.person, color: Colors.black, size: 35,),
+                      ),
+                    ),
+                    _buildDrawerItem(
+                        icon: Icons.home_outlined,
+                        text: 'Home',
+                        onTap: () {},
+                        subItems: [
+                          _buildDrawerSubItem('Announcement', onTap: () {
+                            Get.toNamed(ApplicationPages.announcementScreen);
+                          }),
+                          _buildDrawerSubItem('Hierarchy', onTap: () {
+                            // Get.toNamed(ApplicationPages.lawyerPaymentRequest);
+                          }),
+                        ]),
+                    _buildDrawerItem(icon: Icons.festival_outlined, text: 'Holiday / Event', onTap: (){
+                      Get.toNamed(ApplicationPages.holidayScreen);
+                    }),
+                    _buildDrawerItem(
+                        icon: Icons.self_improvement_outlined,
+                        text: 'Self Service',
+                        onTap: () {},
+                        subItems: [
+                          _buildDrawerSubItem('Leave Status', onTap: () {
+                            Get.toNamed(ApplicationPages.leaveStatusScreen);
+                          }),
+                          _buildDrawerSubItem('Leave Grant', onTap: () {
+                            Get.toNamed(ApplicationPages.leaveGrantScreen);
+                          }),
+                          _buildDrawerSubItem('WFH Update', onTap: () {
+                            Get.toNamed(ApplicationPages.leaveWFHScreen);
+                          }),
+                          _buildDrawerSubItem('Payslip', onTap: () {
+                            Get.toNamed(ApplicationPages.paySlipScreen);
+                          }),
+                        ]),
 
-                _buildDrawerItem(icon: Icons.keyboard_alt_outlined, text: 'Peripheral', onTap: (){
-                  Get.toNamed(ApplicationPages.peripheralScreen);
-                }),
-                _buildDrawerItem(icon: Icons.snippet_folder_outlined, text: 'Documents', onTap: (){
-                  Get.toNamed(ApplicationPages.documentsScreen);
-                }),
+                    _buildDrawerItem(icon: Icons.keyboard_alt_outlined, text: 'Peripheral', onTap: (){
+                      Get.toNamed(ApplicationPages.peripheralScreen);
+                    }),
+                    _buildDrawerItem(icon: Icons.snippet_folder_outlined, text: 'Documents', onTap: (){
+                      Get.toNamed(ApplicationPages.documentsScreen);
+                    }),
+                    _buildDrawerItem(icon: Icons.dangerous, text: 'For Testing', onTap: (){
+                      Get.toNamed(ApplicationPages.testingScreen);
+                    }),
+                    _buildDrawerItem(icon: Icons.auto_graph_outlined, text: 'Attendance Statistics', onTap: (){
+                      Get.toNamed(ApplicationPages.statisticsScreen);
+
+
+                    }),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(40.0),
+                  child: RoundButton(title: 'Logout', onTap: () {
+
+                  },),
+                )
               ],
             ),
-            // const Divider(),
-            Padding(
-              padding: const EdgeInsets.all(40.0),
-              child: RoundButton(title: 'Logout', onTap: () {
-
-              },),
-            )
-            // ListTile(
-            //   title: const Text('Logout'),
-            //   leading: const Icon(Icons.logout),
-            //   onTap: () {
-            //     Navigator.of(context).pop();
-            //   },
-            // ),
           ],
         ),
       ),

@@ -133,6 +133,7 @@ class LeaveGrantScreen extends GetView<LeaveGrantController> {
                 Text("On Duty For 9h & 0 min", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor)),
                 const10Text("Request date : 16-12-2024"),
                 const SizedBox(height: 7,),
+                const10TextBold("Reason"),
                 const10Text("Due to punch machine not setup in B-88 branch"),
                 const SizedBox(height: 10), // Reduced space to minimize height
                 Row(

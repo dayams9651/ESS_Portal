@@ -244,10 +244,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
             // Calendar Grid
             SizedBox(
-              height: 320, // Adjust grid height for a more controlled layout
+              height: 300,
               child: GridView.builder(
-                shrinkWrap: false, // Do not shrinkWrap for better control
-                physics: const NeverScrollableScrollPhysics(), // Disable internal scrolling
+                shrinkWrap: false,
+                physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 7,
                 ),
@@ -258,7 +258,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                     return Container(
                       margin: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade300, // Grey for past month days
+                        color: Colors.grey.shade300,
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Center(
@@ -294,7 +294,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       ),
                     );
                   } else {
-                    // Render days from the next month
                     int nextMonthDay = index - firstDayOfMonth - daysInMonth + 1;
                     return Container(
                       margin: const EdgeInsets.all(4),
