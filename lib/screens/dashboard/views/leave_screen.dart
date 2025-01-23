@@ -14,8 +14,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
   TextEditingController _textController = TextEditingController();
   TextEditingController _startDateController = TextEditingController();
   TextEditingController _endDateController = TextEditingController();
-
-  // Example list of values that can be selected from the bottom sheet
+  TextEditingController _reasonController = TextEditingController();
   final List<String> _items = [
     'Earned Leave', 'Sick/Casual Leave', 'Work From Home', 'On Duty', 'Apply for Compensatory Leave'
   ];
@@ -66,8 +65,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 3), // Space between text fields
-              // Row for Date Pickers
+              SizedBox(height: 3),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -179,15 +177,14 @@ class _LeaveScreenState extends State<LeaveScreen> {
                             width: 200,
                             child: Container(
                               decoration: BoxDecoration(
-                                border: Border.all(color: AppColors.white40, ),  // Border color and width
-                                borderRadius: BorderRadius.circular(8),  // Optional: Rounded corners
+                                border: Border.all(color: AppColors.white40, ),
+                                borderRadius: BorderRadius.circular(8),
                               ),
                               child: DropdownButtonFormField<String>(
-                                value: _selectedToFrom,  // The currently selected value
-                                // hint: Center(child: Text('Select ')), // Hint text when nothing is selected
+                                value: _selectedToFrom,
                                 onChanged: (String? newValue) {
                                   setState(() {
-                                    _selectedToFrom= newValue;  // Update selected value
+                                    _selectedToFrom= newValue;
                                   });
                                 },
                                 items: _session.map<DropdownMenuItem<String>>((String value) {
@@ -210,6 +207,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
               Text("Reason",style: AppTextStyles.kPrimaryTextStyle, ),
               SizedBox(height: 5,),
               TextFormField(
+                controller: _reasonController,
                 maxLines: 5, // Allows unlimited lines
                 keyboardType: TextInputType.multiline, // Enables multiline input
                 decoration: InputDecoration(

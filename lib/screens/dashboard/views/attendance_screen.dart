@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:ms_ess_potal/screens/dashboard/widget/custom_container.dart';
 import 'package:ms_ess_potal/style/color.dart';
 import 'package:ms_ess_potal/style/text_style.dart';
-
+import 'package:shimmer/shimmer.dart';
+import '../../../common/widget/const_shimmer_effects.dart';
+import '../contoller/attendance_controller.dart';
+import '../contoller/shift_controller.dart';
 class AttendanceScreen extends StatefulWidget {
   const AttendanceScreen({super.key});
 
@@ -10,12 +14,12 @@ class AttendanceScreen extends StatefulWidget {
   State<AttendanceScreen> createState() => _AttendanceScreenState();
 }
 
-enum AttendanceStatus { absent, present, mispunch, short }
+enum AttendanceStatus { P,HLD, A, SRT, WO, HD, MIS }
 
 class _AttendanceScreenState extends State<AttendanceScreen> {
   int selectedYear = 2025;
   int selectedMonth = 1; // January
-  List<AttendanceStatus> attendance = []; // Attendance status
+  List<AttendanceStatus> attendance = [];
   final List<int> years = [2023, 2024, 2025, 2026, 2027];
   final List<String> months = [
     "January",
@@ -39,8 +43,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     super.initState();
     initializeAttendance(selectedYear, selectedMonth);
   }
-
-  // This function calculates the number of days in a month
   int getDaysInMonth(int year, int month) {
     return DateTime(year, month + 1, 0).day; // Last day of the month
   }
@@ -48,10 +50,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   // Get the first day of the month (used to align the grid)
   int getFirstDayOfMonth(int year, int month) {
     DateTime firstDayOfMonth = DateTime(year, month, 1);
-    return firstDayOfMonth.weekday; // 1 = Monday, 7 = Sunday
+    return firstDayOfMonth.weekday;
   }
 
-  // Get the number of days in the previous month
   int getDaysInPreviousMonth(int year, int month) {
     if (month == 1) {
       return DateTime(year - 1, 12 + 1, 0).day; // December of the previous year
@@ -64,26 +65,33 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   void initializeAttendance(int year, int month) {
     int daysInMonth = getDaysInMonth(year, month);
     setState(() {
-      attendance = List.generate(daysInMonth, (index) => AttendanceStatus.absent);
+      attendance = List.generate(daysInMonth, (index) => AttendanceStatus.A);
     });
   }
 
-  // Function to change attendance status for a particular day
   void toggleAttendance(int day) {
     setState(() {
-      // Cycle through the attendance states
       switch (attendance[day]) {
-        case AttendanceStatus.absent:
-          attendance[day] = AttendanceStatus.present;
+        case AttendanceStatus.A:
+          attendance[day] = AttendanceStatus.P;
           break;
-        case AttendanceStatus.present:
-          attendance[day] = AttendanceStatus.mispunch;
+        case AttendanceStatus.P:
+          attendance[day] = AttendanceStatus.MIS;
           break;
-        case AttendanceStatus.mispunch:
-          attendance[day] = AttendanceStatus.short;
+        case AttendanceStatus.MIS:
+          attendance[day] = AttendanceStatus.SRT;
           break;
-        case AttendanceStatus.short:
-          attendance[day] = AttendanceStatus.absent;
+        case AttendanceStatus.SRT:
+          attendance[day] = AttendanceStatus.A;
+          break;
+        case AttendanceStatus.HLD:
+          attendance[day] = AttendanceStatus.HLD;
+          break;
+        case AttendanceStatus.WO:
+          attendance[day] = AttendanceStatus.WO;
+          break;
+        case AttendanceStatus.HD:
+          attendance[day] = AttendanceStatus.HD;
           break;
       }
     });
@@ -115,251 +123,255 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     });
   }
 
-  // Check if the day is today
-  bool isToday(int day) {
+   bool isToday(int day) {
     return selectedYear == currentDate.year &&
         selectedMonth == currentDate.month &&
         day == currentDate.day;
   }
+  final ShiftController controller = Get.put(ShiftController());
+  final AttendanceController attendController = Get.put(AttendanceController());
 
   @override
-  @override
   Widget build(BuildContext context) {
+    controller.fetchShiftData();
     int daysInMonth = getDaysInMonth(selectedYear, selectedMonth);
     int firstDayOfMonth = getFirstDayOfMonth(selectedYear, selectedMonth);
     int previousMonthDays = getDaysInPreviousMonth(selectedYear, selectedMonth);
     int totalCells = (firstDayOfMonth + daysInMonth + 6) ~/ 7 * 7;
-
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        padding: EdgeInsets.zero, // Ensure there's no extra padding here
-        child: Column(
-          children: [
-            const SizedBox(height: 10,),
-            // Year and Month Dropdowns
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+      body: Obx((){
+        if (controller.shiftModel.value == null) {
+          return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
+        } else {
+          var shift = controller.shiftModel.value!;
+          return SingleChildScrollView(
+            padding: EdgeInsets.zero, // Ensure there's no extra padding here
+            child: Column(
               children: [
-                Container(
-                  color: AppColors.white30,
-                  width: 200,
-                  height: 40,
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.keyboard_arrow_left_sharp),
-                        onPressed: goToPreviousMonth,
-                      ),
-                      Text(
-                        months[selectedMonth - 1],
-                        style: AppTextStyles.kSmall12SemiBoldTextStyle,
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.keyboard_arrow_right_sharp),
-                        onPressed: goToNextMonth,
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: 150,
-                  height: 39,
-                  color: AppColors.primaryColor,
-                  child: Center(
-                    child: DropdownButton<int>(
-                      value: selectedYear,
-                      onChanged: (newYear) {
-                        setState(() {
-                          selectedYear = newYear!;
-                          initializeAttendance(selectedYear, selectedMonth);
-                        });
-                      },
-                      items: years.map((year) {
-                        return DropdownMenuItem<int>(
-                          value: year,
-                          child: Text(
-                            year.toString(),
-                            style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.white90),
+                const SizedBox(height: 10,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Container(
+                      color: AppColors.white30,
+                      width: 200,
+                      height: 40,
+                      child: Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.keyboard_arrow_left_sharp),
+                            onPressed: goToPreviousMonth,
                           ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20), // Adjust the space between sections
-
-            // Attendance status summary Row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Column(
-                  children: [
-                    Text(
-                      "11",
-                      style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor),
-                    ),
-                    Text("Present", style: AppTextStyles.kSmall12RegularTextStyle),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text(
-                      "01",
-                      style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.misPunch1Color),
-                    ),
-                    Text("MisPunch", style: AppTextStyles.kSmall12RegularTextStyle),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text(
-                      "03",
-                      style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.short1Color),
-                    ),
-                    Text("Short", style: AppTextStyles.kSmall12RegularTextStyle),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 15),
-
-            // Days of the Week Header Row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: daysOfWeek.map((day) {
-                return Expanded(
-                  child: Center(
-                    child: Text(
-                      day,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 10), // Adjust spacing for the grid
-
-            // Calendar Grid
-            SizedBox(
-              height: 300,
-              child: GridView.builder(
-                shrinkWrap: false,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7,
-                ),
-                itemCount: totalCells,
-                itemBuilder: (context, index) {
-                  if (index < firstDayOfMonth) {
-                    int prevMonthDay = previousMonthDays - (firstDayOfMonth - index - 1);
-                    return Container(
-                      margin: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(5),
+                          Text(
+                            months[selectedMonth - 1],
+                            style: AppTextStyles.kSmall12SemiBoldTextStyle,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.keyboard_arrow_right_sharp),
+                            onPressed: goToNextMonth,
+                          ),
+                        ],
                       ),
+                    ),
+                    Container(
+                      width: 150,
+                      height: 39,
+                      color: AppColors.primaryColor,
+                      child: Center(
+                        child: DropdownButton<int>(
+                          value: selectedYear,
+                          onChanged: (newYear) {
+                            setState(() {
+                              selectedYear = newYear!;
+                              initializeAttendance(selectedYear, selectedMonth);
+                            });
+                          },
+                          items: years.map((year) {
+                            return DropdownMenuItem<int>(
+                              value: year,
+                              child: Text(
+                                year.toString(),
+                                style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.white90),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20), // Adjust the space between sections
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Column(
+                      children: [
+                        Text(
+                          "11",
+                          style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor),
+                        ),
+                        Text("Present", style: AppTextStyles.kSmall12RegularTextStyle),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          "01",
+                          style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.misPunch1Color),
+                        ),
+                        Text("MisPunch", style: AppTextStyles.kSmall12RegularTextStyle),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          "03",
+                          style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.short1Color),
+                        ),
+                        Text("Short", style: AppTextStyles.kSmall12RegularTextStyle),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: daysOfWeek.map((day) {
+                    return Expanded(
                       child: Center(
                         child: Text(
-                          prevMonthDay.toString(),
-                          style: const TextStyle(
-                            color: Colors.grey,
-                          ),
+                          day,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
                     );
-                  } else if (index < firstDayOfMonth + daysInMonth) {
-                    int day = index - firstDayOfMonth + 1;
-                    bool today = isToday(day);
-                    Color dayColor = _getAttendanceColor(attendance[day - 1]);
-                    return GestureDetector(
-                      onTap: () => toggleAttendance(day - 1),
-                      child: Container(
-                        margin: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: today ? AppColors.primaryColor : dayColor,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Center(
-                          child: Text(
-                            day.toString(),
-                            style: TextStyle(
-                              color: today ? Colors.white : Colors.black,
-                              fontWeight: FontWeight.bold,
+                  }).toList(),
+                ),
+                const SizedBox(height: 10), // Adjust spacing for the grid
+                SizedBox(
+                  height: 300,
+                  child: GridView.builder(
+                    shrinkWrap: false,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 7,
+                    ),
+                    itemCount: totalCells,
+                    itemBuilder: (context, index) {
+                      if (index < firstDayOfMonth) {
+                        int prevMonthDay = previousMonthDays - (firstDayOfMonth - index - 1);
+                        return Container(
+                          margin: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade300,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Center(
+                            child: Text(
+                              prevMonthDay.toString(),
+                              style: const TextStyle(
+                                color: Colors.grey,
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    );
-                  } else {
-                    int nextMonthDay = index - firstDayOfMonth - daysInMonth + 1;
-                    return Container(
-                      margin: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300, // Grey for next month days
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Center(
-                        child: Text(
-                          nextMonthDay.toString(),
-                          style: const TextStyle(
-                            color: Colors.grey,
+                        );
+                      } else if (index < firstDayOfMonth + daysInMonth) {
+                        int day = index - firstDayOfMonth + 1;
+                        bool today = isToday(day);
+                        Color dayColor = _getAttendanceColor(attendance[day - 1]);
+                        return GestureDetector(
+                          onTap: () => toggleAttendance(day - 1),
+                          child: Container(
+                            margin: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: today ? AppColors.primaryColor : dayColor,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Center(
+                              child: Text(
+                                day.toString(),
+                                style: TextStyle(
+                                  color: today ? Colors.white : Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                        );
+                      } else {
+                        int nextMonthDay = index - firstDayOfMonth - daysInMonth + 1;
+                        return Container(
+                          margin: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade300, // Grey for next month days
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Center(
+                            child: Text(
+                              nextMonthDay.toString(),
+                              style: const TextStyle(
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ),
+                Padding(
+                  padding:  EdgeInsets.all(5.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CustomContainer(icon: Icons.watch_later_outlined, text: 'Shift In', subTitle: '${shift.startTime??'Null'}'),
+                          const SizedBox(width: 10),
+                          CustomContainer(icon: Icons.watch_later_outlined, text: 'Shift Out', subTitle: '${shift.endTime??"Null"}')
+                        ],
                       ),
-                    );
-                  }
-                },
-              ),
-            ),
-
-            // Padding and CustomContainer Widgets
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomContainer(icon: Icons.watch_later_outlined, text: 'Shift In', subTitle: '09:12 AM'),
-                      const SizedBox(width: 10),
-                      CustomContainer(icon: Icons.watch_later_outlined, text: 'Shift Out', subTitle: '09:12 AM')
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CustomContainer(icon: Icons.watch_later_outlined, text: 'Worked Hours', subTitle: shift.endTime??'Null'),
+                          const SizedBox(width: 10),
+                          CustomContainer(icon: Icons.calendar_month, text: 'Date', subTitle: shift.division)
+                        ],
+                      ),
+                      const SizedBox(height: 60),
                     ],
                   ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomContainer(icon: Icons.watch_later_outlined, text: 'Worked Hours', subTitle: '09:12 AM'),
-                      const SizedBox(width: 10),
-                      CustomContainer(icon: Icons.calendar_month, text: 'Date', subTitle: '09:12 AM')
-                    ],
-                  ),
-                  const SizedBox(height: 60),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+          }
+        }
       ),
     );
   }
 
-
-  // Method to get color based on attendance status
   Color _getAttendanceColor(AttendanceStatus status) {
     switch (status) {
-      case AttendanceStatus.present:
+      case AttendanceStatus.P:
         return AppColors.presentColor;
-      case AttendanceStatus.mispunch:
+      case AttendanceStatus.MIS:
         return AppColors.misPunchColor;
-      case AttendanceStatus.short:
+      case AttendanceStatus.SRT:
         return AppColors.shortColor;
-      case AttendanceStatus.absent:
+      case AttendanceStatus.HD:
+        return AppColors.info20;
+      case AttendanceStatus.HLD:
+        return AppColors.warning60;
+      case AttendanceStatus.A:
       default:
         return AppColors.absentColor;
     }
   }
 }
+
+
+

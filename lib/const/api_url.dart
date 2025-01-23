@@ -8,3 +8,7 @@ const String newHireListApi = "$baseUrl/dashboard/hiresList";
 const String workAnnApi = "$baseUrl/dashboard/eventBash/WA";
 const String earnedLeaveApi = "$baseUrl/dashboard/leave/EL";
 const String leaveListApi = "$baseUrl/dashboard/leave/leavelist";
+const String shiftApi = "$baseUrl/attendance/view/shift";
+const String wfhLeaveApi = "$baseUrl/dashboard/leave/WFH";
+const String sickLeaveApi = "$baseUrl/dashboard/leave/SL";
+const String attendanceApi = "$baseUrl/attendance/view/punch";

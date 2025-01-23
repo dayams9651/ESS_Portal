@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:ms_ess_potal/screens/Statistics/bindings/statistics_bindings.dart';
-import 'package:ms_ess_potal/screens/Testing/testing_screen.dart';
 import 'package:ms_ess_potal/screens/dashboard/dashboard_screen.dart';
 import 'package:ms_ess_potal/screens/documents/views/documents_page_screen.dart';
 import 'package:ms_ess_potal/screens/holiday&event/bindings/holidays_bindings.dart';
@@ -114,11 +113,11 @@ class ApplicationPages {
         binding: StatisticsBindings()
     ),
 
-    GetPage(
-        name: testingScreen,
-        page: ()=>  LeaveBalanceScreen(),
-        // binding: StatisticsBindings()
-    ),
+    // GetPage(
+    //     name: testingScreen,
+    //     page: ()=>  LeaveBalanceScreen(),
+    //     // binding: StatisticsBindings()
+    // ),
 
 
       ];

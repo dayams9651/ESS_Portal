@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -22,16 +23,16 @@ class AnnouncementController extends GetxController {
       );
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
-        print('Response data: $data');  // Print the full response data in the terminal
+        debugPrint('Announcement Api Response : $data');  // Print the full response data in the terminal
         var fetchedAnnouncements = (data['data'] as List)
             .map((item) => Announcement.fromJson(item))
             .toList();
         announcements.assignAll(fetchedAnnouncements);
       } else {
-        print('Failed to load data: ${response.statusCode}');  // Print error code if status code isn't 200
+        debugPrint('Failed to load data: ${response.statusCode}');  // Print error code if status code isn't 200
       }
     } catch (e) {
-      print('Error: $e');  // Catch and print any error that occurs during the request
+      debugPrint('Error: $e');  // Catch and print any error that occurs during the request
     } finally {
       isLoading(false);
     }

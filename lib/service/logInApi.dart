@@ -6,10 +6,12 @@ import 'package:get_storage/get_storage.dart';  // Import GetStorage
 import 'package:ms_ess_potal/screens/dashboard/dashboard_screen.dart';
 import '../common/widget/snackbar_helper.dart';
 import '../const/api_url.dart';
+import '../screens/signUp/model/loginIn_response_model.dart';
 
 class UserLogInService extends GetxController {
   RxBool isLoading = false.obs;
   var responseMessage = ''.obs;
+  var logInData = Rxn<LoginResponse>();
 
   // Initialize GetStorage
   final box = GetStorage();
@@ -34,13 +36,13 @@ class UserLogInService extends GetxController {
           // Save token to GetStorage if login is successful
           String token = responseData['data']['token'];
           box.write('token', token);  // Save token here
-
-          // Print the saved token to the terminal
           debugPrint("Saved Token: $token");  // Logs token to the console
 
           showCustomSnackbar('LogIn', '${responseData['message']}');
           debugPrint("LogIn Data: ${responseData['message']}");
           Get.to(const DashboardScreen());
+          var decodedResponse = json.decode(response.body);
+          logInData.value = LoginResponse.fromJson(decodedResponse);
         } else {
           showCustomSnackbar('Error', responseData['message'] ?? 'Your Employee ID or Password is wrong');
           debugPrint("Error ${responseData['message']}");
@@ -58,7 +60,6 @@ class UserLogInService extends GetxController {
     return box.read('token') ?? ''; // Returns token or empty string if not found
   }
 
-  // To check if user is already logged in
   bool isUserLoggedIn() {
     return box.read('token') != null;  // Returns true if token exists
   }

@@ -4,27 +4,27 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import '../../../const/api_url.dart';
-import '../model/earned_leave_model.dart';
+import '../model/wfh_leave_balance_model.dart';
 
-class EarnedLeaveController extends GetxController {
+class LeaveBalanceController extends GetxController {
   var isLoading = false.obs;
-  var earnedLeave = Rxn<LeaveBalanceModel>();
+  var leaveBalance = Rxn<LeaveBalanceModel1>();
 
   @override
   void onInit() {
     super.onInit();
-    fetchEarnedLeave();
+    fetchLeaveBalance();
   }
   final box = GetStorage();
 
-  Future<void> fetchEarnedLeave() async {
+  Future<void> fetchLeaveBalance() async {
     isLoading.value = true;
     try {
       String? token = box.read('token');
       if (token == null || token.isEmpty) {
         throw Exception('Token not found. Please log in first.');
       }
-      final response = await http.post(Uri.parse(earnedLeaveApi),
+      final response = await http.post(Uri.parse(wfhLeaveApi),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -32,15 +32,15 @@ class EarnedLeaveController extends GetxController {
       );
       if (response.statusCode == 200) {
         var decodedResponse = json.decode(response.body);
-        debugPrint('Earned Leave Response : $decodedResponse');
-        earnedLeave.value = LeaveBalanceModel.fromJson(decodedResponse);
+        debugPrint("WFH API Response: $decodedResponse");  // Print the entire response
+        leaveBalance.value = LeaveBalanceModel1.fromJson(decodedResponse);
       } else {
-        debugPrint('Failed to load data: ${response.statusCode}');
+        debugPrint('Failed to load data. Status Code: ${response.statusCode}');
       }
     } catch (e) {
-      debugPrint('Error: $e');
+      debugPrint("Error: $e");
     } finally {
-      isLoading(false);
+      isLoading.value = false;
     }
   }
 }

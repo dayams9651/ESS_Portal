@@ -191,11 +191,6 @@ class _HolidayEventPageState extends State<HolidayScreen> {
                                 ),
                             ],
                           ),
-                          trailing: const CircleAvatar(
-                            backgroundColor: AppColors.primary1,
-                            radius: 30,
-                            child: Icon(Icons.person),
-                          ),
                         ),
                       );
                     },
