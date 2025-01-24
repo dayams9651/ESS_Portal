@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart'; // Import GetStorage
+import 'package:ms_ess_potal/screens/dashboard/model/attendance_model.dart';
 import 'package:ms_ess_potal/screens/dashboard/model/workanniversary_model.dart';
 import '../const/api_url.dart';
 import '../screens/dashboard/model/home_model.dart';
@@ -86,4 +87,30 @@ class ApiServices {
       return null;
     }
   }
+
+
+  //  Punch In Api
+  static const String apiUrlPunch = 'https://esstest.mscorpres.net/attendance/view/punch/';
+  Future<AttendanceResponse> fetchAttendanceData(String startDate, String endDate) async {
+    String? token = box.read('token');
+    if (token == null || token.isEmpty) {
+      throw Exception('Token not found. Please log in first.');
+    }
+
+    final response = await http.post(
+      Uri.parse('$apiUrlPunch?start=$startDate&end=$endDate'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+    debugPrint('API Response: ${response.body}');
+
+    if (response.statusCode == 200) {
+      return AttendanceResponse.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load attendance data');
+    }
+  }
+
 }

@@ -41,7 +41,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     final List<Widget> bottomBarPages = [
       HomeScreen(controller: (_controller)),
-       AttendanceScreen(),
+       const AttendanceScreen(),
       const LeaveScreen(),
       const ProfileScreen(),
     ];

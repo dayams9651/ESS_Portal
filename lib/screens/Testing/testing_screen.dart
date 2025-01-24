@@ -1,42 +1,64 @@
-// // lib/screens/leave_balance_screen.dart
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-// import 'package:ms_ess_potal/screens/Testing/testing_controller.dart';
-//
-// class LeaveBalanceScreen extends StatelessWidget {
-//   final LeaveBalanceController controller = Get.put(LeaveBalanceController());
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text("Leave Balance")),
-//       body: Obx(() {
-//         if (controller.isLoading.value) {
-//           return Center(child: CircularProgressIndicator());
-//         }
-//
-//         // Access the reactive data here
-//         final leaveBalance = controller.leaveBalance.value;
-//         return Padding(
-//           padding: const EdgeInsets.all(16.0),
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               Text('Total Yearly Balance: ${leaveBalance?.data.totalYrBal}', style: TextStyle(fontSize: 18)),
-//               SizedBox(height: 10),
-//               Text('Leave Open Balance: ${leaveBalance?.data.lOpBal}', style: TextStyle(fontSize: 18)),
-//               SizedBox(height: 10),
-//               Text('Leave Closed Balance: ${leaveBalance?.data.lClBal??''}', style: TextStyle(fontSize: 18)),
-//             ],
-//           ),
-//         );
-//       }),
-//     );
-//   }
-// }
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:ms_ess_potal/screens/dashboard/contoller/attendance_controller.dart';
 
-// Ensure shiftIn?.todayIn is not null and parse the time
+class AttendancePage extends StatelessWidget {
+  final AttendanceController controller = Get.put(AttendanceController());
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Attendance Tracker')),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: () {
+                controller.fetchAttendanceData('2025-01-01', '2025-01-31');
+              },
+              child: Text('Fetch Attendance Data'),
+            ),
+          ),
 
+          // Display the totalPresent value
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Obx(() {
+              return Text(
+                'Total Present: ${controller.totalPresent.value}',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              );
+            }),
+          ),
 
-
+          // Display attendance data list
+          Obx(() {
+            if (controller.isLoading.value) {
+              return Center(child: CircularProgressIndicator());
+            } else if (controller.errorMessage.isNotEmpty) {
+              return Center(child: Text('Error: ${controller.errorMessage.value}'));
+            } else {
+              return Expanded(
+                child: ListView.builder(
+                  itemCount: controller.attendanceList.length,
+                  itemBuilder: (context, index) {
+                    var attendance = controller.attendanceList[index];
+                    return Card(
+                      margin: EdgeInsets.all(8),
+                      child: ListTile(
+                        title: Text(attendance.totalTime),
+                        subtitle: Text('Date: ${attendance.start}'),  // Fixed from attendance.hashCode to display actual date
+                        trailing: Text(attendance.totalTime.isEmpty ? 'No Time' : attendance.totalTime),
+                      ),
+                    );
+                  },
+                ),
+              );
+            }
+          }),
+        ],
+      ),
+    );
+  }
+}

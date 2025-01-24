@@ -1,12 +1,16 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ms_ess_potal/common/const_api.dart';
+import 'package:ms_ess_potal/common/widget/const_shimmer_effects.dart';
+import 'package:ms_ess_potal/screens/dashboard/contoller/attendance_controller.dart';
+import 'package:ms_ess_potal/screens/dashboard/contoller/shift_controller.dart';
 import 'package:ms_ess_potal/screens/dashboard/widget/custom_container.dart';
 import 'package:ms_ess_potal/style/color.dart';
 import 'package:ms_ess_potal/style/text_style.dart';
 import 'package:shimmer/shimmer.dart';
-import '../../../common/widget/const_shimmer_effects.dart';
-import '../contoller/attendance_controller.dart';
-import '../contoller/shift_controller.dart';
+import '../model/attendance_model.dart';
+
 class AttendanceScreen extends StatefulWidget {
   const AttendanceScreen({super.key});
 
@@ -14,35 +18,31 @@ class AttendanceScreen extends StatefulWidget {
   State<AttendanceScreen> createState() => _AttendanceScreenState();
 }
 
-enum AttendanceStatus { P,HLD, A, SRT, WO, HD, MIS }
+enum AttendanceStatus { P, HLD, A, SRT, WO, HD, MIS }
 
 class _AttendanceScreenState extends State<AttendanceScreen> {
   int selectedYear = 2025;
-  int selectedMonth = 1; // January
+  int selectedMonth = 1;
   List<AttendanceStatus> attendance = [];
-  final List<int> years = [2023, 2024, 2025, 2026, 2027];
+  final List<int> years = [2023, 2024, 2025]; // Define available years
   final List<String> months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
+    "January", "February", "March", "April", "May", "June", "July",
+    "August", "September", "October", "November", "December"
   ];
   final List<String> daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   DateTime currentDate = DateTime.now(); // Current date for highlighting
 
+  final ShiftController controller = Get.put(ShiftController());
+  final AttendanceController attendController = Get.put(AttendanceController());
+
+  List<Attendance> fetchedAttendanceData = [];
+
   @override
   void initState() {
     super.initState();
-    initializeAttendance(selectedYear, selectedMonth);
+    attendController.fetchAttendanceData('2025-01-01', '2025-01-31');
   }
+
   int getDaysInMonth(int year, int month) {
     return DateTime(year, month + 1, 0).day; // Last day of the month
   }
@@ -106,7 +106,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       } else {
         selectedMonth--;
       }
-      initializeAttendance(selectedYear, selectedMonth);
+      attendController.fetchAttendanceData(
+        '$selectedYear-${selectedMonth.toString().padLeft(2, '0')}-01',
+        '$selectedYear-${selectedMonth.toString().padLeft(2, '0')}-${getDaysInMonth(selectedYear, selectedMonth)}',
+      );
     });
   }
 
@@ -119,37 +122,47 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       } else {
         selectedMonth++;
       }
-      initializeAttendance(selectedYear, selectedMonth);
+      attendController.fetchAttendanceData(
+        '$selectedYear-${selectedMonth.toString().padLeft(2, '0')}-01',
+        '$selectedYear-${selectedMonth.toString().padLeft(2, '0')}-${getDaysInMonth(selectedYear, selectedMonth)}',
+      );
     });
   }
 
-   bool isToday(int day) {
+  bool isToday(int day) {
     return selectedYear == currentDate.year &&
         selectedMonth == currentDate.month &&
         day == currentDate.day;
   }
-  final ShiftController controller = Get.put(ShiftController());
-  final AttendanceController attendController = Get.put(AttendanceController());
 
   @override
   Widget build(BuildContext context) {
     controller.fetchShiftData();
-    int daysInMonth = getDaysInMonth(selectedYear, selectedMonth);
-    int firstDayOfMonth = getFirstDayOfMonth(selectedYear, selectedMonth);
-    int previousMonthDays = getDaysInPreviousMonth(selectedYear, selectedMonth);
-    int totalCells = (firstDayOfMonth + daysInMonth + 6) ~/ 7 * 7;
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Obx((){
-        if (controller.shiftModel.value == null) {
+      body: Obx(() {
+        if (attendController.isLoading.value) {
           return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
+        } else if (attendController.errorMessage.isNotEmpty) {
+          return Center(child: Text('Error: ${attendController.errorMessage.value}'));
         } else {
           var shift = controller.shiftModel.value!;
+          fetchedAttendanceData = attendController.attendanceList;
+          List<Attendance> filteredAttendanceData = fetchedAttendanceData.where((attendance) {
+            DateTime attendanceDate = DateTime.parse(attendance.start);
+            return attendanceDate.year == selectedYear && attendanceDate.month == selectedMonth;
+          }).toList();
+
+          int daysInMonth = getDaysInMonth(selectedYear, selectedMonth);
+          int firstDayOfMonth = getFirstDayOfMonth(selectedYear, selectedMonth);
+          int previousMonthDays = getDaysInPreviousMonth(selectedYear, selectedMonth);
+          int totalCells = (firstDayOfMonth + daysInMonth + 6) ~/ 7 * 7;
+
           return SingleChildScrollView(
-            padding: EdgeInsets.zero, // Ensure there's no extra padding here
+            padding: EdgeInsets.zero,
             child: Column(
               children: [
-                const SizedBox(height: 10,),
+                const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -184,7 +197,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                           onChanged: (newYear) {
                             setState(() {
                               selectedYear = newYear!;
-                              initializeAttendance(selectedYear, selectedMonth);
+                              attendController.fetchAttendanceData(
+                                '$selectedYear-${selectedMonth.toString().padLeft(2, '0')}-01',
+                                '$selectedYear-${selectedMonth.toString().padLeft(2, '0')}-${getDaysInMonth(selectedYear, selectedMonth)}',
+                              );
                             });
                           },
                           items: years.map((year) {
@@ -201,14 +217,14 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 20), // Adjust the space between sections
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Column(
                       children: [
                         Text(
-                          "11",
+                          "${attendController.totalPresent}",
                           style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor),
                         ),
                         Text("Present", style: AppTextStyles.kSmall12RegularTextStyle),
@@ -217,7 +233,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                     Column(
                       children: [
                         Text(
-                          "01",
+                          "${attendController.totalMissPunch}",
                           style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.misPunch1Color),
                         ),
                         Text("MisPunch", style: AppTextStyles.kSmall12RegularTextStyle),
@@ -234,6 +250,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 15),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -250,7 +267,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                 ),
                 const SizedBox(height: 10), // Adjust spacing for the grid
                 SizedBox(
-                  height: 300,
+                  height: 350,
                   child: GridView.builder(
                     shrinkWrap: false,
                     physics: const NeverScrollableScrollPhysics(),
@@ -279,7 +296,15 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       } else if (index < firstDayOfMonth + daysInMonth) {
                         int day = index - firstDayOfMonth + 1;
                         bool today = isToday(day);
-                        Color dayColor = _getAttendanceColor(attendance[day - 1]);
+
+                        // Find the attendance for the specific day
+                        Attendance? attendanceForDay = filteredAttendanceData.firstWhere(
+                              (attendance) => DateTime.parse(attendance.start).day == day,
+                          orElse: () => Attendance(title: "A", start: "", totalTime: ""),
+                        );
+
+                        Color dayColor = _getAttendanceColor(attendanceForDay);
+
                         return GestureDetector(
                           onTap: () => toggleAttendance(day - 1),
                           child: Container(
@@ -304,7 +329,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         return Container(
                           margin: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade300, // Grey for next month days
+                            color: Colors.grey.shade300,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Center(
@@ -348,30 +373,29 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               ],
             ),
           );
-          }
         }
-      ),
+      }),
     );
   }
 
-  Color _getAttendanceColor(AttendanceStatus status) {
-    switch (status) {
-      case AttendanceStatus.P:
-        return AppColors.presentColor;
-      case AttendanceStatus.MIS:
-        return AppColors.misPunchColor;
-      case AttendanceStatus.SRT:
-        return AppColors.shortColor;
-      case AttendanceStatus.HD:
-        return AppColors.info20;
-      case AttendanceStatus.HLD:
-        return AppColors.warning60;
-      case AttendanceStatus.A:
-      default:
+  Color _getAttendanceColor(Attendance attendance) {
+    switch (attendance.title) {
+      case "P":
+        return AppColors.success60;
+      case "WO":
         return AppColors.absentColor;
+      case "HLD":
+        return AppColors.warning60;
+      case "A":
+        return AppColors.error80;
+      case "SRT":
+        return AppColors.error20;
+      case "MIS":
+        return AppColors.error40;
+      case "HD":
+        return AppColors.success80;
+      default:
+        return AppColors.error80;
     }
   }
 }
-
-
-

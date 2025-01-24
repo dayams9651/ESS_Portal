@@ -12,8 +12,6 @@ class UserLogInService extends GetxController {
   RxBool isLoading = false.obs;
   var responseMessage = ''.obs;
   var logInData = Rxn<LoginResponse>();
-
-  // Initialize GetStorage
   final box = GetStorage();
 
   Future<void> logInUser(String username, String password) async {
@@ -33,10 +31,9 @@ class UserLogInService extends GetxController {
 
       if (response.statusCode == 200) {
         if (responseData['success']) {
-          // Save token to GetStorage if login is successful
           String token = responseData['data']['token'];
           box.write('token', token);  // Save token here
-          debugPrint("Saved Token: $token");  // Logs token to the console
+          debugPrint("Saved Token: $token");
 
           showCustomSnackbar('LogIn', '${responseData['message']}');
           debugPrint("LogIn Data: ${responseData['message']}");
@@ -64,3 +61,4 @@ class UserLogInService extends GetxController {
     return box.read('token') != null;  // Returns true if token exists
   }
 }
+
