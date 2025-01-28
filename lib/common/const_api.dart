@@ -90,13 +90,12 @@ class ApiServices {
 
 
   //  Punch In Api
-  static const String apiUrlPunch = 'https://esstest.mscorpres.net/attendance/view/punch/';
+
   Future<AttendanceResponse> fetchAttendanceData(String startDate, String endDate) async {
     String? token = box.read('token');
     if (token == null || token.isEmpty) {
       throw Exception('Token not found. Please log in first.');
     }
-
     final response = await http.post(
       Uri.parse('$apiUrlPunch?start=$startDate&end=$endDate'),
       headers: {

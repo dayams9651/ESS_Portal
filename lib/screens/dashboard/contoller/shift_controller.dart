@@ -33,11 +33,8 @@ class ShiftController extends GetxController {
           Get.snackbar('Error', 'Failed to load shift data: ${data['message']}');
         }
       }
-      // else {
-      //   Get.snackbar('Error', 'Failed to load shift data, status code: ${response.statusCode}');
-      // }
     } catch (e) {
-      Get.snackbar('Error', 'An error occurred: $e');
+      Get.snackbar('Error', 'Please Check Your Internet Connection');
     }
   }
 }

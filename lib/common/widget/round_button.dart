@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:ms_ess_potal/style/color.dart';
-
-import '../../style/text_style.dart';
+import 'package:ms_ess_potal/style/text_style.dart';
 
 class RoundButton extends StatelessWidget {
   final String title;
   final VoidCallback onTap;
   final bool loading;
-  final Icon ? icon;
-  final Color? color; // This will allow the custom color
+  final Icon? icon;
+  final Color? color;
 
   const RoundButton({
     super.key,
-    this.color, // Optional parameter to pass custom color
+    this.color,
     required this.title,
     required this.onTap,
     this.loading = false,
@@ -21,7 +20,6 @@ class RoundButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Use the custom color if provided, otherwise default to primary color
     final buttonColor = color ?? AppColors.primaryColor;
 
     return Padding(
@@ -36,7 +34,7 @@ class RoundButton extends StatelessWidget {
           ),
           child: Center(
             child: loading
-                ? const CircularProgressIndicator(
+                ? CircularProgressIndicator(
                 strokeWidth: 3, color: Colors.white)
                 : Text(
               title,

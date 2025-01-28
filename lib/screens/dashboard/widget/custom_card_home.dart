@@ -69,7 +69,7 @@ class CustomHomeCard extends StatelessWidget {
                       Text(text1, style: AppTextStyles.kCaption13SemiBoldTextStyle,),
                     ],
                   ),
-                  IconButton(onPressed: (){}, icon: Icon(Icons.refresh_outlined))
+                  // IconButton(onPressed: (){}, icon: Icon(Icons.refresh_outlined))
                 ],
               )
             ],

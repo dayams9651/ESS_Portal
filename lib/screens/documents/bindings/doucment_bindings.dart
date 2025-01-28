@@ -6,6 +6,6 @@ class DocumentsBindings extends Bindings {
 
   @override
   void dependencies(){
-    Get.lazyPut(()=> DocumentsController());
+    Get.lazyPut(()=> SOPController());
   }
 }

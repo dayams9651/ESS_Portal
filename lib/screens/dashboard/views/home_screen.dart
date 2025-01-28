@@ -20,6 +20,7 @@ import '../contoller/new_hireList_controller.dart';
 import '../contoller/shift_controller.dart';
 import '../contoller/wA_controller.dart';
 import '../widget/custom_card_home.dart';
+
 class HomeScreen extends StatefulWidget {
   final NotchBottomBarController? controller;
   static const double cardHeight = 250;
@@ -29,8 +30,8 @@ class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
-class _HomeScreenState extends State<HomeScreen> {
 
+class _HomeScreenState extends State<HomeScreen> {
   DateTime currentTime = DateTime.now();
   late Color lineColor;
   late Timer _timer;
@@ -90,19 +91,49 @@ class _HomeScreenState extends State<HomeScreen> {
     return Obx(() {
       if (controller.isLoading.value) {
         return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
-      }
-      else {
+      } else {
         final leaveBalance = controllerWFH.leaveBalance.value;
         final leaveELBalance = controllerEL.earnedLeave.value;
         final sickLeave = controllerSL.sickLeaveBalance.value;
         final logInResponse = controllerLogIn.logInData.value;
         final shiftIn = controllerShift.shiftModel.value;
-        DateTime shiftInTime = DateFormat('dd-MM-yyyy HH:mm:ss').parse(shiftIn?.todayIn ?? "01-01-0000 00:00:00");
+
+        DateTime shiftInTime;
+        if (shiftIn?.todayIn != null ) {
+          try {
+            shiftInTime = DateFormat('dd-MM-yyyy HH:mm:ss').parse(shiftIn!.todayIn!);
+          } catch (e) {
+            print("Error parsing shiftIn?.todayIn: ${shiftIn?.todayIn}. Using fallback.");
+            // Fallback to current date if parsing fails
+            shiftInTime = DateTime.now();
+          }
+        } else {
+          // If shifstIn?.todayIn is null or empty, use fallback date
+          shiftInTime = DateFormat('dd-MM-yyyy HH:mm:ss').parse("01-01-0000 00:00:00");
+        }
+
         Duration elapsedTime = currentTime.difference(shiftInTime);
         Duration maxDuration = Duration(hours: 9);
+
         if (elapsedTime > maxDuration) {
           elapsedTime = maxDuration;
         }
+
+        String getGreetingMessage() {
+          int hour = currentTime.hour;
+
+          if (hour >= 5 && hour < 12) {
+            return "Good Morning";
+          } else if (hour >= 12 && hour < 17) {
+            return "Good Afternoon";
+          } else if (hour >= 17 && hour < 21) {
+            return "Good Evening";
+          } else {
+            return "Good Night"; // For hours between 9 PM and 5 AM
+          }
+        }
+
+
         return WillPopScope(
           onWillPop: () async {
             return await showExitConfirmationDialog(context) ?? false;
@@ -122,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: ListTile(
                     title: Text(
-                      "Good Morning, ${logInResponse?.data.userName}",
+                      "${getGreetingMessage()}, ${logInResponse?.data.userName}",
                       style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text("Let's be productive today!", style: AppTextStyles.kSmall12RegularTextStyle),
@@ -177,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CustomHomeCard( icon: Icons.medical_information_outlined, text: 'Sick Leave', text1: '${sickLeave?.data.lOpBal} / ${sickLeave?.data.totalYrBal}', subTitle: '0.666'),
+                          CustomHomeCard(icon: Icons.medical_information_outlined, text: 'Sick Leave', text1: '${sickLeave?.data.lOpBal} / ${sickLeave?.data.totalYrBal}', subTitle: '0.666'),
                           CustomHomeCard(icon: Icons.currency_exchange, text: 'Earned Leave', text1: '${leaveELBalance?.data?.lClBal} / ${leaveELBalance?.data?.totalYrBal}', subTitle: '0.5')
                         ],
                       ),
@@ -186,12 +217,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const CustomHomeCard(icon: Icons.done_outline, text: 'Compensatory\nLeave', text1: '', subTitle: '0.5'),
-                          CustomHomeCard(icon: Icons.home_outlined, text: 'Work From\nHome', text1: '${leaveBalance?.data.lOpBal??''} / ${leaveBalance?.data.lClBal??''}', subTitle: '0.5')
+                          CustomHomeCard(icon: Icons.home_outlined, text: 'Work From\nHome', text1: '${leaveBalance?.data.lOpBal ?? ''} / ${leaveBalance?.data.lClBal ?? ''}', subTitle: '0.5')
                         ],
                       ),
                       const SizedBox(height: 5),
                       const12TextBold("New Hires"),
-                      const SizedBox(height: 5,),
+                      const SizedBox(height: 5),
                       SizedBox(
                         height: 210,
                         child: ListView.builder(
@@ -217,12 +248,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                             CircleAvatar(
                                               radius: 45,
                                               backgroundImage: NetworkImage(newHires.photo!),
-                                              // child: Image.network(newHires.photo!),
                                             ),
-                                            Text(newHires.date??'', style: AppTextStyles.kSmall10SemiBoldTextStyle,),
-                                            const SizedBox(height: 2,),
-                                            Text(newHires.name??"", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor),),
-                                            const SizedBox(height: 2,),
+                                            Text(newHires.date ?? '', style: AppTextStyles.kSmall10SemiBoldTextStyle),
+                                            const SizedBox(height: 2),
+                                            Text(newHires.name ?? "", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor)),
+                                            const SizedBox(height: 2),
                                             Text("${newHires.day} (${newHires.timeago})")
                                           ],
                                         ),
@@ -236,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 5),
                       const12TextBold("Birthday Bash"),
-                      const SizedBox(height: 5,),
+                      const SizedBox(height: 5),
                       SizedBox(
                         height: 210,
                         child: ListView.builder(
@@ -262,13 +292,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                             CircleAvatar(
                                               radius: 45,
                                               backgroundImage: NetworkImage(item.photo!),
-                                              // child: Image.network(item.photo!),
                                             ),
-                                            const SizedBox(height: 2,),
-                                            Text(item.date??"", style: AppTextStyles.kSmall10SemiBoldTextStyle,),
-                                            Text(item.name??"", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor),),
-                                            const SizedBox(height: 2,),
-                                            Center(child: Text(item.department??""))
+                                            const SizedBox(height: 2),
+                                            Text(item.date ?? "", style: AppTextStyles.kSmall10SemiBoldTextStyle),
+                                            Text(item.name ?? "", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor)),
+                                            const SizedBox(height: 2),
+                                            Center(child: Text(item.department ?? ""))
                                           ],
                                         ),
                                       )
@@ -281,7 +310,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 5),
                       const12TextBold("Work Anniversary"),
-                      const SizedBox(height: 5,),
+                      const SizedBox(height: 5),
                       SizedBox(
                         height: 200,
                         child: ListView.builder(
@@ -308,12 +337,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                               radius: 45,
                                               backgroundImage: NetworkImage(workAList.photo!),
                                             ),
-                                            const SizedBox(height: 7,),
-                                            Text(workAList.date??'', style: AppTextStyles.kSmall10SemiBoldTextStyle,),
-                                            const SizedBox(height: 2,),
-                                            Text(workAList.name??"", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor),),
-                                            const SizedBox(height: 2,),
-                                            Text(workAList.department??'')
+                                            const SizedBox(height: 7),
+                                            Text(workAList.date ?? '', style: AppTextStyles.kSmall10SemiBoldTextStyle),
+                                            const SizedBox(height: 2),
+                                            Text(workAList.name ?? "", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor)),
+                                            const SizedBox(height: 2),
+                                            Text(workAList.department ?? '')
                                           ],
                                         ),
                                       )
@@ -326,11 +355,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 5),
                       const12TextBold("Today's Office Absence"),
-                      const SizedBox(height: 5,),
+                      const SizedBox(height: 5),
                       ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount:  leaveController.leaveRequests.length,
+                        itemCount: leaveController.leaveRequests.length,
                         itemBuilder: (context, index) {
                           final leave = leaveController.leaveRequests[index];
                           return Padding(
@@ -343,8 +372,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   radius: 40,
                                   backgroundImage: NetworkImage(leave.empPhoto),
                                 ),
-                                title: Text('${leave.empName} (${leave.department})',style: AppTextStyles.kSmall10SemiBoldTextStyle,),
-                                subtitle: Text('${leave.leaveType} :  ${leave.dateFrom} To ${leave.dateTo}', style: AppTextStyles.kSmall10RegularTextStyle,),
+                                title: Text('${leave.empName} (${leave.department})',style: AppTextStyles.kSmall10SemiBoldTextStyle),
+                                subtitle: Text('${leave.leaveType} :  ${leave.dateFrom} To ${leave.dateTo}', style: AppTextStyles.kSmall10RegularTextStyle),
                               ),
                             ),
                           );
@@ -360,6 +389,7 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
   }
+
   Future<bool?> showExitConfirmationDialog(BuildContext context) {
     return showDialog<bool>(
       context: context,
@@ -371,7 +401,6 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               // Close the app directly
               SystemNavigator.pop();
-              // Navigator.of(context).pop(true);
             },
             child: const Text('Yes'),
           ),

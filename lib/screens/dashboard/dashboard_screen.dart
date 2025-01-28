@@ -12,7 +12,6 @@ import '../../const/const_height.dart';
 import '../../const/const_width.dart';
 import '../../routes/routes.dart';
 import '../../style/color.dart';
-
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
   @override
@@ -36,8 +35,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-  @override
   final UserLogInService controllerLogIn = Get.put(UserLogInService());
+  @override
   Widget build(BuildContext context) {
     final List<Widget> bottomBarPages = [
       HomeScreen(controller: (_controller)),
@@ -90,9 +89,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         accountName: Text('${logInResponse?.data.userName}',style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.white100),),
                         accountEmail: Text('${logInResponse?.data.designation}', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white100),),
                         currentAccountPicture: CircleAvatar(
-                          radius: 30,
+                          radius: 40,
                           backgroundImage: NetworkImage(
-                              '${logInResponse?.data.photo??"No Img"}'),
+                              logInResponse?.data.photo??"No Img"),
                         ),
                       ),
                       _buildDrawerItem(
@@ -141,14 +140,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       _buildDrawerItem(icon: Icons.auto_graph_outlined, text: 'Attendance Statistics', onTap: (){
                         Get.toNamed(ApplicationPages.statisticsScreen);
 
-
                       }),
                     ],
                   ),
+                  const SizedBox(height: 150,),
                   Padding(
-                    padding: const EdgeInsets.all(40.0),
+                    padding: const EdgeInsets.all(80.0),
                     child: RoundButton(title: 'Logout', onTap: () {
-
+                      showLogOutConfirmation(context);
                     },),
                   )
                 ],
@@ -294,4 +293,61 @@ Widget _buildDrawerSubItem(String text,
       size: w15,
     ),
   ).paddingSymmetric(vertical: h2);
+}
+
+
+
+Future<bool?> showLogOutConfirmation(BuildContext context) {
+  return showDialog<bool>(
+    context: context,
+    builder: (context) => Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0),
+      ),
+      backgroundColor: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 15,),
+            Align(
+              alignment: Alignment.topRight,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop(); // Close the pop-up
+                },
+                child: const Icon(
+                  Icons.cancel_outlined,
+                  color: AppColors.primaryColor,
+                  size: 30,
+                ),
+              ),
+            ),
+            const SizedBox(height: 10,),
+            Text("Logout", style: AppTextStyles.kCaption14SemiBoldTextStyle.copyWith(color: AppColors.error80)),
+            const SizedBox(height: 10,),
+            Text("Are you sure you want to Logout", style: AppTextStyles.kSmall12RegularTextStyle,),
+            const SizedBox(height: 20,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                SizedBox(width: 70, height: 38,
+                  child: RoundButton(title: "Yes", onTap: (){
+                  Get.toNamed(ApplicationPages.signUpScreen);
+                } ,),),
+                const SizedBox(width: 5,),
+                SizedBox(width:70, height: 38,
+                  child: RoundButton(title: "No", onTap: (){
+                  Get.back();
+                }),),
+              ],
+            )
+          ],
+        ),
+      ),
+    ),
+  );
 }

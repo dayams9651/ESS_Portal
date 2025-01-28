@@ -6,6 +6,6 @@ class HolidaysBindings extends Bindings {
 
   @override
   void dependencies(){
-    Get.lazyPut(()=> HolidayController());
+    Get.lazyPut(()=> EventController());
   }
 }

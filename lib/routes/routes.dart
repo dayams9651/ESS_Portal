@@ -11,6 +11,7 @@ import 'package:ms_ess_potal/screens/notification/view/notification_screen.dart'
 import 'package:ms_ess_potal/screens/peripheral/bindings/peripheral_bindings.dart';
 import 'package:ms_ess_potal/screens/peripheral/view/peripheral_screen.dart';
 import 'package:ms_ess_potal/screens/selfService/bindings/leaveStatus_bindings.dart';
+import 'package:ms_ess_potal/screens/selfService/bindings/leave_grant_bindings.dart';
 import 'package:ms_ess_potal/screens/selfService/views/leaveWFH_screen.dart';
 import 'package:ms_ess_potal/screens/selfService/views/leave_grant_screen.dart';
 import 'package:ms_ess_potal/screens/selfService/views/paySlip_screen.dart';
@@ -62,13 +63,13 @@ class ApplicationPages {
     GetPage(
         name: leaveGrantScreen,
         page: ()=> LeaveGrantScreen(),
-        binding: LeaveStatusBindings()
+        binding: LeaveGrantBindings()
     ),
 
     GetPage(
         name: leaveWFHScreen,
         page: ()=>  LeaveWFHScreen(),
-        binding: LeaveStatusBindings()
+        // binding: LeaveStatusBindings()
     ),
 
     GetPage(
@@ -79,7 +80,7 @@ class ApplicationPages {
 
     GetPage(
         name: holidayScreen,
-        page: ()=> const HolidayScreen(),
+        page: ()=> HolidayScreen(),
         binding: HolidaysBindings()
     ),
 
@@ -114,12 +115,10 @@ class ApplicationPages {
         binding: StatisticsBindings()
     ),
 
-    // GetPage(
-    //     name: testingScreen,
-    //     page: ()=>  AttendancePage(),
-    //     // binding: StatisticsBindings()
-    // ),
-
-
-      ];
+    GetPage(
+        name: testingScreen,
+        page: ()=>  LeaveBalanceScreen(),
+        // binding: StatisticsBindings()
+    ),
+  ];
 }

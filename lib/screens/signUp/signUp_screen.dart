@@ -24,7 +24,6 @@ class _SignupScreenState extends State<SignupScreen> {
   final UserLogInService userLogService = Get.put(UserLogInService());
 
 
-
   @override
   void dispose() {
     employeeCodeController.dispose();
@@ -37,15 +36,15 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      appBar: AppBar(
-        backgroundColor: AppColors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, size: 24,), // Change this to any icon you prefer
-          onPressed: () {
-            Get.back();
-          },
-        ),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: AppColors.white,
+      //   leading: IconButton(
+      //     icon: const Icon(Icons.arrow_back_ios, size: 24,), // Change this to any icon you prefer
+      //     onPressed: () {
+      //       Get.back();
+      //     },
+      //   ),
+      // ),
       body: Padding(
         padding: const EdgeInsets.all(9.0),
         child: SingleChildScrollView(
@@ -55,7 +54,7 @@ class _SignupScreenState extends State<SignupScreen> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 80,),
+                  const SizedBox(height: 150,),
                   Image.asset(
                     logo,
                     height: 110,
@@ -153,6 +152,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             }
                           }
                         },
+                        loading: _isLoading,
                       ),
                     ),
                     const SizedBox(height: 40,)

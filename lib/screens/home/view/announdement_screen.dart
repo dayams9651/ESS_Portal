@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
+import 'package:ms_ess_potal/common/widget/const_shimmer_effects.dart';
 import 'package:ms_ess_potal/screens/home/controller/announcement_controller.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../style/color.dart';
 import '../../../style/text_style.dart';
 
@@ -32,7 +35,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
         padding: const EdgeInsets.all(5.0),
         child: Obx(() {
           if(controller.isLoading.value) {
-            return Center(child: CircularProgressIndicator(),);
+            return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
           }
           return SingleChildScrollView(
             child: Column(
@@ -63,13 +66,11 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                                 announcement.tmlnInsertDate,
                                 style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.white50),
                               ),
-                              // Html(
-                              //   data: announcement.tmlnContent,
-                              // ),
                               Text(
                                 "Posted By : ${announcement.tmlnInsertBy}",
                                 style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.primaryColor),
                               ),
+                              HtmlWidget(announcement.tmlnContent,),
                               SizedBox(height: 5),
                               Container(
                                 height: 47,

@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ms_ess_potal/common/const_api.dart';
 import 'package:ms_ess_potal/common/widget/const_shimmer_effects.dart';
 import 'package:ms_ess_potal/screens/dashboard/contoller/attendance_controller.dart';
 import 'package:ms_ess_potal/screens/dashboard/contoller/shift_controller.dart';
@@ -23,14 +22,15 @@ enum AttendanceStatus { P, HLD, A, SRT, WO, HD, MIS }
 class _AttendanceScreenState extends State<AttendanceScreen> {
   int selectedYear = 2025;
   int selectedMonth = 1;
+
   List<AttendanceStatus> attendance = [];
-  final List<int> years = [2023, 2024, 2025]; // Define available years
+  final List<int> years = [2023, 2024, 2025];
   final List<String> months = [
     "January", "February", "March", "April", "May", "June", "July",
     "August", "September", "October", "November", "December"
   ];
   final List<String> daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  DateTime currentDate = DateTime.now(); // Current date for highlighting
+  DateTime currentDate = DateTime.now();
 
   final ShiftController controller = Get.put(ShiftController());
   final AttendanceController attendController = Get.put(AttendanceController());
@@ -44,10 +44,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   }
 
   int getDaysInMonth(int year, int month) {
-    return DateTime(year, month + 1, 0).day; // Last day of the month
+    return DateTime(year, month + 1, 0).day;
   }
 
-  // Get the first day of the month (used to align the grid)
   int getFirstDayOfMonth(int year, int month) {
     DateTime firstDayOfMonth = DateTime(year, month, 1);
     return firstDayOfMonth.weekday;
@@ -61,7 +60,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     }
   }
 
-  // Initialize the attendance data based on the year and month
   void initializeAttendance(int year, int month) {
     int daysInMonth = getDaysInMonth(year, month);
     setState(() {
@@ -97,7 +95,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     });
   }
 
-  // Navigate to the previous month
   void goToPreviousMonth() {
     setState(() {
       if (selectedMonth == 1) {
@@ -113,7 +110,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     });
   }
 
-  // Navigate to the next month
   void goToNextMonth() {
     setState(() {
       if (selectedMonth == 12) {
@@ -134,6 +130,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         selectedMonth == currentDate.month &&
         day == currentDate.day;
   }
+  int getSRTCount(List<Attendance> attendanceList) {
+    return attendanceList.where((attendance) => attendance.title == "SRT").length;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,8 +142,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       body: Obx(() {
         if (attendController.isLoading.value) {
           return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
-        } else if (attendController.errorMessage.isNotEmpty) {
-          return Center(child: Text('Error: ${attendController.errorMessage.value}'));
         } else {
           var shift = controller.shiftModel.value!;
           fetchedAttendanceData = attendController.attendanceList;
@@ -152,7 +149,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
             DateTime attendanceDate = DateTime.parse(attendance.start);
             return attendanceDate.year == selectedYear && attendanceDate.month == selectedMonth;
           }).toList();
-
           int daysInMonth = getDaysInMonth(selectedYear, selectedMonth);
           int firstDayOfMonth = getFirstDayOfMonth(selectedYear, selectedMonth);
           int previousMonthDays = getDaysInPreviousMonth(selectedYear, selectedMonth);
@@ -215,9 +211,16 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         ),
                       ),
                     ),
+                    CircleAvatar(
+                      radius: 20,
+                      backgroundColor: AppColors.error20,
+                      child: IconButton(onPressed: () {
+                        showPunchInDetails(context);
+                      }, icon: Icon(Icons.info_outline,)),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 15),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -242,7 +245,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                     Column(
                       children: [
                         Text(
-                          "03",
+                          "${getSRTCount(fetchedAttendanceData)}", // Show the count of "SRT"
                           style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.short1Color),
                         ),
                         Text("Short", style: AppTextStyles.kSmall12RegularTextStyle),
@@ -265,7 +268,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                     );
                   }).toList(),
                 ),
-                const SizedBox(height: 10), // Adjust spacing for the grid
+                const SizedBox(height: 10),
                 SizedBox(
                   height: 350,
                   child: GridView.builder(
@@ -296,15 +299,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       } else if (index < firstDayOfMonth + daysInMonth) {
                         int day = index - firstDayOfMonth + 1;
                         bool today = isToday(day);
-
-                        // Find the attendance for the specific day
                         Attendance? attendanceForDay = filteredAttendanceData.firstWhere(
                               (attendance) => DateTime.parse(attendance.start).day == day,
                           orElse: () => Attendance(title: "A", start: "", totalTime: ""),
                         );
-
                         Color dayColor = _getAttendanceColor(attendanceForDay);
-
                         return GestureDetector(
                           onTap: () => toggleAttendance(day - 1),
                           child: Container(
@@ -345,6 +344,29 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                     },
                   ),
                 ),
+                Card(
+                  color: AppColors.white,
+                  elevation: 3.0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: BorderSide(
+                          color: AppColors.white50)
+                  ),
+                  child: ListTile(
+                    leading: Icon(Icons.fingerprint_outlined),
+                    title: Text("Today's In", style: AppTextStyles.kSmall12SemiBoldTextStyle,),
+                    subtitle: Text(shift.todayIn.isNotEmpty?shift.todayIn:"null", style: AppTextStyles.kSmall10SemiBoldTextStyle,),
+                    trailing: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          shift.totalHour, style: AppTextStyles.kSmall12SemiBoldTextStyle,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 Padding(
                   padding:  EdgeInsets.all(5.0),
                   child: Column(
@@ -361,15 +383,16 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CustomContainer(icon: Icons.watch_later_outlined, text: 'Worked Hours', subTitle: shift.endTime??'Null'),
+                          CustomContainer(icon: Icons.watch_later_outlined, text: 'Worked Hours', subTitle: shift.totalHour.isNotEmpty?shift.totalHour:"Null"),
                           const SizedBox(width: 10),
-                          CustomContainer(icon: Icons.calendar_month, text: 'Date', subTitle: shift.division)
+                          CustomContainer(icon: Icons.calendar_month, text: 'Shift Code ', subTitle: shift.division)
                         ],
                       ),
                       const SizedBox(height: 60),
                     ],
                   ),
                 ),
+                SizedBox(height: 70,),
               ],
             ),
           );
@@ -398,4 +421,103 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         return AppColors.error80;
     }
   }
+}
+
+Future<bool?> showPunchInDetails(BuildContext context) {
+  return showDialog<bool>(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(0),
+        ),
+        backgroundColor: Colors.white,
+        child: Container(
+          padding: EdgeInsets.all(12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop(); // Close the pop-up
+                  },
+                  child: Icon(
+                    Icons.cancel_outlined,
+                    color: AppColors.primaryColor,
+                    size: 30,
+                  ),
+                ),
+              ),
+              SizedBox(height: 20,),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Row(
+                        children: [
+                          Text("SRT", style: AppTextStyles.kSmall12SemiBoldTextStyle,),
+                          SizedBox(width: 7,),
+                          CircleAvatar(radius: 12, backgroundColor: AppColors.error20,)
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text("MIS", style: AppTextStyles.kSmall12SemiBoldTextStyle,),
+                          SizedBox(width: 7,),
+                          CircleAvatar(radius: 12,backgroundColor: AppColors.error40,)
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text("WOH", style: AppTextStyles.kSmall12SemiBoldTextStyle,),
+                          SizedBox(width: 7,),
+                          CircleAvatar(radius: 12, backgroundColor: AppColors.absentColor)
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text("HLD", style: AppTextStyles.kSmall12SemiBoldTextStyle,),
+                          SizedBox(width: 7,),
+                          CircleAvatar(radius: 12, backgroundColor: AppColors.warning60,)
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Row(
+                        children: [
+                          Text("P",style: AppTextStyles.kSmall12SemiBoldTextStyle,),
+                          SizedBox(width: 7,),
+                          CircleAvatar(radius: 12, backgroundColor: AppColors.success60,)
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text("WO", style: AppTextStyles.kSmall12SemiBoldTextStyle,),
+                          SizedBox(width: 7,),
+                          CircleAvatar(radius: 12, backgroundColor: AppColors.absentColor,)
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text("A", style: AppTextStyles.kSmall12SemiBoldTextStyle,),
+                          SizedBox(width: 7,),
+                          CircleAvatar(radius: 12, backgroundColor: AppColors.error80,)
+                        ],
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ],
+          ),
+        ),
+      )
+  );
 }

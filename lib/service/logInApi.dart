@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';  // Import GetStorage
 import 'package:ms_ess_potal/screens/dashboard/dashboard_screen.dart';
+import 'package:ms_ess_potal/style/color.dart';
 import '../common/widget/snackbar_helper.dart';
 import '../const/api_url.dart';
 import '../screens/signUp/model/loginIn_response_model.dart';
@@ -48,7 +49,7 @@ class UserLogInService extends GetxController {
         showCustomSnackbar('Alert', 'Your Employee ID or Password is wrong');
       }
     } catch (error) {
-      showCustomSnackbar('Error', 'An error occurred. Please try again later.');
+      showCustomSnackbar('Error', 'Please Check Your Internet Connection', backgroundColor: AppColors.error10);
     }
   }
 

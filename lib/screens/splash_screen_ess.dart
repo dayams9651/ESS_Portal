@@ -41,10 +41,10 @@ class _SplashScreenEssState extends State<SplashScreenEss> {
     return Container(
       color: Colors.white,
       child: SizedBox(
-        height: h25,
-        width: w25,
         child: Image.asset(
-          logo,
+          splashGif,
+          fit: BoxFit.cover,
+          filterQuality: FilterQuality.high,
         ),
       ),
     );

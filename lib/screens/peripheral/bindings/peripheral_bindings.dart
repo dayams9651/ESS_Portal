@@ -7,6 +7,6 @@ class PeripheralBindings extends Bindings {
 
   @override
   void dependencies(){
-    Get.lazyPut(()=> PeripheralController());
+    Get.lazyPut(()=> AssetController());
   }
 }

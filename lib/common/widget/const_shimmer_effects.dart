@@ -8,15 +8,15 @@ Widget loadSke() {
   return SingleChildScrollView(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: List.generate(6, (index) => shimmerItem()),
+      children: List.generate(8, (index) => shimmerItem()),
     ),
   );
 }
 Widget shimmerItem() {
   return ConstantContainer(
-    radiusBorder: w5, // Use appropriate value
+    radiusBorder: w5,
     borderColor: AppColors.white50,
-    padding: 3.0, // Use appropriate value
+    padding: 3.0,
     color: AppColors.white,
     child: ListTile(
       title: Container(

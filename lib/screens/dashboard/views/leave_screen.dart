@@ -99,39 +99,39 @@ class _LeaveScreenState extends State<LeaveScreen> {
                   SizedBox(width: 10), // Space between date pickers
                   Expanded(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Session", style: AppTextStyles.kPrimaryTextStyle,),
-                        SizedBox(height: 2,),
-                        SizedBox(
-                          height: 48,
-                          width: 200,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: AppColors.white40, ),  // Border color and width
-                              borderRadius: BorderRadius.circular(8),  // Optional: Rounded corners
-                            ),
-                            child: DropdownButtonFormField<String>(
-                              value: _selectedSessionFrom,  // The currently selected value
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  _selectedSessionFrom= newValue;  // Update selected value
-                                });
-                              },
-                              items: _session.map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 7.0, right: 3),
-                                    child: Text(value),
-                                  ),
-                                );
-                              }).toList(),
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Session", style: AppTextStyles.kPrimaryTextStyle,),
+                          SizedBox(height: 2,),
+                          SizedBox(
+                            height: 48,
+                            width: 200,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(color: AppColors.white40, ),  // Border color and width
+                                borderRadius: BorderRadius.circular(8),  // Optional: Rounded corners
+                              ),
+                              child: DropdownButtonFormField<String>(
+                                value: _selectedSessionFrom,  // The currently selected value
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    _selectedSessionFrom= newValue;  // Update selected value
+                                  });
+                                },
+                                items: _session.map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 7.0, right: 3),
+                                      child: Text(value),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
                             ),
                           ),
-                        ),
 
-                      ]),
+                        ]),
                   )],
               ),
               SizedBox(height: 5,),
@@ -252,10 +252,10 @@ class _LeaveScreenState extends State<LeaveScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(
-                      width: 180,
+                        width: 180,
                         child: RoundButton(title: 'Apply', onTap:(){} )),
                     SizedBox(
-                      width: 180,
+                        width: 180,
                         height: 40,
                         child: ConstButton(title: 'Cancel', onTap: (){}))
                   ],

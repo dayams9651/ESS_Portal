@@ -1,30 +1,45 @@
-// // lib/models/leave_balance_model.dart
-// class LeaveBalanceModel1 {
-//   final bool success;
-//   final Data data;
-//
-//   LeaveBalanceModel1({required this.success, required this.data});
-//
-//   factory LeaveBalanceModel1.fromJson(Map<String, dynamic> json) {
-//     return LeaveBalanceModel1(
-//       success: json['success'],
-//       data: Data.fromJson(json['data']),
-//     );
-//   }
-// }
-//
-// class Data {
-//   final int totalYrBal;
-//   final String lOpBal;
-//   final String lClBal;
-//
-//   Data({required this.totalYrBal, required this.lOpBal, required this.lClBal});
-//
-//   factory Data.fromJson(Map<String, dynamic> json) {
-//     return Data(
-//       totalYrBal: json['total_yr_bal'],
-//       lOpBal: json['l_op_bal'],
-//       lClBal: json['l_cl_bal'],
-//     );
-//   }
-// }
+
+
+class LeaveOption {
+  final int value;
+  final String label;
+
+  LeaveOption({required this.value, required this.label});
+
+  factory LeaveOption.fromJson(Map<String, dynamic> json) {
+    return LeaveOption(
+      value: json['value'],
+      label: json['label'],
+    );
+  }
+}
+
+class LeaveBalance {
+  final int balance;
+  final List<LeaveOption> options;
+  final String sessionValue;
+  final String approvalLevel;
+  final String totalLevel;
+
+  LeaveBalance({
+    required this.balance,
+    required this.options,
+    required this.sessionValue,
+    required this.approvalLevel,
+    required this.totalLevel,
+  });
+
+  factory LeaveBalance.fromJson(Map<String, dynamic> json) {
+    var optionsList = (json['leaveOptions']['options'] as List)
+        .map((e) => LeaveOption.fromJson(e))
+        .toList();
+    return LeaveBalance(
+      balance: json['leaveBalance']['balance'],
+      options: optionsList,
+      sessionValue: json['sessionValue'],
+      approvalLevel: json['approval_level'] ?? '',
+      totalLevel: json['total_level'] ?? '',
+    );
+  }
+}
+
