@@ -1,0 +1,80 @@
+name: ms_ess_portal
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.6.1
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.8
+  flutter_screenutil: ^5.9.3
+  get: ^4.6.6
+  google_fonts: ^6.2.1
+  syncfusion_flutter_calendar: ^28.1.37
+  animated_notch_bottom_bar: ^1.0.3
+  permission_handler: ^10.0.0
+  path_provider: ^2.0.7
+  pdf: ^3.6.0
+  dio:
+
+  # ------- Pie chart ------------
+  pie_chart: ^5.4.0
+
+  #------ Api ---------------
+  http: ^1.2.2
+  fluttertoast: ^8.2.10
+  flutter_calendar_carousel: ^2.4.4
+  font_awesome_flutter: ^10.7.0
+  #  flutter_html: ^2.1.1
+  flutter_widget_from_html: ^0.15.0
+#  flutter_widget_from_html: ^0.15.2
+
+  get_storage: ^2.1.1
+  shimmer: ^3.0.0
+  connectivity_plus: ^6.1.0
+  flutter_web_browser: ^0.17.1
+  flutter_staggered_animations: ^1.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^5.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+  assets:
+    - assets/logo/
+
+  fonts:
+    - family: Schyler
+      fonts:
+        - asset: assets/fonts/Roboto-Black.ttf

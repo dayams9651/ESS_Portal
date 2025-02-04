@@ -1,0 +1,139 @@
+import 'dart:convert';
+import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
+import 'package:get_storage/get_storage.dart'; // Import GetStorage
+import 'package:ms_ess_portal/screens/dashboard/model/workanniversary_model.dart';
+import '../const/api_url.dart';
+import '../screens/dashboard/model/attendance_model.dart';
+import '../screens/dashboard/model/home_model.dart';
+import '../screens/dashboard/model/new_hireList_model.dart';
+
+class ApiServices {
+  final box = GetStorage();
+
+  // final String apiUrl = "https://esstest.mscorpres.net/hierarchy";
+
+  // Future<List<Employee>> fetchEmployees() async {
+  //   String? token = box.read('token');
+  //   if (token == null || token.isEmpty) {
+  //     throw Exception('Token not found. Please log in first.');
+  //   }
+  //   final response = await http.get(Uri.parse(apiUrl),
+  //     headers: {
+  //       'Authorization': 'Bearer $token',
+  //       'Content-Type': 'application/json',
+  //     },
+  //   );
+  //   if (response.statusCode == 200) {
+  //     final Map<String, dynamic> data = json.decode(response.body);
+  //     debugPrint("daya : ${response.body}");
+  //     final List children = data['children'];
+  //     return children.map((e) => Employee.fromJson(e)).toList();
+  //   } else {
+  //     throw Exception('Failed to load employees');
+  //   }
+  // }
+
+  Future<BirthdayBashModel?> fetchBirthdayData() async {
+    try {
+      String? token = box.read('token');
+      if (token == null || token.isEmpty) {
+        throw Exception('Token not found. Please log in first.');
+      }
+      final response = await http.get(
+        Uri.parse(birthdayBashApi),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+      debugPrint('BirthdayResponse : ${response.body}');
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return BirthdayBashModel.fromJson(data);
+      } else {
+        throw Exception('Failed to load birthday data');
+      }
+    } catch (e) {
+      debugPrint('Error fetching data: $e');
+      return null;
+    }
+  }
+
+  Future<NewHireListModel?> fetchNewHireListData() async {
+    try {
+      String? token = box.read('token');
+      if (token == null || token.isEmpty) {
+        throw Exception('Token not found. Please log in first.');
+      }
+      final response = await http.get(
+        Uri.parse(newHireListApi),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+      debugPrint('New Hire List Response : ${response.body}');
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return NewHireListModel.fromJson(data);
+      } else {
+        throw Exception('Failed to load New Hire List data');
+      }
+    } catch (e) {
+      debugPrint('Error fetching data: $e');
+      return null;
+    }
+  }
+
+  Future<WorkAnniversaryModel?> fetchWAData() async {
+    try {
+      String? token = box.read('token');
+      if (token == null || token.isEmpty) {
+        throw Exception('Token not found. Please log in first.');
+      }
+      final response = await http.get(
+        Uri.parse(workAnnApi),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+      debugPrint('Work Anniversary Response : ${response.body}');
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return WorkAnniversaryModel.fromJson(data);
+      } else {
+        throw Exception('Failed to load New Hire List data');
+      }
+    } catch (e) {
+      debugPrint('Error fetching data: $e');
+      return null;
+    }
+  }
+
+
+  //  Punch In Api
+
+  Future<AttendanceResponse> fetchAttendanceData(String startDate, String endDate) async {
+    String? token = box.read('token');
+    if (token == null || token.isEmpty) {
+      throw Exception('Token not found. Please log in first.');
+    }
+    final response = await http.post(
+      Uri.parse('$apiUrlPunch?start=$startDate&end=$endDate'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+    debugPrint('API Response: ${response.body}');
+
+    if (response.statusCode == 200) {
+      return AttendanceResponse.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load attendance data');
+    }
+  }
+
+}
