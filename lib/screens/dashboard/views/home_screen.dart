@@ -44,6 +44,10 @@ class _HomeScreenState extends State<HomeScreen> {
     _pageController = PageController(viewportFraction: 0.8);
     lineColor = AppColors.primaryColor;
     _startTimeUpdates();
+    controllerSL.fetchSickLeaveBalance;
+    controllerShift.fetchShiftData;
+
+
   }
 
   void _startTimeUpdates() {
@@ -176,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text("Start your shift at: ${shiftIn?.todayIn}", style: AppTextStyles.kSmall12RegularTextStyle),
+                                Text("Start your shift at: ${shiftIn?.todayIn??00-00-00}", style: AppTextStyles.kSmall12RegularTextStyle),
                                 const SizedBox(height: 3),
                                 Text(
                                   "${elapsedTime.inHours.toString().padLeft(2, '0')}:${(elapsedTime.inMinutes % 60).toString().padLeft(2, '0')}:${(elapsedTime.inSeconds % 60).toString().padLeft(2, '0')}",
@@ -202,8 +206,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CustomHomeCard(icon: Icons.medical_information_outlined, text: 'Sick Leave', text1: '${sickLeave?.data.lOpBal} / ${sickLeave?.data.totalYrBal}', subTitle: '0.666'),
-                          CustomHomeCard(icon: Icons.currency_exchange, text: 'Earned Leave', text1: '${leaveELBalance?.data?.lClBal} / ${leaveELBalance?.data?.totalYrBal}', subTitle: '0.5')
+                          CustomHomeCard(icon: Icons.medical_information_outlined, text: 'Sick Leave', text1: '${sickLeave?.data.lOpBal ??0} / ${sickLeave?.data.totalYrBal??0}', subTitle: '0.666' ),
+                          CustomHomeCard(icon: Icons.currency_exchange, text: 'Earned Leave', text1: '${leaveELBalance?.data?.lClBal??0} / ${leaveELBalance?.data?.totalYrBal??0}', subTitle: '0.5')
                         ],
                       ),
                       const SizedBox(height: 5),
@@ -211,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const CustomHomeCard(icon: Icons.done_outline, text: 'Compensatory\nLeave', text1: '', subTitle: '0.5'),
-                          CustomHomeCard(icon: Icons.home_outlined, text: 'Work From\nHome', text1: '${leaveBalance?.data.lOpBal ?? ''} / ${leaveBalance?.data.lClBal ?? ''}', subTitle: '0.5')
+                          CustomHomeCard(icon: Icons.home_outlined, text: 'Work From\nHome', text1: '${leaveBalance?.data.lOpBal ?? 0} / ${leaveBalance?.data.lClBal ?? 0}', subTitle: '0.5')
                         ],
                       ),
                       const SizedBox(height: 5),

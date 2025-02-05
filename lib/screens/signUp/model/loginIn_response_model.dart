@@ -1,4 +1,3 @@
-
 class LoginResponse {
   String status;
   String message;
@@ -20,20 +19,29 @@ class LoginResponse {
       data: Data.fromJson(json['data']),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'status': status,
+      'message': message,
+      'success': success,
+      'data': data.toJson(),
+    };
+  }
 }
 
 class Data {
- final String token;
- final String userId;
- final String userName;
- final String designation;
- final String photo;
+  String token;
+  String userId;
+  String userName;
+  String? designation;
+  String photo;
 
   Data({
     required this.token,
     required this.userId,
     required this.userName,
-    required this.designation,
+    this.designation,
     required this.photo,
   });
 
@@ -45,5 +53,15 @@ class Data {
       designation: json['designation'],
       photo: json['photo'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'token': token,
+      'userId': userId,
+      'userName': userName,
+      'designation': designation,
+      'photo': photo,
+    };
   }
 }

@@ -27,6 +27,8 @@ class PeripheralScreen extends GetView<AssetController> {
        body: Obx(() {
          if (assetController.isLoading.value) {
            return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
+         } else if(assetController.assets.isEmpty) {
+           return Center(child: Image.asset(noData1),);
          } else {
            return SingleChildScrollView(
              child: Column(

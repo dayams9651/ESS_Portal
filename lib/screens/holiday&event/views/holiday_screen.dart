@@ -15,7 +15,7 @@ class HolidayScreen extends StatefulWidget {
 }
 
 class _HolidayEventPageState extends State<HolidayScreen> {
-  String selectedMonth = 'January';
+  String selectedMonth = 'February';
   int selectedYear = 2025;
   Map<String, int> monthNames = {
     'January': 1,

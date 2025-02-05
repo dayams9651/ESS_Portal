@@ -29,14 +29,13 @@ class UserLogInService extends GetxController {
       );
 
       final Map<String, dynamic> responseData = json.decode(response.body);
-
       if (response.statusCode == 200) {
         if (responseData['success']) {
           String token = responseData['data']['token'];
           box.write('token', token);  // Save token here
            // Save token here
           debugPrint("Saved Token: $token");
-          debugPrint(response.body);
+          debugPrint("LogIN Aoi Response : ${response.body}");
           showCustomSnackbar('LogIn', '${responseData['message']}');
           debugPrint("LogIn Data: ${responseData['message']}");
           Get.to(const DashboardScreen());

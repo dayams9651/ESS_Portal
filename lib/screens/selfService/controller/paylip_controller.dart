@@ -1,35 +1,49 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart'; // For date formatting
+import 'package:intl/intl.dart';
+import 'package:ms_ess_portal/common/const_api.dart';
+import 'package:ms_ess_portal/screens/selfService/models/payslip_model.dart';
 import 'dart:io';
-import 'package:path_provider/path_provider.dart'; // For file storage
-import 'package:permission_handler/permission_handler.dart'; // For permission handling
-import 'package:pdf/widgets.dart' as pw; // PDF widget package
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 class PayslipController extends GetxController {
   var selectedDate = DateTime.now().obs;
   var formattedDate = "".obs;
   var isFileSaved = false.obs;
-
+  var payslip = Payslip(success: false, status: "", data: PayslipData(basic: [], earing: [], deduction: [], total: []))
+      .obs;
+  var isLoading = true.obs;
+  final ApiServices payslipService = ApiServices();
+  @override
+  void onInit() {
+    super.onInit();
+  }
   // Method to update the selected date
   void updateDate(DateTime newDate) {
     selectedDate.value = newDate;
   }
 
-  // Method to generate the formatted date
   void generateDate() {
     formattedDate.value = DateFormat('yyyy-MM-dd').format(selectedDate.value);
   }
 
-  // Method to generate PDF and save to local storage
+  void fetchPayslip(int year, int month) async {
+    try {
+      isLoading(true);
+      Payslip data = await payslipService.fetchPayslipData();
+      payslip.value = data;
+    } catch (e) {
+      debugPrint("Error: $e");
+    } finally {
+      isLoading(false);
+    }
+  }
   Future<void> downloadPdf() async {
-    // Check permission for storage access
     if (await Permission.storage.request().isGranted) {
       try {
-        // Create a PDF document
         final pdf = pw.Document();
-
-        // Add a page to the PDF
         pdf.addPage(
           pw.Page(
             build: (pw.Context context) {
@@ -38,32 +52,24 @@ class PayslipController extends GetxController {
                   'Generated Date: ${formattedDate.value}', // Date text
                   style: const pw.TextStyle(fontSize: 24),
                 ),
-              ); // Center the text on the page
+              );
             },
           ),
         );
-
-        // Get the path to save the PDF file
         final directory = await getExternalStorageDirectory();
         if (directory != null) {
           final path = '${directory.path}/payslip.pdf';
-
-          // Write the PDF file to the path
           final file = File(path);
           await file.writeAsBytes(await pdf.save());
-
-          // Update the state to reflect the file is saved
           isFileSaved.value = true;
-
-          // Optionally, show a success message
           debugPrint("PDF saved at: $path");
         }
       } catch (e) {
         debugPrint("Error generating PDF: $e");
       }
     } else {
-      // Handle permission denial
       debugPrint('Storage permission denied');
     }
   }
 }
+

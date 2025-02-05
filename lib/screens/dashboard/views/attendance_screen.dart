@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ms_ess_portal/common/widget/const_shimmer_effects.dart';
+import 'package:ms_ess_portal/const/image_strings.dart';
 import 'package:ms_ess_portal/screens/dashboard/contoller/attendance_controller.dart';
 import 'package:ms_ess_portal/screens/dashboard/contoller/shift_controller.dart';
 import 'package:ms_ess_portal/screens/dashboard/widget/custom_container.dart';
@@ -352,7 +353,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                           color: AppColors.white50)
                   ),
                   child: ListTile(
-                    leading: const Icon(Icons.fingerprint_outlined),
+                    leading: Image.asset(hand_touch, height: 45,),
                     title: Text("Today's In", style: AppTextStyles.kSmall12SemiBoldTextStyle,),
                     subtitle: Text(shift.todayIn.isNotEmpty?shift.todayIn:"null", style: AppTextStyles.kSmall10SemiBoldTextStyle,),
                     trailing: Column(
@@ -382,7 +383,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CustomContainer(icon: Icons.watch_later_outlined, text: 'Worked Hours', subTitle: shift.totalHour),
+                          CustomContainer(icon: Icons.watch_later_outlined, text: 'Worked Hours', subTitle: shift.totalHour.isEmpty ? "0"  : shift.totalHour),
                           const SizedBox(width: 10),
                           CustomContainer(icon: Icons.calendar_month, text: 'Shift Code ', subTitle: shift.division)
                         ],

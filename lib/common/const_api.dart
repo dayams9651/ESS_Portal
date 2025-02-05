@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-import 'package:get_storage/get_storage.dart'; // Import GetStorage
+import 'package:get_storage/get_storage.dart';
 import 'package:ms_ess_portal/screens/dashboard/model/workanniversary_model.dart';
+import 'package:ms_ess_portal/screens/selfService/models/payslip_model.dart';
 import '../const/api_url.dart';
 import '../screens/dashboard/model/attendance_model.dart';
 import '../screens/dashboard/model/home_model.dart';
@@ -10,29 +11,24 @@ import '../screens/dashboard/model/new_hireList_model.dart';
 
 class ApiServices {
   final box = GetStorage();
-
-  // final String apiUrl = "https://esstest.mscorpres.net/hierarchy";
-
-  // Future<List<Employee>> fetchEmployees() async {
-  //   String? token = box.read('token');
-  //   if (token == null || token.isEmpty) {
-  //     throw Exception('Token not found. Please log in first.');
-  //   }
-  //   final response = await http.get(Uri.parse(apiUrl),
-  //     headers: {
-  //       'Authorization': 'Bearer $token',
-  //       'Content-Type': 'application/json',
-  //     },
-  //   );
-  //   if (response.statusCode == 200) {
-  //     final Map<String, dynamic> data = json.decode(response.body);
-  //     debugPrint("daya : ${response.body}");
-  //     final List children = data['children'];
-  //     return children.map((e) => Employee.fromJson(e)).toList();
-  //   } else {
-  //     throw Exception('Failed to load employees');
-  //   }
-  // }
+  final String payslipApi = "https://esstest.mscorpres.net/payslip?period=2024-12";
+  Future<Payslip> fetchPayslipData() async {
+    String? token = box.read('token');
+    if (token == null || token.isEmpty) {
+      throw Exception('Token not found. Please log in first.');
+    }
+    final response = await http.get(Uri.parse(payslipApi),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      return Payslip.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load payslip data');
+    }
+  }
 
   Future<BirthdayBashModel?> fetchBirthdayData() async {
     try {
@@ -136,4 +132,6 @@ class ApiServices {
     }
   }
 
+
 }
+

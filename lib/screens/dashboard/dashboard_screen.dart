@@ -1,6 +1,7 @@
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:ms_ess_portal/common/widget/round_button.dart';
 import 'package:ms_ess_portal/const/image_strings.dart';
 import 'package:ms_ess_portal/screens/dashboard/views/attendance_screen.dart';
@@ -86,11 +87,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Column(
                     children: [
                       UserAccountsDrawerHeader(
+                        currentAccountPictureSize: Size(78, 78),
                         decoration: const BoxDecoration(
                             color: AppColors.white
                         ),
                         accountName: Text('${logInResponse?.data.userName}',style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.white100),),
-                        accountEmail: Text('${logInResponse?.data.designation}', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white100),),
+                        accountEmail: Text('${logInResponse?.data.designation ?? ""}', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white100),),
                         currentAccountPicture: CircleAvatar(
                           radius: 40,
                           backgroundImage: NetworkImage(
@@ -337,7 +339,15 @@ Future<bool?> showLogOutConfirmation(BuildContext context) {
               children: [
                 SizedBox(width: 70, height: 38,
                   child: RoundButton(title: "Yes", onTap: (){
-                  Get.toNamed(ApplicationPages.signUpScreen);
+                    final box = GetStorage();
+                    box.erase();
+                    String? token = box.read('token');
+                    if (token == null) {
+                      print('Token has been deleted');
+                    } else {
+                      print('Token still exists: $token');
+                    }
+                    Get.toNamed(ApplicationPages.signUpScreen);
                 }
                 ,),),
                 const SizedBox(width: 5,),

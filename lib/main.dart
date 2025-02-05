@@ -6,9 +6,7 @@ import 'package:ms_ess_portal/routes/routes.dart';
 import 'package:ms_ess_portal/style/color.dart';
 
 void main() {
-
   GetStorage.init();
-
   runApp(const MyApp());
 }
 
@@ -27,17 +25,13 @@ class MyApp extends StatelessWidget {
           transitionDuration: Get.defaultDialogTransitionDuration,
           defaultGlobalState: Get.isLogEnable,
           debugShowCheckedModeBanner: false,
-
           theme: ThemeData(
-            // brightness: Brightnessspp.dark,
             colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
             useMaterial3: true,
             appBarTheme: const AppBarTheme(
             ),
           ),
           initialRoute: ApplicationPages.splashScreen,
-          // home: SimpleDataTable(),
-          // home: MobileEstimateViewPdfScreen(),
           getPages: ApplicationPages.getApplicationPages(),
         )
     );
