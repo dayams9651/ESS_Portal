@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';  // For date formatting
 import 'package:ms_ess_portal/common/widget/const_shimmer_effects.dart';
 import 'package:ms_ess_portal/common/widget/const_text_with_styles.dart';
 import 'package:ms_ess_portal/common/widget/round_button.dart';
+import 'package:ms_ess_portal/const/image_strings.dart';
 import 'package:ms_ess_portal/screens/selfService/controller/paylip_controller.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../style/color.dart';
@@ -56,56 +57,69 @@ class _PayslipScreenState extends State<PayslipScreen> {
           },
         ),
       ),
-      body: SingleChildScrollView(  // Make the entire body scrollable
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  height: 40,
-                  width: 120,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.white50),
-                    borderRadius: BorderRadius.circular(10),
+      body: Obx(() {
+        if(payslipController.isLoading.value) {
+          return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
+        }
+        return SingleChildScrollView( // Make the entire body scrollable
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    height: 40,
+                    width: 120,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.white50),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: TextButton(
+                      onPressed: () => _selectDate(context),
+                      child: Text(DateFormat.yMMM().format(payslipController
+                          .selectedDate.value),
+                          style: AppTextStyles.kSmall12SemiBoldTextStyle),
+                    ),
                   ),
-                  child: TextButton(
-                    onPressed: () => _selectDate(context),
-                    child: Text(DateFormat.yMMM().format(payslipController.selectedDate.value), style: AppTextStyles.kSmall12SemiBoldTextStyle),
+                  SizedBox(
+                    width: 100,
+                    child: RoundButton(title: 'Generate',
+                        onTap: payslipController.generateDate),
                   ),
-                ),
-                SizedBox(
-                  width: 100,
-                  child: RoundButton(title: 'Generate', onTap: payslipController.generateDate),
-                ),
-                IconButton(
-                  onPressed: payslipController.downloadPdf,  // Trigger PDF download here
-                  icon: Icon(Icons.file_download_outlined, size: 35, color: AppColors.primaryColor),
-                ),
-              ],
-            ),
-            Obx(() {
-              if (payslipController.formattedDate.isNotEmpty) {
-                return Column(
-                  children: [
-                    SizedBox(height: 10),
-                    if (payslipController.isFileSaved.value)
-                      Text("PDF has been saved!"),
-                    Text("Generated Date : ${payslipController.formattedDate.value}"),
-                    SizedBox(height: 20),
-                    _buildSalaryDetailsSection(),
-                    SizedBox(height: 20),
-                    _buildDeductionsSection(),
-                  ],
-                );
-              } else {
-                return SizedBox.shrink();  // Hide this section if no date has been generated yet
+                  IconButton(
+                    onPressed: payslipController.downloadPdf,
+                    // Trigger PDF download here
+                    icon: Icon(Icons.file_download_outlined, size: 35,
+                        color: AppColors.primaryColor),
+                  ),
+                ],
+              ),
+              Obx(() {
+                if (payslipController.formattedDate.isNotEmpty) {
+                  return Column(
+                    children: [
+                      SizedBox(height: 10),
+                      if (payslipController.isFileSaved.value)
+                        Text("PDF has been saved!"),
+                      Text("Generated Date : ${payslipController.formattedDate
+                          .value}"),
+                      SizedBox(height: 20),
+                      _buildSalaryDetailsSection(),
+                      SizedBox(height: 20),
+                      _buildDeductionsSection(),
+                    ],
+                  );
+                } else {
+                  return SizedBox.shrink(); // Hide this section if no date has been generated yet
+                }
               }
-            }),
-          ],
-        ),
+              ),
+            ],
+          ),
+        );
+      }
       ),
     );
   }

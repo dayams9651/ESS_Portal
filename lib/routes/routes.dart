@@ -68,11 +68,11 @@ class ApplicationPages {
         binding: LeaveGrantBindings()
     ),
 
-    GetPage(
-        name: leaveWFHScreen,
-        page: ()=>  LeaveWFHScreen(),
-        // binding: LeaveStatusBindings()
-    ),
+    // GetPage(
+    //     name: leaveWFHScreen,
+    //     page: ()=>  LeaveWFHScreen(),
+    //     // binding: LeaveStatusBindings()
+    // ),
 
     GetPage(
         name: paySlipScreen,
@@ -125,7 +125,7 @@ class ApplicationPages {
 
     GetPage(
         name: testingScreen,
-        page: ()=>  AttendancStaticeScreen(),
+        page: ()=>  ReportScreen(),
         // binding: TestingBindings()
     ),
   ];

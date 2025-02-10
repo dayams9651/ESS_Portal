@@ -162,7 +162,7 @@ class LeaveStatusScreen extends GetView<LeaveStatusController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 10,),
-                Center(child: Text("Leave Without Payment", style: AppTextStyles.kCaption14SemiBoldTextStyle,)),
+                // Center(child: Text("Leave Without Payment", style: AppTextStyles.kCaption14SemiBoldTextStyle,)),
                 const SizedBox(height: 20,),
                 Padding(
                   padding: const EdgeInsets.all(8.0),

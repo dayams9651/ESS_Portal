@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ms_ess_portal/style/color.dart';
 import 'package:ms_ess_portal/style/text_style.dart';
 
-class CustomHomeCard extends StatelessWidget {
+class CustomHomeCard extends StatefulWidget {
   final IconData? icon;
   final String text;
   final String text1;
@@ -15,7 +15,7 @@ class CustomHomeCard extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final BorderRadiusGeometry? borderRadius;
   final List<BoxShadow>? boxShadow;
-  final VoidCallback? onIconButtonPressed; // Add this line
+  final IconButton? iconButton;
 
   const CustomHomeCard({
     super.key,
@@ -31,24 +31,45 @@ class CustomHomeCard extends StatelessWidget {
     this.boxShadow,
     required this.subTitle,
     required this.text1,
-    this.onIconButtonPressed, // Add this line
+    this.iconButton, // Pass the iconButton parameter here
   });
+
+  @override
+  _CustomHomeCardState createState() => _CustomHomeCardState();
+}
+
+class _CustomHomeCardState extends State<CustomHomeCard> {
+  bool isLoading = false;
+
+  void handleIconButtonClick() {
+    setState(() {
+      isLoading = true;
+    });
+
+    // Simulating a delay (for example, a network request)
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double containerWidth = screenWidth < 600 ? screenWidth * 0.47 : screenWidth * 0.45; // Smaller width for phone, larger for tablets
-    double containerHeight = screenHeight < 600 ? 160 : 144; // Smaller height for phone, larger for tablets
+    double containerWidth = screenWidth < 600 ? screenWidth * 0.47 : screenWidth * 0.45;
+    double containerHeight = screenHeight < 600 ? 160 : 144;
+
     return Container(
       width: containerWidth,
       height: containerHeight,
-      padding: padding,
+      padding: widget.padding,
       decoration: BoxDecoration(
-        color: backgroundColor,
+        color: widget.backgroundColor,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: AppColors.white70),
-        boxShadow: boxShadow,
+        boxShadow: widget.boxShadow,
       ),
       child: Padding(
         padding: const EdgeInsets.all(5.0),
@@ -58,7 +79,7 @@ class CustomHomeCard extends StatelessWidget {
             CircleAvatar(
               radius: 25,
               backgroundColor: AppColors.primaryColor2,
-              child: Icon(icon),
+              child: Icon(widget.icon),
             ),
             const SizedBox(height: 5),
             Row(
@@ -68,19 +89,21 @@ class CustomHomeCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      text,
+                      widget.text,
                       style: AppTextStyles.kCaption13RegularTextStyle.copyWith(color: AppColors.white50),
                     ),
                     Text(
-                      text1,
+                      widget.text1,
                       style: AppTextStyles.kCaption13SemiBoldTextStyle,
                     ),
                   ],
                 ),
-                if (onIconButtonPressed != null)
+                if (widget.iconButton != null)
                   IconButton(
-                    onPressed: onIconButtonPressed,
-                    icon: Icon(Icons.refresh_outlined),
+                    icon: isLoading
+                        ? CircularProgressIndicator(color: AppColors.primaryColor2)
+                        : widget.iconButton!.icon!,
+                    onPressed: handleIconButtonClick,
                   ),
               ],
             ),
@@ -90,3 +113,4 @@ class CustomHomeCard extends StatelessWidget {
     );
   }
 }
+

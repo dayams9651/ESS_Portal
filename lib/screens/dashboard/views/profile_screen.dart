@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:ms_ess_portal/service/logInApi.dart';
 import 'package:ms_ess_portal/style/color.dart';
 import 'package:shimmer/shimmer.dart';
@@ -20,15 +22,26 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final UserLogInService controller = Get.put(UserLogInService());
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.white,
-      body: Obx((){
+    return WillPopScope(
+      onWillPop: () async {
+        final box = GetStorage();
+        box.erase();
+        String? token = box.read('token');
+        if (token == null) {
+          print('Token has been deleted');
+        } else {
+          print('Token still exists: $token');
+        }
+        return await showExitConfirmationDialog(context) ?? false;
+      },
+      // backgroundColor: AppColors.white,
+      child: Obx((){
         if(controller.isLoading.value){
           return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
         }
         else {
           final profileData = controller.logInData.value;
-          return SingleChildScrollView(  // Wrap the whole body with SingleChildScrollView for scrolling
+          return SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -52,366 +65,157 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: Icons.import_contacts,
                     text: "About me",
                     onTap: () {
-                      // Show the dialog when "About me" is tapped
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return  Dialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(0), // Square corners
-                            ),
-                            backgroundColor: Colors.white,
-                            child: Container(
-                              padding: const EdgeInsets.all(12),
-                              // width: MediaQuery.of(context).size.width * 1.0, // Adjust the width if needed
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min, // Make dialog height flexible to content
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Align(
-                                    alignment: Alignment.topRight,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        Navigator.of(context).pop(); // Close the pop-up
-                                      },
-                                      child: Icon(
-                                        Icons.cancel_outlined,
-                                        color: AppColors.primaryColor,
-                                        size: 30,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10), // Reduced space to minimize height
-                                  Text("Mukul Taneja ( T0019 )", style: AppTextStyles.kSmall12SemiBoldTextStyle),
-                                  const SizedBox(height: 3), // Reduced space to minimize height
-                                  const10Text("Information Technology as UI-UX Design"),
-                                  SizedBox(height: 7,),
-                                  Text("On Duty For 9h & 0 min", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor)),
-                                  const10Text("Request date : 16-12-2024"),
-                                  SizedBox(height: 7,),
-                                  const10Text("Due to punch machine not setup in B-88 branch"),
-                                  const SizedBox(height: 10), // Reduced space to minimize height
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          const12TextBold('Date'),
-                                          Text('16-12-2024', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
-                                        ],
-                                      ),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          const12TextBold('Session'),
-                                          Text('9:00 AM - 11:30 AM', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
-                                        ],
-                                      ),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          const12TextBold('Days'),
-                                          Text('16', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
+
                     },
                   ),
                   ProfileContainer(icon: Icons.family_restroom_outlined, text: 'Family Info', onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return  Dialog(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(0), // Square corners
-                          ),
-                          backgroundColor: Colors.white,
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            // width: MediaQuery.of(context).size.width * 1.0, // Adjust the width if needed
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min, // Make dialog height flexible to content
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Align(
-                                  alignment: Alignment.topRight,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).pop(); // Close the pop-up
-                                    },
-                                    child: Icon(
-                                      Icons.cancel_outlined,
-                                      color: AppColors.primaryColor,
-                                      size: 30,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 10), // Reduced space to minimize height
-                                Text("Mukul Taneja ( T0019 )", style: AppTextStyles.kSmall12SemiBoldTextStyle),
-                                const SizedBox(height: 3), // Reduced space to minimize height
-                                const10Text("Information Technology as UI-UX Design"),
-                                SizedBox(height: 7,),
-                                Text("On Duty For 9h & 0 min", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor)),
-                                const10Text("Request date : 16-12-2024"),
-                                SizedBox(height: 7,),
-                                const10Text("Due to punch machine not setup in B-88 branch"),
-                                const SizedBox(height: 10), // Reduced space to minimize height
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        const12TextBold('Date'),
-                                        Text('16-12-2024', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
-                                      ],
-                                    ),
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        const12TextBold('Session'),
-                                        Text('9:00 AM - 11:30 AM', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
-                                      ],
-                                    ),
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        const12TextBold('Days'),
-                                        Text('16', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    );
+
                   }),
                   ProfileContainer(icon: Icons.mail_outline, text: 'Contact Info', onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return  Dialog(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(0), // Square corners
-                          ),
-                          backgroundColor: Colors.white,
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            // width: MediaQuery.of(context).size.width * 1.0, // Adjust the width if needed
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min, // Make dialog height flexible to content
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Align(
-                                  alignment: Alignment.topRight,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).pop(); // Close the pop-up
-                                    },
-                                    child: Icon(
-                                      Icons.cancel_outlined,
-                                      color: AppColors.primaryColor,
-                                      size: 30,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 10), // Reduced space to minimize height
-                                Text("Mukul Taneja ( T0019 )", style: AppTextStyles.kSmall12SemiBoldTextStyle),
-                                const SizedBox(height: 3), // Reduced space to minimize height
-                                const10Text("Information Technology as UI-UX Design"),
-                                SizedBox(height: 7,),
-                                Text("On Duty For 9h & 0 min", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor)),
-                                const10Text("Request date : 16-12-2024"),
-                                SizedBox(height: 7,),
-                                const10Text("Due to punch machine not setup in B-88 branch"),
-                                const SizedBox(height: 10), // Reduced space to minimize height
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        const12TextBold('Date'),
-                                        Text('16-12-2024', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
-                                      ],
-                                    ),
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        const12TextBold('Session'),
-                                        Text('9:00 AM - 11:30 AM', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
-                                      ],
-                                    ),
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        const12TextBold('Days'),
-                                        Text('16', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    );
                   }),
                   ProfileContainer(icon: Icons.wifi_calling_outlined, text: 'Emergency Contact', onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return  Dialog(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(0), // Square corners
-                          ),
-                          backgroundColor: Colors.white,
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            // width: MediaQuery.of(context).size.width * 1.0, // Adjust the width if needed
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min, // Make dialog height flexible to content
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Align(
-                                  alignment: Alignment.topRight,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).pop(); // Close the pop-up
-                                    },
-                                    child: Icon(
-                                      Icons.cancel_outlined,
-                                      color: AppColors.primaryColor,
-                                      size: 30,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 10), // Reduced space to minimize height
-                                Text("Mukul Taneja ( T0019 )", style: AppTextStyles.kSmall12SemiBoldTextStyle),
-                                const SizedBox(height: 3), // Reduced space to minimize height
-                                const10Text("Information Technology as UI-UX Design"),
-                                SizedBox(height: 7,),
-                                Text("On Duty For 9h & 0 min", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor)),
-                                const10Text("Request date : 16-12-2024"),
-                                SizedBox(height: 7,),
-                                const10Text("Due to punch machine not setup in B-88 branch"),
-                                const SizedBox(height: 10), // Reduced space to minimize height
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        const12TextBold('Date'),
-                                        Text('16-12-2024', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
-                                      ],
-                                    ),
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        const12TextBold('Session'),
-                                        Text('9:00 AM - 11:30 AM', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
-                                      ],
-                                    ),
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        const12TextBold('Days'),
-                                        Text('16', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    );
+                    // showDialog(
+                    //   context: context,
+                    //   builder: (BuildContext context) {
+                    //     return  Dialog(
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(0), // Square corners
+                    //       ),
+                    //       backgroundColor: Colors.white,
+                    //       child: Container(
+                    //         padding: const EdgeInsets.all(12),
+                    //         // width: MediaQuery.of(context).size.width * 1.0, // Adjust the width if needed
+                    //         child: Column(
+                    //           mainAxisSize: MainAxisSize.min, // Make dialog height flexible to content
+                    //           crossAxisAlignment: CrossAxisAlignment.center,
+                    //           children: [
+                    //             Align(
+                    //               alignment: Alignment.topRight,
+                    //               child: GestureDetector(
+                    //                 onTap: () {
+                    //                   Navigator.of(context).pop(); // Close the pop-up
+                    //                 },
+                    //                 child: Icon(
+                    //                   Icons.cancel_outlined,
+                    //                   color: AppColors.primaryColor,
+                    //                   size: 30,
+                    //                 ),
+                    //               ),
+                    //             ),
+                    //             const SizedBox(height: 10), // Reduced space to minimize height
+                    //             Text("Mukul Taneja ( T0019 )", style: AppTextStyles.kSmall12SemiBoldTextStyle),
+                    //             const SizedBox(height: 3), // Reduced space to minimize height
+                    //             const10Text("Information Technology as UI-UX Design"),
+                    //             SizedBox(height: 7,),
+                    //             Text("On Duty For 9h & 0 min", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor)),
+                    //             const10Text("Request date : 16-12-2024"),
+                    //             SizedBox(height: 7,),
+                    //             const10Text("Due to punch machine not setup in B-88 branch"),
+                    //             const SizedBox(height: 10), // Reduced space to minimize height
+                    //             Row(
+                    //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //               children: [
+                    //                 Column(
+                    //                   crossAxisAlignment: CrossAxisAlignment.center,
+                    //                   children: [
+                    //                     const12TextBold('Date'),
+                    //                     Text('16-12-2024', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
+                    //                   ],
+                    //                 ),
+                    //                 Column(
+                    //                   crossAxisAlignment: CrossAxisAlignment.center,
+                    //                   children: [
+                    //                     const12TextBold('Session'),
+                    //                     Text('9:00 AM - 11:30 AM', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
+                    //                   ],
+                    //                 ),
+                    //                 Column(
+                    //                   crossAxisAlignment: CrossAxisAlignment.center,
+                    //                   children: [
+                    //                     const12TextBold('Days'),
+                    //                     Text('16', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
+                    //                   ],
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //     );
+                    //   },
+                    // );
                   }),
                   ProfileContainer(icon: Icons.folder_special_outlined, text: 'Compliance Info', onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return  Dialog(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(0), // Square corners
-                          ),
-                          backgroundColor: Colors.white,
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            // width: MediaQuery.of(context).size.width * 1.0, // Adjust the width if needed
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min, // Make dialog height flexible to content
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Align(
-                                  alignment: Alignment.topRight,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).pop(); // Close the pop-up
-                                    },
-                                    child: Icon(
-                                      Icons.cancel_outlined,
-                                      color: AppColors.primaryColor,
-                                      size: 30,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 10), // Reduced space to minimize height
-                                Text("Mukul Taneja ( T0019 )", style: AppTextStyles.kSmall12SemiBoldTextStyle),
-                                const SizedBox(height: 3), // Reduced space to minimize height
-                                const10Text("Information Technology as UI-UX Design"),
-                                SizedBox(height: 7,),
-                                Text("On Duty For 9h & 0 min", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor)),
-                                const10Text("Request date : 16-12-2024"),
-                                SizedBox(height: 7,),
-                                const10Text("Due to punch machine not setup in B-88 branch"),
-                                const SizedBox(height: 10), // Reduced space to minimize height
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        const12TextBold('Date'),
-                                        Text('16-12-2024', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
-                                      ],
-                                    ),
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        const12TextBold('Session'),
-                                        Text('9:00 AM - 11:30 AM', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
-                                      ],
-                                    ),
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        const12TextBold('Days'),
-                                        Text('16', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    );
+                    // showDialog(
+                    //   context: context,
+                    //   builder: (BuildContext context) {
+                    //     return  Dialog(
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(0), // Square corners
+                    //       ),
+                    //       backgroundColor: Colors.white,
+                    //       child: Container(
+                    //         padding: const EdgeInsets.all(12),
+                    //         // width: MediaQuery.of(context).size.width * 1.0, // Adjust the width if needed
+                    //         child: Column(
+                    //           mainAxisSize: MainAxisSize.min, // Make dialog height flexible to content
+                    //           crossAxisAlignment: CrossAxisAlignment.center,
+                    //           children: [
+                    //             Align(
+                    //               alignment: Alignment.topRight,
+                    //               child: GestureDetector(
+                    //                 onTap: () {
+                    //                   Navigator.of(context).pop(); // Close the pop-up
+                    //                 },
+                    //                 child: Icon(
+                    //                   Icons.cancel_outlined,
+                    //                   color: AppColors.primaryColor,
+                    //                   size: 30,
+                    //                 ),
+                    //               ),
+                    //             ),
+                    //             const SizedBox(height: 10), // Reduced space to minimize height
+                    //             Text("Mukul Taneja ( T0019 )", style: AppTextStyles.kSmall12SemiBoldTextStyle),
+                    //             const SizedBox(height: 3), // Reduced space to minimize height
+                    //             const10Text("Information Technology as UI-UX Design"),
+                    //             SizedBox(height: 7,),
+                    //             Text("On Duty For 9h & 0 min", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor)),
+                    //             const10Text("Request date : 16-12-2024"),
+                    //             SizedBox(height: 7,),
+                    //             const10Text("Due to punch machine not setup in B-88 branch"),
+                    //             const SizedBox(height: 10), // Reduced space to minimize height
+                    //             Row(
+                    //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //               children: [
+                    //                 Column(
+                    //                   crossAxisAlignment: CrossAxisAlignment.center,
+                    //                   children: [
+                    //                     const12TextBold('Date'),
+                    //                     Text('16-12-2024', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
+                    //                   ],
+                    //                 ),
+                    //                 Column(
+                    //                   crossAxisAlignment: CrossAxisAlignment.center,
+                    //                   children: [
+                    //                     const12TextBold('Session'),
+                    //                     Text('9:00 AM - 11:30 AM', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
+                    //                   ],
+                    //                 ),
+                    //                 Column(
+                    //                   crossAxisAlignment: CrossAxisAlignment.center,
+                    //                   children: [
+                    //                     const12TextBold('Days'),
+                    //                     Text('16', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),)
+                    //                   ],
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //     );
+                    //   },
+                    // );
                   }),
                 ],
               ),
@@ -419,6 +223,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
           );
         }
       }),
+    );
+  }
+  Future<bool?> showExitConfirmationDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Exit'),
+        content: const Text('Are you sure you want to exit?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              SystemNavigator.pop();
+            },
+            child: const Text('Yes'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('No'),
+          ),
+        ],
+      ),
     );
   }
 }

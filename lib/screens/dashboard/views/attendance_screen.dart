@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:ms_ess_portal/common/widget/const_shimmer_effects.dart';
 import 'package:ms_ess_portal/const/image_strings.dart';
 import 'package:ms_ess_portal/screens/dashboard/contoller/attendance_controller.dart';
@@ -137,9 +139,20 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   @override
   Widget build(BuildContext context) {
     controller.fetchShiftData();
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Obx(() {
+    return WillPopScope(
+      onWillPop: () async {
+        final box = GetStorage();
+        box.erase();
+        String? token = box.read('token');
+        if (token == null) {
+          print('Token has been deleted');
+        } else {
+          print('Token still exists: $token');
+        }
+        return await showExitConfirmationDialog(context) ?? false;
+      },
+      // backgroundColor: Colors.white,
+      child: Obx(() {
         if (attendController.isLoading.value) {
           return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
         } else {
@@ -398,6 +411,27 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           );
         }
       }),
+    );
+  }
+  Future<bool?> showExitConfirmationDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Exit'),
+        content: const Text('Are you sure you want to exit?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              SystemNavigator.pop();
+            },
+            child: const Text('Yes'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('No'),
+          ),
+        ],
+      ),
     );
   }
 

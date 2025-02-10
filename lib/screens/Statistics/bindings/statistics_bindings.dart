@@ -7,6 +7,6 @@ class StatisticsBindings extends Bindings {
 
   @override
   void dependencies(){
-    Get.lazyPut(()=> StatisticsController());
+    Get.lazyPut(()=> AttendanceStaticsController());
   }
 }

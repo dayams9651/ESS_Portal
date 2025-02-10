@@ -8,7 +8,7 @@ import '../../../style/color.dart';
 import '../../../style/text_style.dart';
 
 class AnnouncementScreen extends StatefulWidget {
-  AnnouncementScreen({super.key});
+  const AnnouncementScreen({super.key});
   @override
   _AnnouncementScreenState createState() => _AnnouncementScreenState();
 }

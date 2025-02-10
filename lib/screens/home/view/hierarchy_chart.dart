@@ -45,16 +45,42 @@ class EmployeeView extends StatelessWidget {
 class EmployeeTile extends StatelessWidget {
   final Employee employee;
   const EmployeeTile({super.key, required this.employee});
+
   @override
   Widget build(BuildContext context) {
+    // Use ValueNotifier to manage expansion state
+    ValueNotifier<bool> _isExpanded = ValueNotifier(false);
+
     return Card(
       color: AppColors.white,
       elevation: 15,
       child: ExpansionTile(
-        title: Text(employee.name, style: AppTextStyles.kSmall12SemiBoldTextStyle,),
-        subtitle: Text(employee.title,style: AppTextStyles.kSmall10RegularTextStyle,),
+        onExpansionChanged: (bool expanded) {
+          // Update the expansion state
+          _isExpanded.value = expanded;
+        },
+        title: Text(
+          employee.name,
+          style: AppTextStyles.kSmall12SemiBoldTextStyle,
+        ),
+        subtitle: Text(
+          employee.title,
+          style: AppTextStyles.kSmall10RegularTextStyle,
+        ),
         leading: CircleAvatar(
           backgroundImage: NetworkImage(employee.imageUrl.isNotEmpty ? employee.imageUrl : "empty"),
+        ),
+        trailing: ValueListenableBuilder<bool>(
+          valueListenable: _isExpanded,
+          builder: (context, isExpanded, child) {
+            return CircleAvatar(
+              backgroundColor: AppColors.success40,
+              child: Icon(
+                isExpanded ? Icons.remove : Icons.add,
+                size: 24,
+              ),
+            );
+          },
         ),
         children: employee.children.map((child) {
           return EmployeeTile(employee: child);
@@ -63,3 +89,4 @@ class EmployeeTile extends StatelessWidget {
     );
   }
 }
+

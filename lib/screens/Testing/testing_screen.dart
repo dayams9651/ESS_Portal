@@ -1,61 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:get/get.dart';
 import 'package:ms_ess_portal/screens/Testing/testing_controller.dart';
 
+class ReportScreen extends StatelessWidget {
+  final ReportController controller = Get.put(ReportController());
 
-class AttendancStaticeScreen extends StatelessWidget {
-  final AttendanceStaticsController _controller = Get.put(AttendanceStaticsController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Attendance Statistics'),
+        title: Text('Attendance PDF Viewer'),
       ),
-      body: Obx(() {
-        if (_controller.attendanceData.value == null) {
-          return Center(child: CircularProgressIndicator());
-        }
-        var months = _controller.attendanceData.value!.months;
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Obx(() {
+          // Check if loading
+          if (controller.isLoading.value) {
+            return Center(child: CircularProgressIndicator());
+          }
 
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: DropdownButton<int>(
-                value: _controller.selectedMonthIndex.value,
-                onChanged: (int? newIndex) {
-                  if (newIndex != null) {
-                    _controller.updateSelectedMonth(newIndex);
-                  }
-                },
-                items: List.generate(
-                  months.length,
-                      (index) => DropdownMenuItem<int>(
-                    value: index,
-                    child: Text(months[index]),
-                  ),
-                ),
-              ),
+          // Check if there's an error
+          if (controller.errorMessage.isNotEmpty) {
+            return Center(child: Text(controller.errorMessage.value));
+          }
+
+          // Check if PDF path is available
+          if (controller.pdfPath.value.isNotEmpty) {
+            return PDFViewPage(filePath: controller.pdfPath.value);
+          }
+
+          // Default UI: Show a button to fetch the PDF
+          return Center(
+            child: ElevatedButton(
+              onPressed: () {
+                controller.fetchPDF();
+              },
+              child: Text('Download Attendance PDF'),
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _controller.attendanceData.value!.data.length,
-                itemBuilder: (context, index) {
-                  var item = _controller.attendanceData.value!.data[index];
-                  var monthData = item.data[_controller.selectedMonthIndex.value];
-                  return ListTile(
-                    title: Text(item.name),
-                    trailing: Text(monthData.toString()),
-                  );
-                },
-              ),
-            ),
-          ],
-        );
-      }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _controller.fetchData,
-        child: Icon(Icons.refresh),
+          );
+        }),
+      ),
+    );
+  }
+}
+
+class PDFViewPage extends StatelessWidget {
+  final String filePath;
+
+  PDFViewPage({required this.filePath});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('PDF Viewer')),
+      body: PDFView(
+        filePath: filePath,  // Path to the saved PDF file
       ),
     );
   }

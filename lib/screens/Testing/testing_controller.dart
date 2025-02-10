@@ -1,49 +1,53 @@
+import 'dart:typed_data';
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:path_provider/path_provider.dart';
 
-import 'testing_model.dart';
-
-class AttendanceStaticsController extends GetxController {
-  var attendanceData = Rxn<AttendanceStatistics>();
-  var selectedMonthIndex = 0.obs; // To track selected month index
+class ReportController extends GetxController {
+  var isLoading = false.obs;
+  var errorMessage = ''.obs;
+  var pdfPath = ''.obs;
+  final String apiUrl = 'https://esstest.mscorpres.net/attendance/download';
+  final Map<String, dynamic> requestBody = {'period': '2025-01'};
   final box = GetStorage();
-  Future<void> fetchData() async {
+  Future<void> fetchPDF() async {
     try {
+      isLoading(true);
       String? token = box.read('token');
       if (token == null || token.isEmpty) {
         throw Exception('Token not found. Please log in first.');
       }
-      final response = await http.get(Uri.parse('https://esstest.mscorpres.net/dashboard/attendance-statistics'),
+
+      final response = await http.post(
+        Uri.parse(apiUrl),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
-        },);
+        },
+        body: requestBody,
+      );
+
+
 
       if (response.statusCode == 200) {
-        var jsonData = json.decode(response.body);
-        attendanceData.value = AttendanceStatistics.fromJson(jsonData);
+        Uint8List bufferData = response.bodyBytes;
+        debugPrint(response.body);
+        final directory = await getApplicationDocumentsDirectory();
+        final filePath = '${directory.path}/attendance_report.pdf';
+        final file = File(filePath);
+        await file.writeAsBytes(bufferData);
+        pdfPath.value = filePath;
+        errorMessage.value = '';
       } else {
-        print('Failed to load data');
+        errorMessage.value = 'Failed to load PDF. Status code: ${response.statusCode}';
       }
     } catch (e) {
-      print('Error: $e');
+      errorMessage.value = 'Error: $e';
+    } finally {
+      isLoading(false);
     }
-  }
-
-  // Get the data for the selected month
-  List<int> getSelectedMonthData() {
-    if (attendanceData.value != null) {
-      return attendanceData.value!.data
-          .map((e) => e.data[selectedMonthIndex.value])
-          .toList();
-    }
-    return [];
-  }
-
-  // Update selected month
-  void updateSelectedMonth(int index) {
-    selectedMonthIndex.value = index;
   }
 }

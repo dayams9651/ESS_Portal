@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ms_ess_portal/routes/routes.dart';
 import 'package:ms_ess_portal/screens/signIn/welcome_screen.dart';
-import '../const/const_height.dart';
-import '../const/const_width.dart';
 import '../const/image_strings.dart';
 import '../service/logInApi.dart';
 

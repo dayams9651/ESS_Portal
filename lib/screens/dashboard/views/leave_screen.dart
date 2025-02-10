@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:ms_ess_portal/common/widget/const_button.dart';
 import 'package:ms_ess_portal/common/widget/round_button.dart';
 import 'package:ms_ess_portal/const/literals.dart';
 import 'package:ms_ess_portal/screens/dashboard/contoller/applyLeave_Controller.dart';
 import 'package:ms_ess_portal/screens/dashboard/contoller/apply_leave_balance_controller.dart';
+import 'package:ms_ess_portal/screens/dashboard/contoller/leave_balance_calculation_controller.dart';
 import 'package:ms_ess_portal/screens/dashboard/model/apply_leave_balance_model.dart';
 import 'package:ms_ess_portal/style/color.dart';
 import '../../../style/text_style.dart';
@@ -16,9 +19,9 @@ class LeaveScreen extends StatefulWidget {
   @override
   State<LeaveScreen> createState() => _LeaveScreenState();
 }
-
 class _LeaveScreenState extends State<LeaveScreen> {
   final LeaveApplyBalanceControllerEL controller = Get.put(LeaveApplyBalanceControllerEL());
+  final LeaveApplyBalanceControllerController leaveApplyCalculateController = Get.put(LeaveApplyBalanceControllerController());
   final TextEditingController _textController = TextEditingController();
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
@@ -31,9 +34,20 @@ class _LeaveScreenState extends State<LeaveScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Padding(
+    return WillPopScope(
+      onWillPop: () async {
+        final box = GetStorage();
+        box.erase();
+        String? token = box.read('token');
+        if (token == null) {
+          debugPrint('Token has been deleted');
+        } else {
+          debugPrint('Token still exists: $token');
+        }
+        return await showExitConfirmationDialog(context) ?? false;
+      },
+      // backgroundColor: Colors.white,
+      child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
           child: Column(
@@ -238,7 +252,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
                           hintText: 'Employee ID / Name',
                           border: OutlineInputBorder(),
                         ),
-                        // validator: (value) { 
+                        // validator: (value) {
                         //   if (value!.isEmpty) {
                         //     return 'Please Enter Employee ID / Name';
                         //   }
@@ -253,7 +267,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
                         children: [
                           const Icon(Icons.info_outline, color: AppColors.error60, size: 27),
                           Obx(() => Text(
-                            'Available balance : ${controller.leaveBalance.value.data?.leaveBalance?.balance ?? '0'} / Current Booked : 1',
+                            'Available balance : ${controller.leaveBalance.value.data?.leaveBalance?.balance ?? '0'} / Current Booked : ${leaveApplyCalculateController.leaveBalanceCalculate.value.data?.currentBooking??"0"}',
                             style: AppTextStyles.kSmall10SemiBoldTextStyle,
                           )),
                         ],
@@ -291,6 +305,27 @@ class _LeaveScreenState extends State<LeaveScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+  Future<bool?> showExitConfirmationDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Exit'),
+        content: const Text('Are you sure you want to exit?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              SystemNavigator.pop();
+            },
+            child: const Text('Yes'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('No'),
+          ),
+        ],
       ),
     );
   }

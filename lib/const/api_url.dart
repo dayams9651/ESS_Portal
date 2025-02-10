@@ -18,7 +18,14 @@ const String apiLeaveGrant = "$baseUrl/request";
 const String apiLeaveStatus = "$baseUrl/audit";
 // Apply Leave List
 const String apiLeave = "$baseUrl/apply/balance/";
+const String apiLeaveCalculation = "$baseUrl/leave/getBalance/";
 const String apiApplyLeave = "$baseUrl/apply/request/EL";
 const String apiResetPassword = "$baseUrl/auth/reset";
 
+
+// Leave balance Update
+
+const String apiLeaveUpdateWFH = "$baseUrl/dashboard/updateLeave/WFH";
+const String apiLeaveUpdateSL = "$baseUrl/dashboard/updateLeave/SL";
+const String apiLeaveUpdateEL = "$baseUrl/dashboard/updateLeave/EL";
 

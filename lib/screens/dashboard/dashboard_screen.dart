@@ -125,9 +125,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             _buildDrawerSubItem('Leave Grant', onTap: () {
                               Get.toNamed(ApplicationPages.leaveGrantScreen);
                             }),
-                            _buildDrawerSubItem('WFH Update', onTap: () {
-                              Get.toNamed(ApplicationPages.leaveWFHScreen);
-                            }),
+                            // _buildDrawerSubItem('WFH Update', onTap: () {
+                            //   Get.toNamed(ApplicationPages.leaveWFHScreen);
+                            // }),
                             _buildDrawerSubItem('Payslip', onTap: () {
                               Get.toNamed(ApplicationPages.paySlipScreen);
                             }),
