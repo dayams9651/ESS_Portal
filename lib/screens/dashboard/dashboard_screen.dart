@@ -139,9 +139,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       _buildDrawerItem(icon: Icons.snippet_folder_outlined, text: 'Documents', onTap: (){
                         Get.toNamed(ApplicationPages.documentsScreen);
                       }),
-                      _buildDrawerItem(icon: Icons.dangerous, text: 'For Testing', onTap: (){
-                        Get.toNamed(ApplicationPages.testingScreen);
-                      }),
+                      // _buildDrawerItem(icon: Icons.dangerous, text: 'For Testing', onTap: (){
+                      //   Get.toNamed(ApplicationPages.testingScreen);
+                      // }),
                       _buildDrawerItem(icon: Icons.auto_graph_outlined, text: 'Attendance Statistics', onTap: (){
                         Get.toNamed(ApplicationPages.statisticsScreen);
 
