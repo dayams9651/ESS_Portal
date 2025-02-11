@@ -33,7 +33,7 @@ class UserLogInService extends GetxController {
           String token = responseData['data']['token'];
           box.write('token', token);  // Save token here
           debugPrint("Saved Token: $token");
-          debugPrint("LogIN Aoi Response : ${response.body}");
+          debugPrint("LogIn Api Response : ${response.body}");
           showCustomSnackbar('LogIn', '${responseData['message']}');
           debugPrint("LogIn Data: ${responseData['message']}");
           Get.to(const DashboardScreen());

@@ -14,9 +14,7 @@ class AnnouncementScreen extends StatefulWidget {
 }
 
 class _AnnouncementScreenState extends State<AnnouncementScreen> {
-
   final AnnouncementController controller = Get.put(AnnouncementController());
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,23 +78,20 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                                   borderRadius: BorderRadius.circular(30),
                                 ),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(5.0),
                                   child: TextFormField(
                                     // controller: newPasswordController,
                                     decoration: InputDecoration(
                                       hintText: '    Add a comment....',
                                       suffixIcon: IconButton(
-                                        onPressed: () {
-                                          // Add your onPressed logic here
-                                        },
+                                        onPressed: () {},
                                         icon: Icon(
                                           Icons.telegram,
-                                          size: 30,
+                                          size: 28,
                                           color: AppColors.primaryColor,
                                         ),
                                       ),
-                                      border: InputBorder
-                                          .none, // Remove the underline
+                                      border: InputBorder.none,
                                     ),
                                   ),
                                 ),
