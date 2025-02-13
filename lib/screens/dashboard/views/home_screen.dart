@@ -216,10 +216,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           CustomHomeCard(icon: Icons.medical_information_outlined, text: 'Sick Leave', text1: '${sickLeave?.data.lOpBal ??0} / ${sickLeave?.data.totalYrBal??0}', subTitle: '0.666', iconButton: IconButton(onPressed: (){
-                            controllerSL.fetchSickLeaveBalanceUpdate();
+                            controllerSL.fetchSickLeaveBalanceUpdate;
                           }, icon: Icon(Icons.refresh_outlined)), ),
                           CustomHomeCard(icon: Icons.currency_exchange, text: 'Earned Leave', text1: '${leaveELBalance?.data?.lClBal??0} / ${leaveELBalance?.data?.totalYrBal??0}', subTitle: '0.5', iconButton: IconButton(onPressed: (){
-                            controllerEL.fetchEarnedLeaveUpdate();
+                            controllerEL.fetchEarnedLeaveUpdate;
                           }, icon: Icon(Icons.refresh_outlined)),)
                         ],
                       ),
@@ -234,6 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                       const SizedBox(height: 5),
+
                       const12TextBold("New Hires"),
                       const SizedBox(height: 5),
                       SizedBox(
@@ -395,6 +396,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                         ),
                       ),
+
                     ],
                   ),
                 ),

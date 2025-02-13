@@ -13,7 +13,7 @@ class UserLogInService extends GetxController {
   RxBool isLoading = false.obs;
   var responseMessage = ''.obs;
   var logInData = Rxn<LoginResponse>();
-  Future<void> logInUser(String username, String password) async {
+  Future<void> logInUser(String username, String password ) async {
     try {
       final response = await http.post(
         Uri.parse(logInApi),
@@ -22,29 +22,31 @@ class UserLogInService extends GetxController {
         },
         body: json.encode({
           'username': username,
-          'password': password
+          'password': password,
         }),
       );
 
       final Map<String, dynamic> responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         debugPrint("$response.statusCode");
+        debugPrint("LogIn Api Response : ${response.body}");
         if (responseData['success']) {
           String token = responseData['data']['token'];
-          box.write('token', token);  // Save token here
+          box.write('token', token);
           debugPrint("Saved Token: $token");
           debugPrint("LogIn Api Response : ${response.body}");
-          showCustomSnackbar('LogIn', '${responseData['message']}');
+          showCustomSnackbar('LogIn', '${responseData['message']}', backgroundColor: AppColors.success20);
           debugPrint("LogIn Data: ${responseData['message']}");
-          Get.to(const DashboardScreen());
+          Get.to( DashboardScreen());
           var decodedResponse = json.decode(response.body);
           logInData.value = LoginResponse.fromJson(decodedResponse);
         } else {
-          showCustomSnackbar('Error', responseData['message'] ?? 'Your Employee ID or Password is wrong');
+          showCustomSnackbar('Error', responseData['message'] ?? 'Your Employee ID or Password is wrong',
+              backgroundColor: AppColors.error10);
           debugPrint("Error ${responseData['message']}");
         }
       } else {
-        showCustomSnackbar('Alert', 'Your Employee ID or Password is wrong');
+        showCustomSnackbar('Alert', 'Your Employee ID or Password is wrong', backgroundColor: AppColors.error10);
       }
     } catch (error) {
       debugPrint("$error");

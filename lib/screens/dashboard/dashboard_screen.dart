@@ -15,7 +15,7 @@ import '../../style/color.dart';
 import 'views/home_screen.dart';
 import 'views/profile_screen.dart';
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+  const DashboardScreen({super.key,  });
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
@@ -92,7 +92,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             color: AppColors.white
                         ),
                         accountName: Text('${logInResponse?.data.userName}',style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.white100),),
-                        accountEmail: Text('${logInResponse?.data.designation ?? ""}', style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white100),),
+                        accountEmail: Text(logInResponse?.data.designation ?? "", style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white100),),
                         currentAccountPicture: CircleAvatar(
                           radius: 40,
                           backgroundImage: NetworkImage(
@@ -343,9 +343,9 @@ Future<bool?> showLogOutConfirmation(BuildContext context) {
                     box.erase();
                     String? token = box.read('token');
                     if (token == null) {
-                      print('Token has been deleted');
+                      debugPrint('Token has been deleted');
                     } else {
-                      print('Token still exists: $token');
+                      debugPrint('Token still exists: $token');
                     }
                     Get.toNamed(ApplicationPages.signUpScreen);
                 }

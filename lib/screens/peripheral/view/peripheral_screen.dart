@@ -36,7 +36,7 @@ class PeripheralScreen extends GetView<AssetController> {
                  SizedBox(
                    height: 700,
                    child: ListView.builder(
-                     scrollDirection: Axis.horizontal, // Scroll horizontally
+                     scrollDirection: Axis.horizontal,
                      itemCount: assetController.assets.length,
                      itemBuilder: (context, index) {
                        var asset = assetController.assets[index];
@@ -69,8 +69,7 @@ class PeripheralScreen extends GetView<AssetController> {
                                                child: ClipRRect(
                                                  child: Padding(
                                                    padding: const EdgeInsets
-                                                       .all(
-                                                       2.0),
+                                                       .all(2.0),
                                                    child: Container(
                                                        decoration: BoxDecoration(
                                                            borderRadius: BorderRadius
@@ -96,7 +95,7 @@ class PeripheralScreen extends GetView<AssetController> {
                                        ),
                                        Divider(color: AppColors.white100,),
                                        SizedBox(height: 5),
-                                       Text('Category : ${asset.category}  | Model : ${asset.model}',
+                                       Text('Category : ${asset.name}  | Model : ${asset.model}',
                                            style: AppTextStyles
                                                .kSmall12SemiBoldTextStyle),
                                        SizedBox(height: 5),
@@ -119,11 +118,11 @@ class PeripheralScreen extends GetView<AssetController> {
                                                .kSmall12SemiBoldTextStyle),
                                        SizedBox(height: 3),
                                        Text(
-                                           "${asset.allotedDt}",
+                                           asset.allotedDt,
                                            style: AppTextStyles
                                                .kSmall12RegularTextStyle),
                                        SizedBox(height: 10,),
-                                       Text("Total Assets : ${index}/${controller.assets.length}",
+                                       Text("Total Assets : $index/${controller.assets.length}",
                                          style: AppTextStyles
                                              .kSmall12RegularTextStyle.copyWith(
                                              color: AppColors.primaryColor),)

@@ -1,5 +1,6 @@
 
 const String baseUrl = "https://esstest.mscorpres.net";  // local Url
+// const String baseUrl = "http://192.168.68.107:3005";  // local Url
 // const String baseUrl = "https://login.mscorpres.online";  // Live Url
 const String logInApi = "$baseUrl/auth/login";
 const String announcementApi = "$baseUrl/timeline";
