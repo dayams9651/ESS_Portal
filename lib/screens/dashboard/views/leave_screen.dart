@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:ms_ess_portal/common/widget/const_button.dart';
 import 'package:ms_ess_portal/common/widget/round_button.dart';
 import 'package:ms_ess_portal/const/literals.dart';
@@ -29,24 +27,16 @@ class _LeaveScreenState extends State<LeaveScreen> {
   final TextEditingController _copyMailController = TextEditingController();
   final LeaveApplyController leaveApplyController = Get.put(LeaveApplyController());
   final _formKey = GlobalKey<FormState>();
-  String? _selectedSessionStart;
-  String? _selectedSessionEnd;
+  String? _selectedLeaveType;
+  String? _selectedSessionStartValue;
+  String? _selectedSessionEndValue;
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        final box = GetStorage();
-        box.erase();
-        String? token = box.read('token');
-        if (token == null) {
-          debugPrint('Token has been deleted');
-        } else {
-          debugPrint('Token still exists: $token');
-        }
         return await showExitConfirmationDialog(context) ?? false;
       },
-      // backgroundColor: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
@@ -129,15 +119,15 @@ class _LeaveScreenState extends State<LeaveScreen> {
                                   ),
                                   child: Obx(() {
                                     return DropdownButtonFormField<String>(
-                                      value: _selectedSessionStart,
+                                      value: _selectedSessionStartValue,
                                       onChanged: (String? newValue) {
                                         setState(() {
-                                          _selectedSessionStart = newValue;
+                                          _selectedSessionStartValue = newValue;
                                         });
                                       },
                                       items: controller.leaveOptions.map<DropdownMenuItem<String>>((Options option) {
                                         return DropdownMenuItem<String>(
-                                          value: option.label,
+                                          value: option.value.toString(),
                                           child: Padding(
                                             padding: const EdgeInsets.only(left: 2.0, right: 1),
                                             child: Text(option.label ?? ''),
@@ -199,15 +189,15 @@ class _LeaveScreenState extends State<LeaveScreen> {
                                     ),
                                     child: Obx(() {
                                       return DropdownButtonFormField<String>(
-                                        value: _selectedSessionEnd,
+                                        value: _selectedSessionEndValue,
                                         onChanged: (String? newValue) {
                                           setState(() {
-                                            _selectedSessionEnd = newValue;
+                                            _selectedSessionEndValue = newValue;
                                           });
                                         },
                                         items: controller.leaveOptions.map<DropdownMenuItem<String>>((Options option) {
                                           return DropdownMenuItem<String>(
-                                            value: option.label,
+                                            value: option.value.toString(),
                                             child: Padding(
                                               padding: const EdgeInsets.only(left: 1.0, right: 1),
                                               child: Text(option.label ?? ''),
@@ -234,10 +224,10 @@ class _LeaveScreenState extends State<LeaveScreen> {
                         contentPadding: EdgeInsets.all(16),
                       ),
                       validator: (value){
-                          if (value!.isEmpty) {
-                            return 'Reason should not be in less than 15 character';
-                          }
-                          return null;
+                        if (value!.isEmpty || value.length < 15) {
+                          return 'Reason should be at least 15 characters';
+                        }
+                        return null;
                       },
                       textInputAction: TextInputAction.newline,
                     ),
@@ -252,12 +242,6 @@ class _LeaveScreenState extends State<LeaveScreen> {
                           hintText: 'Employee ID / Name',
                           border: OutlineInputBorder(),
                         ),
-                        // validator: (value) {
-                        //   if (value!.isEmpty) {
-                        //     return 'Please Enter Employee ID / Name';
-                        //   }
-                        //   return null;
-                        // },
                       ),
                     ),
                     const SizedBox(height: 7),
@@ -308,6 +292,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
       ),
     );
   }
+
   Future<bool?> showExitConfirmationDialog(BuildContext context) {
     return showDialog<bool>(
       context: context,
@@ -332,17 +317,21 @@ class _LeaveScreenState extends State<LeaveScreen> {
 
   void _applyLeave() async {
     if (_formKey.currentState!.validate()) {
+      if (_selectedLeaveType == null || _selectedSessionStartValue == null || _selectedSessionEndValue == null) {
+        return;
+      }
+
       final body = {
-        "type": _textController.text,
+        "type": _selectedLeaveType,
         "startDate": _startDateController.text,
-        "startSession": _selectedSessionStart,
+        "startSession": _selectedSessionStartValue,
         "endDate": _endDateController.text,
-        "endSession": _selectedSessionEnd,
+        "endSession": _selectedSessionEndValue,
         "reason": _reasonController.text,
         "email_cc": [],
         "comp_date": null,
       };
-      await leaveApplyController.applyLeave(body, );
+      await leaveApplyController.applyLeave(body);
     }
   }
 
@@ -359,7 +348,8 @@ class _LeaveScreenState extends State<LeaveScreen> {
                 title: Center(child: Text(items[index]['name'] ?? "")),
                 onTap: () {
                   _textController.text = items[index]['name'] ?? "";
-                  controller.fetchLeaveBalance(items[index]['title'] ?? "");
+                  _selectedLeaveType = items[index]['title'];
+                  controller.fetchLeaveBalance(_selectedLeaveType ?? "");
                   Navigator.pop(context);
                 },
               );
@@ -378,7 +368,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
       lastDate: DateTime(2101),
     );
     if (picked != null && picked != DateTime.now()) {
-      String formattedDate = DateFormat("dd/MM/yyyy").format(picked);
+      String formattedDate = DateFormat("dd-MM-yyyy").format(picked);
       if (isStartDate) {
         _startDateController.text = formattedDate;
       } else {
@@ -394,8 +384,8 @@ class _LeaveScreenState extends State<LeaveScreen> {
     _reasonController.clear();
     _copyMailController.clear();
     setState(() {
-      _selectedSessionStart = null;
-      _selectedSessionEnd = null;
+      _selectedSessionStartValue = null;
+      _selectedSessionEndValue = null;
     });
   }
 }

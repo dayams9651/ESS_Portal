@@ -24,7 +24,7 @@ class LeaveGrantController extends GetxController {
       throw Exception('Token not found. Please log in first.');
     }
     try {
-      final response = await http.get(Uri.parse(apiLeaveGrant),
+      final response = await http.post(Uri.parse(apiLeaveGrant),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -39,6 +39,7 @@ class LeaveGrantController extends GetxController {
         leaveRequestsData.assignAll(leaveData);
         isError(false);
       } else {
+        debugPrint("Failed : ${response.body}");
         isError(true);
       }
     } catch (e) {

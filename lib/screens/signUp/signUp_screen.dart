@@ -7,7 +7,6 @@ import '../../const/image_strings.dart';
 import '../../service/logInApi.dart';
 import '../../style/text_style.dart';
 import 'package:flutter/services.dart';
-
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
 

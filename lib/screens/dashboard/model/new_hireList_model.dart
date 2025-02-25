@@ -1,14 +1,14 @@
 // New wHire List Model
 
 class NewHireListModel {
-  bool? success;
+  int? code;
   String? status;
   List<Data>? data;
 
-  NewHireListModel({this.success, this.status, this.data});
+  NewHireListModel({this.code, this.status, this.data});
 
   NewHireListModel.fromJson(Map<String, dynamic> json) {
-    success = json['success'];
+    code = json['code'];
     status = json['status'];
     if (json['data'] != null) {
       data = <Data>[];
@@ -20,7 +20,7 @@ class NewHireListModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    data['code'] = this.code;
     data['status'] = this.status;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();

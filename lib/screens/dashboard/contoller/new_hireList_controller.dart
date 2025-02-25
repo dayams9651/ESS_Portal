@@ -6,23 +6,24 @@ import '../model/new_hireList_model.dart';
 class NewHireListController extends GetxController {
   var isLoading = true.obs;
   var newHireList = <Data>[].obs;
+
   @override
   void onInit() {
     super.onInit();
     fetchNewHireListData();
   }
+
   void fetchNewHireListData() async {
     isLoading(true);
     try {
       NewHireListModel? response = await ApiServices().fetchNewHireListData();
-      if (response != null && response.success == true) {
+      if (response != null) {
         newHireList.value = response.data ?? [];
       } else {
-        debugPrint('Error: ${response?.status}');
+        debugPrint('Error: No response data');
       }
     } finally {
       isLoading(false);
     }
   }
-
 }

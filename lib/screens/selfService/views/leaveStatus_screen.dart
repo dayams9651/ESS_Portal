@@ -4,6 +4,7 @@ import 'package:ms_ess_portal/common/widget/const_shimmer_effects.dart';
 import 'package:ms_ess_portal/common/widget/const_text_with_styles.dart';
 import 'package:ms_ess_portal/const/image_strings.dart';
 import 'package:ms_ess_portal/screens/selfService/controller/leaveStatus_controller.dart';
+import 'package:ms_ess_portal/screens/selfService/controller/leave_withdraw_controller.dart';
 import 'package:ms_ess_portal/style/color.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../common/widget/const_button.dart';
@@ -15,6 +16,7 @@ class LeaveStatusScreen extends GetView<LeaveStatusController> {
   final TextEditingController _filterController = TextEditingController();
   @override
   final LeaveStatusController controller = Get.put(LeaveStatusController());
+  final LeaveWithdrawController controllerwithdraw = Get.put(LeaveWithdrawController());
   final List<String> _items = [
     'EL',
     'SL',
@@ -60,17 +62,17 @@ class LeaveStatusScreen extends GetView<LeaveStatusController> {
                   _showBottomFilter(context); // Pass context here
                 },
                 child: AbsorbPointer(
-                  child: SizedBox(
-                    height: 45,
-                    child: TextFormField(
-                      controller: _filterController,
-                      decoration: const InputDecoration(
-                        hintText: "Select Leave",
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.keyboard_arrow_down_outlined, size: 30),
-                      ),
-                    ),
-                  ),
+                  // child: SizedBox(
+                  //   height: 45,
+                  //   child: TextFormField(
+                  //     controller: _filterController,
+                  //     decoration: const InputDecoration(
+                  //       hintText: "Select Leave",
+                  //       border: OutlineInputBorder(),
+                  //       suffixIcon: Icon(Icons.keyboard_arrow_down_outlined, size: 30),
+                  //     ),
+                  //   ),
+                  // ),
                 ),
               ),
             ),
@@ -194,7 +196,6 @@ class LeaveStatusScreen extends GetView<LeaveStatusController> {
                               Text(leaveRequest.fromdt, style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color:AppColors.white50),)
                             ],
                           )
-
                         ],
                       )
                     ],
@@ -202,12 +203,12 @@ class LeaveStatusScreen extends GetView<LeaveStatusController> {
                 ),
                 const SizedBox(height: 10,),
                 Padding(
-                  padding: const EdgeInsets.only(left: 50.0),
+                  padding: const EdgeInsets.only(),
                   child: Row(
                     children: [
                       const Icon(Icons.info_outline, color: AppColors.error60, size: 27,),
                       const SizedBox(width: 5,),
-                      const10TextBold("Reporting to ${leaveRequest.reportto}", )
+                      const10TextBold("Reporting to ${leaveRequest.reportto} for ${leaveRequest.totalday}", )
                     ],
                   ),
                 ),
@@ -222,9 +223,9 @@ class LeaveStatusScreen extends GetView<LeaveStatusController> {
                     borderRadius: BorderRadius.circular(15),
 
                   ),
-                  child: const Padding(
+                  child: Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Text("Due to Fever I'm unable to come at office.....", style: TextStyle(fontSize: 16, color: AppColors.white60),),
+                    child: Text("${leaveRequest.remark??""}", style: TextStyle(fontSize: 16, color: AppColors.white60),),
                   ),
                 ),
                 const SizedBox(height: 15,),
@@ -235,7 +236,11 @@ class LeaveStatusScreen extends GetView<LeaveStatusController> {
                     children: [
                       SizedBox(
                           width: 180,
-                          child: RoundButton(title: 'Withdraw', onTap:(){} )),
+                          child: RoundButton(title: 'Withdraw', onTap:(){
+                            controllerwithdraw.rejectLeaveRequest(leaveRequest.trackid);
+                            Get.back();
+
+                          } )),
                       SizedBox(
                           width: 180,
                           height: 42,

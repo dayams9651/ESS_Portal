@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:ms_ess_portal/LockAuth/lockScreen_page.dart';
 import 'package:ms_ess_portal/screens/Statistics/bindings/statistics_bindings.dart';
 import 'package:ms_ess_portal/screens/Testing/testing_bindings.dart';
 import 'package:ms_ess_portal/screens/dashboard/dashboard_screen.dart';
@@ -40,6 +41,7 @@ class ApplicationPages {
   static const hierarchyScreen = '/hierarchyScreen';
   static const peripheralScreen = '/peripheralScreen';
   static const statisticsScreen = '/statisticsScreen';
+  static const lockScreenScreen = '/lockScreenScreen';
   static const testingScreen = '/testingScreen';
 
   static List<GetPage>? getApplicationPages() => [
@@ -124,8 +126,13 @@ class ApplicationPages {
     ),
 
     GetPage(
+        name: lockScreenScreen,
+        page: ()=>  LockScreenPage(),
+    ),
+
+    GetPage(
         name: testingScreen,
-        page: ()=>  ReportScreen(),
+        page: ()=>  UserPage(),
         // binding: TestingBindings()
     ),
   ];

@@ -9,10 +9,12 @@ import 'package:shimmer/shimmer.dart';
 import '../../../common/widget/round_button.dart';
 import '../../../style/color.dart';
 import '../../../style/text_style.dart';
+
 class LeaveGrantScreen extends GetView<LeaveGrantController> {
   LeaveGrantScreen({super.key});
   final LeaveGrantController controller1 = Get.put(LeaveGrantController());
-  final RejectRequestController rejectRequestController = Get.put(RejectRequestController());
+  final ApproveRequestController rejectRequestController = Get.put(ApproveRequestController());
+  bool _isLoading = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,7 +110,6 @@ class LeaveGrantScreen extends GetView<LeaveGrantController> {
       })
     );
   }
-
   void showPopUp(BuildContext context, index) {
     showDialog(
       context: context,
@@ -147,7 +148,7 @@ class LeaveGrantScreen extends GetView<LeaveGrantController> {
                 const10Text("Request date : ${leaveRequest.regago}"),
                 const SizedBox(height: 7),
                 const10TextBold("Reason"),
-                const10Text("Due to punch machine not setup in B-88 branch"),
+                const10Text(leaveRequest.remark??""),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -177,15 +178,10 @@ class LeaveGrantScreen extends GetView<LeaveGrantController> {
                       child: RoundButton(
                         title: 'Accept',
                         onTap: () async {
-                          await rejectRequestController.acceptRequest();
-                          if (rejectRequestController.isSuccess.value) {
-                            Get.snackbar('Success', 'Request Accepted');
-                            Navigator.of(context).pop();
-                          } else {
-                            Get.snackbar('Error', rejectRequestController.errorMessage.value);
-                          }
+                          await rejectRequestController.acceptRequest(leaveRequest.trackid);
                         },
-                        color: AppColors.error40,
+                        // loading: _isLoading,
+                        color: AppColors.primaryColor,
                       ),
                     ),
                     // Reject Button
@@ -193,17 +189,11 @@ class LeaveGrantScreen extends GetView<LeaveGrantController> {
                       width: 100,
                       child: RoundButton(
                         title: 'Reject',
+                        // loading: _isLoading,
                         onTap: () async {
-                          // Call the rejectRequest method without passing a reason
-                          await rejectRequestController.rejectRequest();
-                          if (rejectRequestController.isSuccess.value) {
-                            Get.snackbar('Success', 'Request Rejected');
-                            Navigator.of(context).pop(); // Close the pop-up after success
-                          } else {
-                            Get.snackbar('Error', rejectRequestController.errorMessage.value);
-                          }
+                          await rejectRequestController.rejectRequest(leaveRequest.trackid);
                         },
-                        color: AppColors.primaryColor,
+                        color: AppColors.error40,
                       ),
                     ),
                   ],
@@ -215,6 +205,5 @@ class LeaveGrantScreen extends GetView<LeaveGrantController> {
       },
     );
   }
-
 
 }

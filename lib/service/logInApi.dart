@@ -13,6 +13,7 @@ class UserLogInService extends GetxController {
   RxBool isLoading = false.obs;
   var responseMessage = ''.obs;
   var logInData = Rxn<LoginResponse>();
+  final box = GetStorage();
   Future<void> logInUser(String username, String password ) async {
     try {
       final response = await http.post(
@@ -44,7 +45,7 @@ class UserLogInService extends GetxController {
           showCustomSnackbar('Error', responseData['message'] ?? 'Your Employee ID or Password is wrong',
               backgroundColor: AppColors.error10);
           debugPrint("Error ${responseData['message']}");
-        }
+      }
       } else {
         showCustomSnackbar('Alert', 'Your Employee ID or Password is wrong', backgroundColor: AppColors.error10);
       }

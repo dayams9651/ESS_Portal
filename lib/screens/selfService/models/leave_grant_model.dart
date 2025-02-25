@@ -9,6 +9,7 @@ class LeaveStatusModel {
   final String regago;
   final String reportto;
   final String code;
+  final String remark;
 
   LeaveStatusModel({
     required this.leavetype,
@@ -21,9 +22,8 @@ class LeaveStatusModel {
     required this.regago,
     required this.reportto,
     required this.code,
+    required this.remark,
   });
-
-  // Factory constructor to create a LeaveRequest from a map (JSON)
   factory LeaveStatusModel.fromJson(Map<String, dynamic> json) {
     return LeaveStatusModel(
       leavetype: json['leavetype'],
@@ -36,6 +36,7 @@ class LeaveStatusModel {
       regago: json['regago'],
       reportto: json['reportto'],
       code: json['code'],
+      remark: json['remark'],
     );
   }
 }

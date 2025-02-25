@@ -91,12 +91,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         decoration: const BoxDecoration(
                             color: AppColors.white
                         ),
-                        accountName: Text('${logInResponse?.data.userName}',style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.white100),),
-                        accountEmail: Text(logInResponse?.data.designation ?? "", style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white100),),
+                        accountName: Text('${logInResponse?.data?.userName}',style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.white100),),
+                        accountEmail: Text(logInResponse?.data?.designation ?? "", style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white100),),
                         currentAccountPicture: CircleAvatar(
                           radius: 40,
                           backgroundImage: NetworkImage(
-                              logInResponse?.data.photo??"No Img"),
+                              logInResponse?.data?.photo??"No Img"),
                         ),
                       ),
                       _buildDrawerItem(
@@ -139,9 +139,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       _buildDrawerItem(icon: Icons.snippet_folder_outlined, text: 'Documents', onTap: (){
                         Get.toNamed(ApplicationPages.documentsScreen);
                       }),
-                      // _buildDrawerItem(icon: Icons.dangerous, text: 'For Testing', onTap: (){
-                      //   Get.toNamed(ApplicationPages.testingScreen);
-                      // }),
+                      _buildDrawerItem(icon: Icons.dangerous, text: 'For Testing', onTap: (){
+                        Get.toNamed(ApplicationPages.testingScreen);
+                      }),
                       _buildDrawerItem(icon: Icons.auto_graph_outlined, text: 'Attendance Statistics', onTap: (){
                         Get.toNamed(ApplicationPages.statisticsScreen);
 
@@ -164,7 +164,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
        }
       ),
       bottomNavigationBar: (bottomBarPages.length <= maxCount)
-          ? AnimatedNotchBottomBar(
+          ?
+      AnimatedNotchBottomBar(
         notchBottomBarController: _controller,
         color: AppColors.primaryColor,
         showLabel: true,
@@ -186,10 +187,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Icons.home_filled,
               color: Colors.white70,
             ),
-            activeItem: Icon(
-              size: 30,
-              Icons.home_filled,
-              color: Colors.white,
+            activeItem: Center(
+              child: Icon(
+                size: 30,
+                Icons.home_filled,
+                color: Colors.white,
+              ),
             ),
             itemLabel: 'Home',
           ),

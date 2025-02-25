@@ -24,7 +24,7 @@ class LeaveStatusController extends GetxController {
       throw Exception('Token not found. Please log in first.');
     }
     try {
-      final response = await http.get(Uri.parse(apiLeaveStatus),
+      final response = await http.post(Uri.parse(apiLeaveStatus),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -39,6 +39,7 @@ class LeaveStatusController extends GetxController {
         leaveStatus.assignAll(leaveStatusData);
         isError(false);
       } else {
+        debugPrint("else Condition");
         isError(true);
       }
     } catch (e) {

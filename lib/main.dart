@@ -5,8 +5,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:ms_ess_portal/routes/routes.dart';
 import 'package:ms_ess_portal/style/color.dart';
 
-void main() {
-  GetStorage.init();
+void main() async {
+  await GetStorage.init();
   runApp(const MyApp());
 }
 
@@ -31,9 +31,11 @@ class MyApp extends StatelessWidget {
             appBarTheme: const AppBarTheme(
             ),
           ),
+          // home: HomeScreen(),
           initialRoute: ApplicationPages.splashScreen,
           getPages: ApplicationPages.getApplicationPages(),
         )
     );
   }
 }
+

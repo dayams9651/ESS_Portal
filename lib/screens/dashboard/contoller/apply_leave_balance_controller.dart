@@ -16,25 +16,40 @@ class LeaveApplyBalanceControllerEL extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchLeaveBalance;
+    fetchLeaveBalance;  // Call fetchLeaveBalance with the key, e.g., keyEL
   }
+
   final box = GetStorage();
+
   Future<void> fetchLeaveBalance(String key) async {
     try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
       String? token = box.read('token');
       if (token == null || token.isEmpty) {
         throw Exception('Token not found. Please log in first.');
       }
-      final response = await http.get(Uri.parse('$apiLeave$key'),
+
+      debugPrint("Making API call to $apiLeave");
+      final Map<String, String> body = {
+        "type": key
+      };
+
+      final response = await http.post(
+        Uri.parse('$apiLeave'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
+        body: json.encode(body),  // Pass the body with type
       );
 
+      debugPrint("API call completed with status code: ${response.statusCode}");
+
       if (response.statusCode == 200) {
+        debugPrint("API Response: ${response.body}");
         var data = json.decode(response.body);
-        debugPrint('------- Api Response From  $key : ${response.body}');
         leaveBalance.value = LeaveResponseModel.fromJson(data);
 
         if (leaveBalance.value.data?.leaveOptions?.options != null) {
@@ -42,10 +57,11 @@ class LeaveApplyBalanceControllerEL extends GetxController {
         }
         debugPrint("fetchLeaveBalance $key ${leaveBalance.value}");
       } else {
-        errorMessage.value = "Failed to load data!";
+        errorMessage.value = "Failed to load data! Status Code: ${response.statusCode}";
       }
     } catch (e) {
       errorMessage.value = "Error: $e";
+      debugPrint("Error occurred: $e");
     } finally {
       isLoading.value = false;
     }

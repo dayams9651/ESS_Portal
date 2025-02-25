@@ -5,11 +5,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:ms_ess_portal/service/logInApi.dart';
 import 'package:ms_ess_portal/style/color.dart';
 import 'package:shimmer/shimmer.dart';
-
 import '../../../common/widget/const_shimmer_effects.dart';
 import '../../../common/widget/const_text_with_styles.dart';
-import '../../../common/widget/round_button.dart';
-import '../../../style/text_style.dart';
 import '../widget/profile_container.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -52,11 +49,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         CircleAvatar(
                           radius: 70,
-                          backgroundImage: NetworkImage(profileData?.data.photo??"No Img"),
+                          backgroundImage: NetworkImage(profileData?.data?.photo??"No Img"),
                         ),
                         SizedBox(height: 5,),
-                        const12TextBold("${profileData?.data.userName}"),
-                        const12Text("${profileData?.data.designation}")
+                        const12TextBold("${profileData?.data?.userName}"),
+                        const12Text("${profileData?.data?.designation}")
                       ],
                     ),
                   ),

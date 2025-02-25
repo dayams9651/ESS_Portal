@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:ms_ess_portal/const/api_url.dart';
 import 'package:ms_ess_portal/screens/holiday&event/models/holiday_model.dart';
 
 
@@ -12,7 +13,7 @@ class EventController extends GetxController {
   var isLoading = true.obs;
   var errorMessage = ''.obs;
 
-  final box = GetStorage(); // Assuming GetStorage is already initialized
+  final box = GetStorage();
 
   @override
   void onInit() {
@@ -27,20 +28,17 @@ class EventController extends GetxController {
 
     try {
       isLoading(true);
-
-      // Generate start and end date strings
       final startDate = "$year-${month.toString().padLeft(2, '0')}-01";
-      final endDate = "$year-${month.toString().padLeft(2, '0')}-28"; // max of 28 days for simplicity
+      final endDate = "$year-${month.toString().padLeft(2, '0')}-28";
+      final event = "$apiHolidayEvent/?start=$startDate&end=$endDate";
+          // 'https://essv2.mscorpres.net/event/?start=$startDate&end=$endDate';
 
-      final url =
-          'https://esstest.mscorpres.net/event/?start=$startDate&end=$endDate';
-
-      final response = await http.get(Uri.parse(url),
+      final response = await http.post(Uri.parse(event),
           headers: {
             'Authorization': 'Bearer $token',
             'Content-Type': 'application/json',
           });
-
+debugPrint("datatgd");
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
         var eventsData = data['data']['events'] as List;

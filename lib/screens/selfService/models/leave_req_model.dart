@@ -11,6 +11,7 @@ class LeaveGrantModel {
   final String department;
   final String designation;
   final String photo;
+  final String remark;
 
   LeaveGrantModel({
     required this.leavetype,
@@ -24,6 +25,7 @@ class LeaveGrantModel {
     required this.department,
     required this.designation,
     required this.photo,
+    required this.remark,
   });
 
   factory LeaveGrantModel.fromJson(Map<String, dynamic> json) {
@@ -39,6 +41,7 @@ class LeaveGrantModel {
       department: json['department'],
       designation: json['designation'],
       photo: json['photo'],
+      remark: json['remark'],
     );
   }
 }

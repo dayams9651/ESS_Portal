@@ -6,6 +6,9 @@ import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:ms_ess_portal/common/widget/const_text_with_styles.dart';
 import 'package:ms_ess_portal/const/image_strings.dart';
+import 'package:ms_ess_portal/noInternet/no_internet_controller.dart';
+import 'package:ms_ess_portal/noInternet/no_internet_screen.dart';
+import 'package:ms_ess_portal/screens/dashboard/contoller/attendance_controller.dart';
 import 'package:ms_ess_portal/screens/dashboard/contoller/earned_leave_controller.dart';
 import 'package:ms_ess_portal/screens/dashboard/contoller/home_controller.dart';
 import 'package:ms_ess_portal/screens/dashboard/contoller/sick_leave_controller.dart';
@@ -47,8 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _startTimeUpdates();
     controllerSL.fetchSickLeaveBalance;
     controllerShift.fetchShiftData;
-
-
+    // attendController.fetchAttendanceData('2025-02-01', '2026-05-28');
   }
 
   void _startTimeUpdates() {
@@ -75,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _timer.cancel();
     super.dispose();
   }
-
+  final NetworkController networkController = Get.put(NetworkController());
   final BirthdayBashController controller = Get.put(BirthdayBashController());
   final NewHireListController controllerNewHire = Get.put(NewHireListController());
   final WorkAnniversaryController controllerWA = Get.put(WorkAnniversaryController());
@@ -85,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final SickLeaveBalanceController controllerSL = Get.put(SickLeaveBalanceController());
   final UserLogInService controllerLogIn = Get.put(UserLogInService());
   final ShiftController controllerShift = Get.put(ShiftController());
+  // final AttendanceController attendController = Get.put(AttendanceController());
   final LeaveBalanceController leaveBalanceController = Get.put(LeaveBalanceController());
 
   @override
@@ -93,6 +96,9 @@ class _HomeScreenState extends State<HomeScreen> {
     double height = MediaQuery.of(context).size.height;
 
     return Obx(() {
+      if (!networkController.isConnected.value) {
+        NoInternetScreen();
+      }
       if (controller.isLoading.value) {
         return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
       }
@@ -161,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: ListTile(
                     title: Text(
-                      "${getGreetingMessage()}, ${logInResponse?.data.userName.toString()}",
+                      "${getGreetingMessage()}, ${logInResponse?.data?.userName.toString()}",
                       style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text("Let's be productive today!", style: AppTextStyles.kSmall12RegularTextStyle),
@@ -215,9 +221,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CustomHomeCard(icon: Icons.medical_information_outlined, text: 'Sick Leave', text1: '${sickLeave?.data.lOpBal ??0} / ${sickLeave?.data.totalYrBal??0}', subTitle: '0.666', iconButton: IconButton(onPressed: (){
-                            controllerSL.fetchSickLeaveBalanceUpdate;
-                          }, icon: Icon(Icons.refresh_outlined)), ),
+                          CustomHomeCard(icon: Icons.medical_information_outlined, text: 'Sick Leave', text1: '${sickLeave?.data?.lClBal ??0} / ${sickLeave?.data?.totalYrBal??0}', subTitle: '0.666',
+                            ),
                           CustomHomeCard(icon: Icons.currency_exchange, text: 'Earned Leave', text1: '${leaveELBalance?.data?.lClBal??0} / ${leaveELBalance?.data?.totalYrBal??0}', subTitle: '0.5', iconButton: IconButton(onPressed: (){
                             controllerEL.fetchEarnedLeaveUpdate;
                           }, icon: Icon(Icons.refresh_outlined)),)
@@ -228,13 +233,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const CustomHomeCard(icon: Icons.done_outline, text: 'Compensatory\nLeave', text1: '', subTitle: '0.5'),
-                          CustomHomeCard(icon: Icons.home_outlined, text: 'Work From\nHome', text1: '${leaveBalance?.data.lOpBal ?? 0} / ${leaveBalance?.data.lClBal ?? 0}', subTitle: '0.5', iconButton: IconButton(onPressed: (){
+                          CustomHomeCard(icon: Icons.home_outlined, text: 'Work From\nHome', text1: '${leaveBalance?.data?.lOpBal ?? 0} / ${leaveBalance?.data?.lClBal ?? 0}', subTitle: '0.5', iconButton: IconButton(onPressed: (){
                             leaveBalanceController.fetchLeaveBalanceUpdate;
                           }, icon: Icon(Icons.refresh_outlined)),)
                         ],
                       ),
                       const SizedBox(height: 5),
-
                       const12TextBold("New Hires"),
                       const SizedBox(height: 5),
                       SizedBox(
@@ -396,7 +400,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                         ),
                       ),
-
                     ],
                   ),
                 ),

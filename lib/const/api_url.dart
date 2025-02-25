@@ -1,31 +1,37 @@
 
-const String baseUrl = "https://esstest.mscorpres.net";  // local Url
-// const String baseUrl = "http://192.168.68.107:3005";  // local Url
+// const String baseUrl = "https://esstest.mscorpres.net";  // local Url
+const String baseUrl = "https://essv2.mscorpres.net";  // local Url
+// const String baseUrl = "http://192.168.68.110:3005";  // local Url
 // const String baseUrl = "https://login.mscorpres.online";  // Live Url
-const String logInApi = "$baseUrl/auth/login";
-const String announcementApi = "$baseUrl/timeline";
-const String birthdayBashApi = "$baseUrl/dashboard/eventBash/DOB";
-const String newHireListApi = "$baseUrl/dashboard/hiresList";
-const String workAnnApi = "$baseUrl/dashboard/eventBash/WA";
-const String earnedLeaveApi = "$baseUrl/dashboard/leave/EL";
-const String leaveListApi = "$baseUrl/dashboard/leave/leavelist";
-const String shiftApi = "$baseUrl/attendance/view/shift";
-const String wfhLeaveApi = "$baseUrl/dashboard/leave/WFH";
-const String sickLeaveApi = "$baseUrl/dashboard/leave/SL";
-const String apiUrlPunch = "$baseUrl/attendance/view/punch/";
-const String apiPeripheral = "$baseUrl/peripheral";
-const String apiEvents = "$baseUrl/event/?start=&end=";
-const String apiLeaveGrant = "$baseUrl/request";
-const String apiLeaveStatus = "$baseUrl/audit";
+
+const String logInApi = "$baseUrl/login/login";  // Done
+const String announcementApi = "$baseUrl/timeline";   // Done
+const String birthdayBashApi = "$baseUrl/dashboard/eventBash/DOB"; // Done
+const String newHireListApi = "$baseUrl/dashboard/hiresList";   // Done
+const String workAnnApi = "$baseUrl/dashboard/eventBash/WA";   //Done
+const String earnedLeaveApi = "$baseUrl/dashboard/leave/EL";   //Done
+const String leaveListApi = "$baseUrl/dashboard/leave/leavelist";  //Done
+const String shiftApi = "$baseUrl/attendance/view/shift";  // Done
+const String wfhLeaveApi = "$baseUrl/dashboard/leave/WFH";  // Done
+const String sickLeaveApi = "$baseUrl/dashboard/leave/SL";   //Done
+const String apiUrlPunch = "$baseUrl/attendance/view/punch/";  // Done
+const String apiPeripheral = "$baseUrl/assets";
+const String apiEvents = "$baseUrl/event/?start=&end=";  // done
+const String apiLeaveGrant = "$baseUrl/leave/getLeaveList";   //Done
+const String apiLeaveStatus = "$baseUrl/leave/getEmpLeaveList";  // Done
+const String apiWithdraw = "$baseUrl/leave/LeaveEmpReject";  // Done
+const String apiLeaveApprove = "$baseUrl/leave/LeaveApprove";  // Done
+const String apiLeaveReject = "$baseUrl/leave/LeaveReject";  // Done
+const String apiHolidayEvent = "$baseUrl/event";  // Done
+const String apiAttendanceStatistics = "$baseUrl/dashboard/attendance-statistics";  // Done
 // Apply Leave List
-const String apiLeave = "$baseUrl/apply/balance/";
+const String apiLeave = "$baseUrl/leave/getBalance";
 const String apiLeaveCalculation = "$baseUrl/leave/getBalance/";
-const String apiApplyLeave = "$baseUrl/apply/request/EL";
+const String apiApplyLeave = "$baseUrl/leave/sendELLeaveRequest";
 const String apiResetPassword = "$baseUrl/auth/reset";
 
 
 // Leave balance Update
-
 const String apiLeaveUpdateWFH = "$baseUrl/dashboard/updateLeave/WFH";
 const String apiLeaveUpdateSL = "$baseUrl/dashboard/updateLeave/SL";
 const String apiLeaveUpdateEL = "$baseUrl/dashboard/updateLeave/EL";

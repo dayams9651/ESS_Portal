@@ -1,30 +1,45 @@
-
 class LeaveBalanceModel1 {
-  final bool success;
-  final Data data;
+  int? code;
+  Data? data;
+  Null? compBal;
 
-  LeaveBalanceModel1({required this.success, required this.data});
+  LeaveBalanceModel1({this.code, this.data, this.compBal});
 
-  factory LeaveBalanceModel1.fromJson(Map<String, dynamic> json) {
-    return LeaveBalanceModel1(
-      success: json['success'],
-      data: Data.fromJson(json['data']),
-    );
+  LeaveBalanceModel1.fromJson(Map<String, dynamic> json) {
+    code = json['code'];
+    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    compBal = json['compBal'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['code'] = this.code;
+    if (this.data != null) {
+      data['data'] = this.data!.toJson();
+    }
+    data['compBal'] = this.compBal;
+    return data;
   }
 }
 
 class Data {
-  final int totalYrBal;
-  final String lOpBal;
-  final String lClBal;
+  String? totalYrBal;
+  String? lOpBal;
+  String? lClBal;
 
-  Data({required this.totalYrBal, required this.lOpBal, required this.lClBal});
+  Data({this.totalYrBal, this.lOpBal, this.lClBal});
 
-  factory Data.fromJson(Map<String, dynamic> json) {
-    return Data(
-      totalYrBal: json['total_yr_bal'],
-      lOpBal: json['l_op_bal'],
-      lClBal: json['l_cl_bal'],
-    );
+  Data.fromJson(Map<String, dynamic> json) {
+    totalYrBal = json['total_yr_bal'];
+    lOpBal = json['l_op_bal'];
+    lClBal = json['l_cl_bal'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['total_yr_bal'] = this.totalYrBal;
+    data['l_op_bal'] = this.lOpBal;
+    data['l_cl_bal'] = this.lClBal;
+    return data;
   }
 }

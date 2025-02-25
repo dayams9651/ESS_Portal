@@ -7,7 +7,6 @@ import '../service/logInApi.dart';
 
 class SplashScreenEss extends StatefulWidget {
   const SplashScreenEss({super.key});
-
   @override
   State<SplashScreenEss> createState() => _SplashScreenEssState();
 }
@@ -26,7 +25,8 @@ class _SplashScreenEssState extends State<SplashScreenEss> {
       debugPrint("box.read('token') loggedIn==$loggedIn ${ await box.read('token')}");
       if (loggedIn) {
         debugPrint("loggedIn $loggedIn");
-        Get.offNamed(ApplicationPages.dashboardScreen);
+        // Get.to(LockScreenPage());
+        Get.offNamed(ApplicationPages.lockScreenScreen);
       } else {
         debugPrint("loggedIn $loggedIn");
         Get.to(const WelcomeScreen());

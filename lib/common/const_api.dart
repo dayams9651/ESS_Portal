@@ -11,7 +11,7 @@ import '../screens/dashboard/model/new_hireList_model.dart';
 
 class ApiServices {
   final box = GetStorage();
-  final String payslipApi = "https://esstest.mscorpres.net/payslip?period=2024-12";
+  final String payslipApi = "https://essv2.mscorpres.net/payslip?period=2024-12";
   Future<Payslip> fetchPayslipData() async {
     String? token = box.read('token');
     if (token == null || token.isEmpty) {
@@ -30,6 +30,7 @@ class ApiServices {
     }
   }
 
+
   Future<BirthdayBashModel?> fetchBirthdayData() async {
     try {
       String? token = box.read('token');
@@ -46,6 +47,7 @@ class ApiServices {
       debugPrint('BirthdayResponse : ${response.body}');
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
+        debugPrint(" Birthday response ${response.body}");
         return BirthdayBashModel.fromJson(data);
       } else {
         throw Exception('Failed to load birthday data');

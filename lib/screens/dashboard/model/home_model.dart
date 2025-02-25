@@ -1,26 +1,23 @@
-// Birthday Model
 class BirthdayBashModel {
-  bool? success;
+  int? code;
   String? status;
   List<Data>? data;
 
-
-  BirthdayBashModel({this.success, this.status, this.data});
-
+  BirthdayBashModel({this.code, this.status, this.data});
   BirthdayBashModel.fromJson(Map<String, dynamic> json) {
-    success = json['success'];
+    code = json['code'];
     status = json['status'];
     if (json['data'] != null) {
       data = <Data>[];
       json['data'].forEach((v) {
-        data!.add(Data.fromJson(v));
+        data!.add(new Data.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    data['success'] = this.success;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['code'] = this.code;
     data['status'] = this.status;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
@@ -58,7 +55,7 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
+    final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
     data['type'] = this.type;
     data['date'] = this.date;
@@ -69,9 +66,3 @@ class Data {
     return data;
   }
 }
-
-
-// New Hires Model
-
-
-

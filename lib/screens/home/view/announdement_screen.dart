@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
+import 'package:ms_ess_portal/noInternet/no_internet_controller.dart';
 import 'package:ms_ess_portal/screens/home/controller/announcement_controller.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../common/widget/const_shimmer_effects.dart';
@@ -15,6 +16,7 @@ class AnnouncementScreen extends StatefulWidget {
 
 class _AnnouncementScreenState extends State<AnnouncementScreen> {
   final AnnouncementController controller = Get.put(AnnouncementController());
+  final NetworkController networkController = Get.put(NetworkController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(

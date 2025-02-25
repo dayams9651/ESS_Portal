@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ms_ess_portal/common/widget/const_shimmer_effects.dart';
 import 'package:ms_ess_portal/screens/Statistics/controller/statistics_controller.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../style/color.dart';
 import '../../../style/text_style.dart';
-import '../../Testing/testing_controller.dart';
 
 class StatisticsScreen extends GetView<AttendanceStaticsController> {
   final AttendanceStaticsController _controller = Get.put(AttendanceStaticsController());
@@ -23,7 +24,7 @@ class StatisticsScreen extends GetView<AttendanceStaticsController> {
             Get.back();
           },
         ),
-        title: Text("Attendance Statistics", style: AppTextStyles.kPrimaryTextStyle),
+        title: Center(child: Text("Attendance Statistics", style: AppTextStyles.kPrimaryTextStyle)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(5.0),
@@ -34,7 +35,7 @@ class StatisticsScreen extends GetView<AttendanceStaticsController> {
             const SizedBox(height: 10),
             Obx(() {
               if (_controller.attendanceData.value == null) {
-                return Center(child: CircularProgressIndicator());
+                return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
               }
               var months = _controller.attendanceData.value!.months;
               Map<String, double> dataMap = {};

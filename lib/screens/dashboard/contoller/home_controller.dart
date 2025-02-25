@@ -5,26 +5,24 @@ import '../model/home_model.dart';
 class BirthdayBashController extends GetxController {
   var isLoading = true.obs;
   var birthdayList = <Data>[].obs;
+
   @override
   void onInit() {
     super.onInit();
     fetchBirthdayData();
   }
+
   void fetchBirthdayData() async {
     isLoading(true);
     try {
       BirthdayBashModel? response = await ApiServices().fetchBirthdayData();
-      if (response != null && response.success == true) {
-        birthdayList.value = response.data ?? [];
-      } else {
-        debugPrint('Error: ${response?.status}');
-      }
+      birthdayList.value = response?.data ?? [];
+    } catch (e) {
+      debugPrint('Error: $e');
     } finally {
       isLoading(false);
     }
   }
-
 }
-
 
 

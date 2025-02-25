@@ -25,7 +25,7 @@ class LeaveApplyController extends GetxController {
       }
       debugPrint('Token: $token');
       debugPrint('Request Body: ${jsonEncode(body)}');
-      final response = await http.post(
+      final response = await   http.post(
         Uri.parse(apiApplyLeave),
         headers: {
           'Authorization': 'Bearer $token',
@@ -37,7 +37,7 @@ class LeaveApplyController extends GetxController {
       debugPrint('Response Status Code: ${response.statusCode}');
       debugPrint('Response Body: ${response.body}');
 
-      // if (response.statusCode == 200) {
+      if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
         if (jsonResponse['success'] == true) {
           String msg = jsonResponse['message']['msg'];
@@ -46,11 +46,11 @@ class LeaveApplyController extends GetxController {
           String errorMsg = jsonResponse['message']['msg'];
           Get.snackbar('Error', errorMsg, backgroundColor: AppColors.error20, );
         }
-      // }
-      // else {
-      //   errorMessage('Failed to apply leave. Status Code: ${response.statusCode}');
-      //   Get.snackbar('Error', 'Failed to apply leave. Status Code: ');
-      // }
+      }
+      else {
+        errorMessage('Failed to apply leave. Status Code: ${response.statusCode}');
+        Get.snackbar('Error', 'Failed to apply leave. Status Code: ');
+      }
     } catch (e) {
       errorMessage('An error occurred: $e');
       Get.snackbar('Error', 'An error occurred: $e');
@@ -58,27 +58,4 @@ class LeaveApplyController extends GetxController {
       isLoading(false);
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

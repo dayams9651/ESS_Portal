@@ -7,6 +7,7 @@ class AssetModel {
   final String identity;
   final String status;
   final String allotedDt;
+  final List<String> images;
 
   AssetModel({
     required this.name,
@@ -17,6 +18,7 @@ class AssetModel {
     required this.identity,
     required this.status,
     required this.allotedDt,
+    required this.images,
   });
 
   factory AssetModel.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,7 @@ class AssetModel {
       identity: json['identity'],
       status: json['status'],
       allotedDt: json['alloted_dt'],
+      images: List<String>.from(json['images'] ?? []),
     );
   }
 }
