@@ -148,7 +148,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       }),
                     ],
                   ),
-                  const SizedBox(height: 70,),
+                  const SizedBox(height: 2,),
                   Padding(
                     padding: const EdgeInsets.all(80.0),
                     child: RoundButton(title: 'Logout', onTap: () {

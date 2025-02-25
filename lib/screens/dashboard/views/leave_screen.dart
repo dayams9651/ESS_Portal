@@ -11,6 +11,7 @@ import 'package:ms_ess_portal/screens/dashboard/model/apply_leave_balance_model.
 import 'package:ms_ess_portal/style/color.dart';
 import '../../../style/text_style.dart';
 import 'package:intl/intl.dart';
+import '../contoller/emp_search_mail_controller.dart';
 
 class LeaveScreen extends StatefulWidget {
   const LeaveScreen({super.key});
@@ -19,12 +20,13 @@ class LeaveScreen extends StatefulWidget {
 }
 class _LeaveScreenState extends State<LeaveScreen> {
   final LeaveApplyBalanceControllerEL controller = Get.put(LeaveApplyBalanceControllerEL());
+  final TextEditingController _copyMailController = TextEditingController();
+  final EmployeeCopyMailController employeeMailController = Get.put(EmployeeCopyMailController());
   final LeaveApplyBalanceControllerController leaveApplyCalculateController = Get.put(LeaveApplyBalanceControllerController());
   final TextEditingController _textController = TextEditingController();
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
   final TextEditingController _reasonController = TextEditingController();
-  final TextEditingController _copyMailController = TextEditingController();
   final LeaveApplyController leaveApplyController = Get.put(LeaveApplyController());
   final _formKey = GlobalKey<FormState>();
   String? _selectedLeaveType;
@@ -242,9 +244,33 @@ class _LeaveScreenState extends State<LeaveScreen> {
                           hintText: 'Employee ID / Name',
                           border: OutlineInputBorder(),
                         ),
+                        onChanged: (value) {
+                          employeeMailController.fetchEmployeeSuggestions(value);
+                        },
                       ),
                     ),
                     const SizedBox(height: 7),
+                    Obx(
+                          () {
+                        if (employeeMailController.isLoading.value) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: employeeMailController.employeeList.length,
+                          itemBuilder: (context, index) {
+                            final employee = employeeMailController.employeeList[index];
+                            return ListTile(
+                              title: Text(employee),
+                              onTap: () {
+                                _copyMailController.text = employee;
+                                employeeMailController.employeeList.clear();
+                              },
+                            );
+                          },
+                        );
+                      },
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: Row(
@@ -264,18 +290,16 @@ class _LeaveScreenState extends State<LeaveScreen> {
               Padding(
                 padding: const EdgeInsets.all(6.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    // Apply button
                     SizedBox(
-                        width: 180,
+                        width: 160,
                         child: RoundButton(
                           title: 'Request',
                           onTap: _applyLeave,
                         )),
-                    // Cancel button
                     SizedBox(
-                        width: 180,
+                        width: 160,
                         height: 40,
                         child: ConstButton(
                           title: 'Cancel',

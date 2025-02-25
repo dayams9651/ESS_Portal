@@ -1,60 +1,41 @@
+
 class Payslip {
-  final bool success;
-  final String status;
-  final PayslipData data;
-
-  Payslip({required this.success, required this.status, required this.data});
-
-  factory Payslip.fromJson(Map<String, dynamic> json) {
-    return Payslip(
-      success: json['success'],
-      status: json['status'],
-      data: PayslipData.fromJson(json['data']),
-    );
-  }
-}
-
-class PayslipData {
-  final List<BasicInfo> basic;
-  final List<Earning> earing;
-  final List<Deduction> deduction;
-  final List<Total> total;
-
-  PayslipData({required this.basic, required this.earing, required this.deduction, required this.total});
-
-  factory PayslipData.fromJson(Map<String, dynamic> json) {
-    return PayslipData(
-      basic: List<BasicInfo>.from(json['basic'].map((x) => BasicInfo.fromJson(x))),
-      earing: List<Earning>.from(json['earing'].map((x) => Earning.fromJson(x))),
-      deduction: List<Deduction>.from(json['deduction'].map((x) => Deduction.fromJson(x))),
-      total: List<Total>.from(json['total'].map((x) => Total.fromJson(x))),
-    );
-  }
-}
-
-class BasicInfo {
   final String name;
   final String code;
   final String designation;
   final String lastSalary;
+  final List<Earning> earnings;
+  final List<Deduction> deductions;
+  final Total total;
 
-  BasicInfo({required this.name, required this.code, required this.designation, required this.lastSalary});
+  Payslip({
+    required this.name,
+    required this.code,
+    required this.designation,
+    required this.lastSalary,
+    required this.earnings,
+    required this.deductions,
+    required this.total,
+  });
 
-  factory BasicInfo.fromJson(Map<String, dynamic> json) {
-    return BasicInfo(
-      name: json['name'],
-      code: json['code'],
-      designation: json['designation'],
-      lastSalary: json['last_salary'],
+  factory Payslip.fromJson(Map<String, dynamic> json) {
+    return Payslip(
+      name: json['basic'][0]['name'],
+      code: json['basic'][0]['code'],
+      designation: json['basic'][0]['designation'],
+      lastSalary: json['basic'][0]['last_salary'],
+      earnings: List<Earning>.from(json['earing'].map((x) => Earning.fromJson(x))),
+      deductions: List<Deduction>.from(json['deduction'].map((x) => Deduction.fromJson(x))),
+      total: Total.fromJson(json['total'][0]),
     );
   }
 }
 
 class Earning {
   final String label;
-  final String? value;
+  final String value;
 
-  Earning({required this.label, this.value});
+  Earning({required this.label, required this.value});
 
   factory Earning.fromJson(Map<String, dynamic> json) {
     return Earning(
@@ -66,9 +47,9 @@ class Earning {
 
 class Deduction {
   final String label;
-  final String? value;
+  final String value;
 
-  Deduction({required this.label, this.value});
+  Deduction({required this.label, required this.value});
 
   factory Deduction.fromJson(Map<String, dynamic> json) {
     return Deduction(
@@ -79,10 +60,10 @@ class Deduction {
 }
 
 class Total {
-  final String? earnings;
+  final int earnings;
   final int deductions;
 
-  Total({this.earnings, required this.deductions});
+  Total({required this.earnings, required this.deductions});
 
   factory Total.fromJson(Map<String, dynamic> json) {
     return Total(

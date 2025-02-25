@@ -1,54 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';  // For date formatting
 import 'package:ms_ess_portal/common/widget/const_shimmer_effects.dart';
-import 'package:ms_ess_portal/common/widget/const_text_with_styles.dart';
 import 'package:ms_ess_portal/common/widget/round_button.dart';
-import 'package:ms_ess_portal/const/image_strings.dart';
 import 'package:ms_ess_portal/screens/selfService/controller/paylip_controller.dart';
+import 'package:ms_ess_portal/style/color.dart';
+import 'package:ms_ess_portal/style/text_style.dart';
 import 'package:shimmer/shimmer.dart';
-import '../../../style/color.dart';
-import '../../../style/text_style.dart';
 
 class PayslipScreen extends StatefulWidget {
-  const PayslipScreen({super.key});
-
   @override
-  _PayslipScreenState createState() => _PayslipScreenState();
+  State<PayslipScreen> createState() => _PayslipScreenState();
 }
 
 class _PayslipScreenState extends State<PayslipScreen> {
-  String selectedMonth = 'February';
+  int selectedMonth = 2; // Default to February (2)
   int selectedYear = 2025;
-  Map<String, int> monthNames = {
-    'January': 1,
-    'February': 2,
-    'March': 3,
-    'April': 4,
-    'May': 5,
-    'June': 6,
-    'July': 7,
-    'August': 8,
-    'September': 9,
-    'October': 10,
-    'November': 11,
-    'December': 12,
-  };
-
-
-  final PayslipController payslipController = Get.put(PayslipController());
-  @override
-  void initState() {
-    super.initState();
-    payslipController.fetchPayslip(selectedYear, monthNames[selectedMonth]!);
-  }
+  List<String> monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(PayslipController());
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
-        title: Center(child: Text("Pay-Slip", style: AppTextStyles.kPrimaryTextStyle)),
+        title: Center(child: Text("Payslip", style: AppTextStyles.kPrimaryTextStyle)),
         backgroundColor: AppColors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, size: 24),
@@ -57,232 +35,181 @@ class _PayslipScreenState extends State<PayslipScreen> {
           },
         ),
       ),
-      body: Obx(() {
-        if(payslipController.isLoading.value) {
-          return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
-        }
-        return SingleChildScrollView( // Make the entire body scrollable
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    height: 40,
-                    width: 120,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.white50),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: TextButton(
-                      onPressed: () => _selectDate(context),
-                      child: Text(DateFormat.yMMM().format(payslipController
-                          .selectedDate.value),
-                          style: AppTextStyles.kSmall12SemiBoldTextStyle),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 100,
-                    child: RoundButton(title: 'Generate',
-                        onTap: payslipController.generateDate),
-                  ),
-                  IconButton(
-                    onPressed: payslipController.downloadPdf,
-                    // Trigger PDF download here
-                    icon: Icon(Icons.file_download_outlined, size: 35,
-                        color: AppColors.primaryColor),
-                  ),
-                ],
-              ),
-              Obx(() {
-                if (payslipController.formattedDate.isNotEmpty) {
-                  return Column(
-                    children: [
-                      SizedBox(height: 10),
-                      if (payslipController.isFileSaved.value)
-                        Text("PDF has been saved!"),
-                      Text("Generated Date : ${payslipController.formattedDate
-                          .value}"),
-                      SizedBox(height: 20),
-                      _buildSalaryDetailsSection(),
-                      SizedBox(height: 20),
-                      _buildDeductionsSection(),
-                    ],
-                  );
-                } else {
-                  return SizedBox.shrink(); // Hide this section if no date has been generated yet
-                }
-              }
-              ),
-            ],
-          ),
-        );
-      }
-      ),
-    );
-  }
-
-  Widget _buildSalaryDetailsSection() {
-    return Obx(() {
-      if(payslipController.isLoading.value){
-        return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
-      }
-      return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.white70),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              SizedBox(height: 10),
-              Container(
-                width: 140,
-                decoration: BoxDecoration(
-                  color: AppColors.success10,
-                  border: Border.all(color: AppColors.success80, width: 1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Center(child: const12TextBold("Total Salary")),
-              ),
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildSalaryLabels(),
-                  _buildSalaryValues(),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-    });
-  }
-
-  Widget _buildSalaryLabels() {
-    return Obx(() {
-      if(payslipController.isLoading.value){
-        return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
-      }
-      final payslipData = payslipController.payslip.value.data;
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Column(
         children: [
-          const12Text(payslipData.earing[0].label),
-          const12Text(payslipData.earing[1].label),
-          const12Text(payslipData.earing[2].label),
-          const12Text(payslipData.earing[3].label),
-          const12Text(payslipData.earing[4].label),
-          const12Text(payslipData.earing[5].label),
-          const12Text(payslipData.earing[6].label),
-          const12Text(payslipData.earing[7].label),
-          const12Text(payslipData.earing[8].label),
-          SizedBox(height: 10),
-          Text("Total",
-              style: AppTextStyles.kCaption14SemiBoldTextStyle.copyWith(
-                  color: AppColors.success60)),
-        ],
-      );
-    });
-  }
-
-  Widget _buildSalaryValues() {
-    final payslipData = payslipController.payslip.value.data;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const12TextBold(payslipData.earing[0].value??''),
-        const12TextBold(payslipData.earing[1].value??''),
-        const12TextBold(payslipData.earing[2].value??''),
-        const12TextBold(payslipData.earing[3].value??''),
-        const12TextBold(payslipData.earing[4].value??''),
-        const12TextBold(payslipData.earing[5].value??''),
-        const12TextBold(payslipData.earing[6].value??''),
-        const12TextBold(payslipData.earing[7].value??''),
-        const12TextBold(payslipData.earing[8].value??''),
-        SizedBox(height: 10),
-        Text(payslipData.total[0].earnings.toString(), style: AppTextStyles.kCaption14SemiBoldTextStyle.copyWith(color: AppColors.success60)),
-      ],
-    );
-  }
-
-  Widget _buildDeductionsSection() {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.white70),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            SizedBox(height: 10),
-            Container(
-              width: 140,
-              decoration: BoxDecoration(
-                color: AppColors.error10,
-                border: Border.all(color: AppColors.error100, width: 1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Center(child: const12TextBold("Deductions")),
-            ),
-            SizedBox(height: 10),
-            Row(
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildDeductionsLabels(),
-                _buildDeductionsValues(),
+                Container(
+                  width: 80,
+                  height: 40,
+                  color: AppColors.primaryColor,
+                  child: Center(
+                    child: DropdownButton<int>(
+                      value: selectedYear,
+                      items: List.generate(10, (index) {
+                        return DropdownMenuItem<int>(
+                          value: 2023 + index,
+                          child: Text('${2023 + index}'),
+                        );
+                      }),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedYear = value!;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                Container(
+                  color: AppColors.white40,
+                  height: 40,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.keyboard_arrow_left_sharp),
+                        onPressed: () {
+                          setState(() {
+                            if (selectedMonth == 1) {
+                              selectedMonth = 12;
+                              selectedYear--; // Decrease year if moving from January to December
+                            } else {
+                              selectedMonth--;
+                            }
+                          });
+                        },
+                      ),
+                      Text(
+                        monthNames[selectedMonth - 1], // Display month name
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.keyboard_arrow_right_sharp),
+                        onPressed: () {
+                          setState(() {
+                            if (selectedMonth == 12) {
+                              selectedMonth = 1;
+                              selectedYear++; // Increase year if moving from December to January
+                            } else {
+                              selectedMonth++;
+                            }
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: 100,
+                  child: RoundButton(
+                    title: "Generate",
+                    onTap: () {
+                      String formattedDate = '$selectedYear-${selectedMonth.toString().padLeft(2, '0')}';
+                      controller.fetchPayslipData(formattedDate);
+                    },
+                  ),
+                )
               ],
             ),
-          ],
-        ),
+          ),
+          Expanded(
+            child: Center(
+              child: Obx(() {
+                if (controller.isLoading.value) {
+                  return Shimmer.fromColors(
+                    baseColor: baseColor,
+                    highlightColor: highLightColor,
+                    child: loadSke(),
+                  );
+                }
+                if (controller.payslip.value == null) {
+                  return Text('No data available');
+                }
+                final payslip = controller.payslip.value!;
+                return Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            color: AppColors.success10,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(child: Text('Earnings:', style: AppTextStyles.kCaption14SemiBoldTextStyle)),
+                            ...payslip.earnings.map((earning) {
+                              return Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(child: Text(earning.label, style: AppTextStyles.kSmall12SemiBoldTextStyle)),
+                                    Text(earning.value, style: AppTextStyles.kCaption13SemiBoldTextStyle),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Container(
+                        decoration: BoxDecoration(
+                            color: AppColors.error10,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(child: Text('Deductions:', style: AppTextStyles.kCaption14SemiBoldTextStyle)),
+                            ...payslip.deductions.map((deduction) {
+                              return Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(child: Text(deduction.label, style: AppTextStyles.kSmall12SemiBoldTextStyle)),
+                                    Text(deduction.value, style: AppTextStyles.kCaption13SemiBoldTextStyle),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Total Earnings', style: AppTextStyles.kBody16SemiBoldTextStyle.copyWith(color: AppColors.success40)),
+                          Text('${payslip.total.earnings}', style: AppTextStyles.kBody16SemiBoldTextStyle.copyWith(color: AppColors.success40)),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Total Deductions:', style: AppTextStyles.kBody16SemiBoldTextStyle.copyWith(color: AppColors.error40)),
+                          Text('${payslip.total.deductions}', style: AppTextStyles.kBody16SemiBoldTextStyle.copyWith(color: AppColors.error20)),
+                        ],
+                      ),
+                      SizedBox(height: 25),
+                      RoundButton(title: "Download", onTap: () {})
+                    ],
+                  ),
+                );
+              }),
+            ),
+          ),
+        ],
       ),
     );
   }
-
-  Widget _buildDeductionsLabels() {
-    final payslipData = payslipController.payslip.value.data;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const12Text(payslipData.deduction[0].label),
-        const12Text(payslipData.deduction[1].label),
-        const12Text(payslipData.deduction[2].label),
-        SizedBox(height: 10),
-        Text("Total", style: AppTextStyles.kCaption14SemiBoldTextStyle.copyWith(color: AppColors.error40)),
-      ],
-    );
-  }
-
-  Widget _buildDeductionsValues() {
-    final payslipData = payslipController.payslip.value.data;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const12TextBold(payslipData.deduction[0].value??''),
-        const12TextBold(payslipData.deduction[1].value??''),
-        const12TextBold(payslipData.deduction[2].value??''),
-        SizedBox(height: 10),
-        Text(payslipData.total[0].deductions.toString(), style: AppTextStyles.kCaption14SemiBoldTextStyle.copyWith(color: AppColors.error40)),
-      ],
-    );
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: payslipController.selectedDate.value,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null && picked != payslipController.selectedDate.value) {
-      payslipController.updateDate(DateTime(picked.year, picked.month, 1));
-    }
-  }
 }
+
 
 

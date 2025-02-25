@@ -24,8 +24,10 @@ const String apiLeaveApprove = "$baseUrl/leave/LeaveApprove";  // Done
 const String apiLeaveReject = "$baseUrl/leave/LeaveReject";  // Done
 const String apiHolidayEvent = "$baseUrl/event";  // Done
 const String apiAttendanceStatistics = "$baseUrl/dashboard/attendance-statistics";  // Done
+const String apiCopyMail = "$baseUrl/leave/fetchEMP";  // Done
+const String apiPayslip= "$baseUrl/empPayslip/view";  // Done
 // Apply Leave List
-const String apiLeave = "$baseUrl/leave/getBalance";
+const String apiLeave = "$baseUrl/leave/getBalance";  //Done
 const String apiLeaveCalculation = "$baseUrl/leave/getBalance/";
 const String apiApplyLeave = "$baseUrl/leave/sendELLeaveRequest";
 const String apiResetPassword = "$baseUrl/auth/reset";

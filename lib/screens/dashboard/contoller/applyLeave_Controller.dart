@@ -39,12 +39,12 @@ class LeaveApplyController extends GetxController {
 
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
-        if (jsonResponse['success'] == true) {
-          String msg = jsonResponse['message']['msg'];
-          Get.snackbar('Success', msg);
+        if (jsonResponse['status'] == "success") {
+          String msg = jsonResponse['message'];
+          Get.snackbar('Success', msg, backgroundColor: AppColors.success40);
         } else {
           String errorMsg = jsonResponse['message']['msg'];
-          Get.snackbar('Error', errorMsg, backgroundColor: AppColors.error20, );
+          Get.snackbar('Failed', errorMsg, backgroundColor: AppColors.error20, );
         }
       }
       else {

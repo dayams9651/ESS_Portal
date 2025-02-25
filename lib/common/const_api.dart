@@ -11,24 +11,25 @@ import '../screens/dashboard/model/new_hireList_model.dart';
 
 class ApiServices {
   final box = GetStorage();
-  final String payslipApi = "https://essv2.mscorpres.net/payslip?period=2024-12";
-  Future<Payslip> fetchPayslipData() async {
-    String? token = box.read('token');
-    if (token == null || token.isEmpty) {
-      throw Exception('Token not found. Please log in first.');
-    }
-    final response = await http.get(Uri.parse(payslipApi),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
-    if (response.statusCode == 200) {
-      return Payslip.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Failed to load payslip data');
-    }
-  }
+  // final String payslipApi = "https://essv2.mscorpres.net/empPayslip/view?period=2024-12";
+  // Future<Payslip> fetchPayslipData() async {
+  //   String? token = box.read('token');
+  //   if (token == null || token.isEmpty) {
+  //     throw Exception('Token not found. Please log in first.');
+  //   }
+  //   final response = await http.post(Uri.parse(payslipApi),
+  //     headers: {
+  //       'Authorization': 'Bearer $token',
+  //       'Content-Type': 'application/json',
+  //     },
+  //   );
+  //   if (response.statusCode == 200) {
+  //     debugPrint("Payslip ");
+  //     return Payslip.fromJson(json.decode(response.body));
+  //   } else {
+  //     throw Exception('Failed to load payslip data');
+  //   }
+  // }
 
 
   Future<BirthdayBashModel?> fetchBirthdayData() async {

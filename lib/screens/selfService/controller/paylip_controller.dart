@@ -1,75 +1,68 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
-import 'package:ms_ess_portal/common/const_api.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:http/http.dart' as http;
+import 'package:ms_ess_portal/common/widget/snackbar_helper.dart';
+import 'package:ms_ess_portal/const/api_url.dart';
+import 'dart:convert';
 import 'package:ms_ess_portal/screens/selfService/models/payslip_model.dart';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:pdf/widgets.dart' as pw;
+import 'package:ms_ess_portal/style/color.dart';
 
 class PayslipController extends GetxController {
-  var selectedDate = DateTime.now().obs;
-  var formattedDate = "".obs;
-  var isFileSaved = false.obs;
-  var payslip = Payslip(success: false, status: "", data: PayslipData(basic: [], earing: [], deduction: [], total: []))
-      .obs;
-  var isLoading = true.obs;
-  final ApiServices payslipService = ApiServices();
-  @override
-  void onInit() {
-    super.onInit();
-  }
-  // Method to update the selected date
-  void updateDate(DateTime newDate) {
-    selectedDate.value = newDate;
-  }
+  var payslip = Rxn<Payslip>();
+  var isLoading = false.obs;
+  var errorMessage = ''.obs;
 
-  void generateDate() {
-    formattedDate.value = DateFormat('yyyy-MM-dd').format(selectedDate.value);
-  }
+  final box = GetStorage();
 
-  void fetchPayslip(int year, int month) async {
+  Future<void> fetchPayslipData(String period) async {
+    isLoading(true);
+    errorMessage.value = '';
+
     try {
-      isLoading(true);
-      Payslip data = await payslipService.fetchPayslipData();
-      payslip.value = data;
+      String? token = box.read('token');
+      if (token == null || token.isEmpty) {
+        errorMessage.value = 'Token not found. Please log in first.';
+        throw Exception('Token not found.');
+      }
+      final response = await http.post(
+        Uri.parse(apiPayslip),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({"period": period}),
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint("Payslip response : ${response.body}");
+        final data = jsonDecode(response.body);
+        if (data['code'] == 200) {
+          if (data['data'] != null) {
+            payslip.value = Payslip.fromJson(data['data']);
+          } else {
+            showCustomSnackbar("Failed", data['message']['msg']);
+            errorMessage.value = 'No data available for this period.';
+          }
+        } else {
+          errorMessage.value = 'Failed to load payslip data: ${data['message']}';
+          showCustomSnackbar("Failed", data['message']['msg'], backgroundColor: AppColors.error20);
+          debugPrint('Failed to load payslip data: ${data['message']}');
+        }
+      } else {
+        final data = jsonDecode(response.body);
+        String msg = data['message'];
+        showCustomSnackbar("Failed", msg);
+        errorMessage.value = 'Failed to load payslip data: ${response.statusCode}';
+        debugPrint('Failed to load payslip data: ${response.statusCode}');
+      }
     } catch (e) {
-      debugPrint("Error: $e");
+      errorMessage.value = 'Error occurred while fetching payslip data: $e';
+      debugPrint('Error occurred while fetching payslip data: $e');
     } finally {
       isLoading(false);
     }
   }
-  Future<void> downloadPdf() async {
-    if (await Permission.storage.request().isGranted) {
-      try {
-        final pdf = pw.Document();
-        pdf.addPage(
-          pw.Page(
-            build: (pw.Context context) {
-              return pw.Center(
-                child: pw.Text(
-                  'Generated Date: ${formattedDate.value}', // Date text
-                  style: const pw.TextStyle(fontSize: 24),
-                ),
-              );
-            },
-          ),
-        );
-        final directory = await getExternalStorageDirectory();
-        if (directory != null) {
-          final path = '${directory.path}/payslip.pdf';
-          final file = File(path);
-          await file.writeAsBytes(await pdf.save());
-          isFileSaved.value = true;
-          debugPrint("PDF saved at: $path");
-        }
-      } catch (e) {
-        debugPrint("Error generating PDF: $e");
-      }
-    } else {
-      debugPrint('Storage permission denied');
-    }
-  }
 }
+
 

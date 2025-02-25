@@ -16,7 +16,7 @@ class LeaveApplyBalanceControllerEL extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchLeaveBalance;  // Call fetchLeaveBalance with the key, e.g., keyEL
+    fetchLeaveBalance;
   }
 
   final box = GetStorage();
@@ -37,7 +37,7 @@ class LeaveApplyBalanceControllerEL extends GetxController {
       };
 
       final response = await http.post(
-        Uri.parse('$apiLeave'),
+        Uri.parse(apiLeave),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

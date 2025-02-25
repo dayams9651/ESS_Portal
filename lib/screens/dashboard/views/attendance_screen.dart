@@ -14,7 +14,6 @@ import '../model/attendance_model.dart';
 
 class AttendanceScreen extends StatefulWidget {
   const AttendanceScreen({super.key});
-
   @override
   State<AttendanceScreen> createState() => _AttendanceScreenState();
 }
@@ -35,6 +34,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   DateTime currentDate = DateTime.now();
 
   final ShiftController controller = Get.put(ShiftController());
+  final ShiftController controllerShift = Get.put(ShiftController());
   final AttendanceController attendController = Get.put(AttendanceController());
 
   List<Attendance> fetchedAttendanceData = [];
@@ -42,6 +42,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   @override
   void initState() {
     super.initState();
+    controllerShift.fetchShiftData;
     attendController.fetchAttendanceData('2025-02-01', '2026-05-28');
   }
 
@@ -145,9 +146,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         box.erase();
         String? token = box.read('token');
         if (token == null) {
-          print('Token has been deleted');
+          debugPrint('Token has been deleted');
         } else {
-          print('Token still exists: $token');
+          debugPrint('Token still exists: $token');
         }
         return await showExitConfirmationDialog(context) ?? false;
       },

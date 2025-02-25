@@ -50,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _startTimeUpdates();
     controllerSL.fetchSickLeaveBalance;
     controllerShift.fetchShiftData;
+    attendController.fetchAttendanceData('2025-02-01', '2026-05-28');
     // attendController.fetchAttendanceData('2025-02-01', '2026-05-28');
   }
 
@@ -78,6 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
   final NetworkController networkController = Get.put(NetworkController());
+  final AttendanceController attendController = Get.put(AttendanceController());
   final BirthdayBashController controller = Get.put(BirthdayBashController());
   final NewHireListController controllerNewHire = Get.put(NewHireListController());
   final WorkAnniversaryController controllerWA = Get.put(WorkAnniversaryController());
@@ -221,7 +223,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CustomHomeCard(icon: Icons.medical_information_outlined, text: 'Sick Leave', text1: '${sickLeave?.data?.lClBal ??0} / ${sickLeave?.data?.totalYrBal??0}', subTitle: '0.666',
+                          CustomHomeCard(icon: Icons.medical_information_outlined, text: 'Sick Leave', text1: '${sickLeave?.data?.lClBal ??0} / ${sickLeave?.data?.totalYrBal??0}', subTitle: '0.666', iconButton: IconButton(onPressed: (){
+                            controllerSL.leaveUpdateBalance;
+                          }, icon: Icon(Icons.refresh_outlined)),
                             ),
                           CustomHomeCard(icon: Icons.currency_exchange, text: 'Earned Leave', text1: '${leaveELBalance?.data?.lClBal??0} / ${leaveELBalance?.data?.totalYrBal??0}', subTitle: '0.5', iconButton: IconButton(onPressed: (){
                             controllerEL.fetchEarnedLeaveUpdate;
