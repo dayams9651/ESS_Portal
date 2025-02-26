@@ -33,10 +33,8 @@ class LeaveApplyController extends GetxController {
         },
         body: jsonEncode(body),
       );
-
       debugPrint('Response Status Code: ${response.statusCode}');
       debugPrint('Response Body: ${response.body}');
-
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
         if (jsonResponse['status'] == "success") {

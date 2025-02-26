@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:ms_ess_portal/LockAuth/lockScreen_page.dart';
 import 'package:ms_ess_portal/screens/Statistics/bindings/statistics_bindings.dart';
-import 'package:ms_ess_portal/screens/Testing/testing_bindings.dart';
 import 'package:ms_ess_portal/screens/dashboard/dashboard_screen.dart';
 import 'package:ms_ess_portal/screens/documents/views/documents_page_screen.dart';
 import 'package:ms_ess_portal/screens/holiday&event/bindings/holidays_bindings.dart';
@@ -13,14 +12,12 @@ import 'package:ms_ess_portal/screens/peripheral/bindings/peripheral_bindings.da
 import 'package:ms_ess_portal/screens/peripheral/view/peripheral_screen.dart';
 import 'package:ms_ess_portal/screens/selfService/bindings/leaveStatus_bindings.dart';
 import 'package:ms_ess_portal/screens/selfService/bindings/leave_grant_bindings.dart';
-import 'package:ms_ess_portal/screens/selfService/views/leaveWFH_screen.dart';
 import 'package:ms_ess_portal/screens/selfService/views/leave_grant_screen.dart';
 import 'package:ms_ess_portal/screens/selfService/views/paySlip_screen.dart';
 import 'package:ms_ess_portal/screens/signIn/welcome_screen.dart';
 import 'package:ms_ess_portal/screens/signUp/signUp_screen.dart';
 import 'package:ms_ess_portal/screens/splash_screen_ess.dart';
 import '../screens/Statistics/view/statistics_screen.dart';
-import '../screens/Testing/testing_screen.dart';
 import '../screens/documents/bindings/doucment_bindings.dart';
 import '../screens/selfService/bindings/payslip_bindings.dart';
 import '../screens/selfService/views/leaveStatus_screen.dart';
@@ -130,10 +127,10 @@ class ApplicationPages {
         page: ()=>  LockScreenPage(),
     ),
 
-    GetPage(
-        name: testingScreen,
-        page: ()=>  UserPage(),
-        // binding: TestingBindings()
-    ),
+    // GetPage(
+    //     name: testingScreen,
+    //     page: ()=>  ProfileView(),
+    //     // binding: TestingBindings()
+    // ),
   ];
 }

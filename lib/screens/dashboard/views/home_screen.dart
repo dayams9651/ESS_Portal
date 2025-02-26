@@ -8,9 +8,11 @@ import 'package:ms_ess_portal/common/widget/const_text_with_styles.dart';
 import 'package:ms_ess_portal/const/image_strings.dart';
 import 'package:ms_ess_portal/noInternet/no_internet_controller.dart';
 import 'package:ms_ess_portal/noInternet/no_internet_screen.dart';
+import 'package:ms_ess_portal/screens/Testing/testing_controller.dart';
 import 'package:ms_ess_portal/screens/dashboard/contoller/attendance_controller.dart';
 import 'package:ms_ess_portal/screens/dashboard/contoller/earned_leave_controller.dart';
 import 'package:ms_ess_portal/screens/dashboard/contoller/home_controller.dart';
+import 'package:ms_ess_portal/screens/dashboard/contoller/profile_view_controller.dart';
 import 'package:ms_ess_portal/screens/dashboard/contoller/sick_leave_controller.dart';
 import 'package:ms_ess_portal/screens/dashboard/contoller/wfh_leave_controller.dart';
 import 'package:ms_ess_portal/screens/notification/view/notification_screen.dart';
@@ -31,7 +33,8 @@ class HomeScreen extends StatefulWidget {
   static const double cardHeight = 250;
   static const double cardWidth = 190;
   static const double iconSize = 25;
-  const HomeScreen({super.key, this.controller});
+  const HomeScreen({super.key,
+    this.controller});
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -48,18 +51,28 @@ class _HomeScreenState extends State<HomeScreen> {
     _pageController = PageController(viewportFraction: 0.8);
     lineColor = AppColors.primaryColor;
     _startTimeUpdates();
-    controllerSL.fetchSickLeaveBalance;
-    controllerShift.fetchShiftData;
-    attendController.fetchAttendanceData('2025-02-01', '2026-05-28');
+    controllerSL.fetchSickLeaveBalance();
+    controllerShift.fetchShiftData();
+    controllerShift.fetchShiftData();
+    controllerProfileView.fetchProfileData();
+    controllerProfileView.fetchProfileData();
+    controller.fetchBirthdayData();
+    controller.fetchBirthdayData();
+    controllerNewHire.fetchNewHireListData();
+    controllerNewHire.fetchNewHireListData();
+    controllerWA.fetchNewHireListData();
+    controllerWA.fetchNewHireListData();
     // attendController.fetchAttendanceData('2025-02-01', '2026-05-28');
   }
 
   void _startTimeUpdates() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        currentTime = DateTime.now();
-        updateLineColor();
-      });
+      if (mounted) {
+        setState(() {
+          currentTime = DateTime.now();
+          updateLineColor();
+        });
+      }
     });
   }
 
@@ -73,13 +86,14 @@ class _HomeScreenState extends State<HomeScreen> {
       lineColor = AppColors.success20;  // Color before 9 hours
     }
   }
+
   @override
   void dispose() {
     _timer.cancel();
     super.dispose();
   }
+
   final NetworkController networkController = Get.put(NetworkController());
-  final AttendanceController attendController = Get.put(AttendanceController());
   final BirthdayBashController controller = Get.put(BirthdayBashController());
   final NewHireListController controllerNewHire = Get.put(NewHireListController());
   final WorkAnniversaryController controllerWA = Get.put(WorkAnniversaryController());
@@ -87,9 +101,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final LeaveController leaveController = Get.put(LeaveController());
   final LeaveBalanceController controllerWFH = Get.put(LeaveBalanceController());
   final SickLeaveBalanceController controllerSL = Get.put(SickLeaveBalanceController());
-  final UserLogInService controllerLogIn = Get.put(UserLogInService());
   final ShiftController controllerShift = Get.put(ShiftController());
-  // final AttendanceController attendController = Get.put(AttendanceController());
+  final ProfileViewController controllerProfileView = Get.put(ProfileViewController());
   final LeaveBalanceController leaveBalanceController = Get.put(LeaveBalanceController());
 
   @override
@@ -99,20 +112,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Obx(() {
       if (!networkController.isConnected.value) {
-        NoInternetScreen();
+        return NoInternetScreen();
       }
       if (controller.isLoading.value) {
         return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
-      }
-      else {
+      } else {
         final leaveBalance = controllerWFH.leaveBalance.value;
         final leaveELBalance = controllerEL.earnedLeave.value;
         final sickLeave = controllerSL.sickLeaveBalance.value;
-        final logInResponse = controllerLogIn.logInData.value;
         final shiftIn = controllerShift.shiftModel.value;
+        final profile = controllerProfileView.profile.value;
 
         DateTime shiftInTime;
-        if (shiftIn?.todayIn != null ) {
+        if (shiftIn?.todayIn != null) {
           try {
             shiftInTime = DateFormat('dd-MM-yyyy HH:mm:ss').parse(shiftIn!.todayIn);
           } catch (e) {
@@ -142,6 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return "Good Night";
           }
         }
+
         return WillPopScope(
           onWillPop: () async {
             final box = GetStorage();
@@ -169,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: ListTile(
                     title: Text(
-                      "${getGreetingMessage()}, ${logInResponse?.data?.userName.toString()}",
+                      "${getGreetingMessage()}, ${profile?.name}",
                       style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text("Let's be productive today!", style: AppTextStyles.kSmall12RegularTextStyle),
@@ -197,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text("Start your shift at: ${shiftIn?.todayIn??00-00-00}", style: AppTextStyles.kSmall12RegularTextStyle),
+                                Text("Start your shift at: ${shiftIn?.todayIn ?? '00-00-00'}", style: AppTextStyles.kSmall12RegularTextStyle),
                                 const SizedBox(height: 3),
                                 Text(
                                   "${elapsedTime.inHours.toString().padLeft(2, '0')}:${(elapsedTime.inMinutes % 60).toString().padLeft(2, '0')}:${(elapsedTime.inSeconds % 60).toString().padLeft(2, '0')}",
@@ -223,23 +236,54 @@ class _HomeScreenState extends State<HomeScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CustomHomeCard(icon: Icons.medical_information_outlined, text: 'Sick Leave', text1: '${sickLeave?.data?.lClBal ??0} / ${sickLeave?.data?.totalYrBal??0}', subTitle: '0.666', iconButton: IconButton(onPressed: (){
-                            controllerSL.leaveUpdateBalance;
-                          }, icon: Icon(Icons.refresh_outlined)),
+                          CustomHomeCard(
+                            icon: Icons.medical_information_outlined,
+                            text: 'Sick Leave',
+                            text1: '${sickLeave?.data?.lClBal ?? 0} / ${sickLeave?.data?.totalYrBal ?? 0}',
+                            subTitle: '0.666',
+                            iconButton: IconButton(
+                              onPressed: () {
+                                controllerSL.leaveUpdateBalance;
+                              },
+                              icon: Icon(Icons.refresh_outlined),
                             ),
-                          CustomHomeCard(icon: Icons.currency_exchange, text: 'Earned Leave', text1: '${leaveELBalance?.data?.lClBal??0} / ${leaveELBalance?.data?.totalYrBal??0}', subTitle: '0.5', iconButton: IconButton(onPressed: (){
-                            controllerEL.fetchEarnedLeaveUpdate;
-                          }, icon: Icon(Icons.refresh_outlined)),)
+                          ),
+                          CustomHomeCard(
+                            icon: Icons.currency_exchange,
+                            text: 'Earned Leave',
+                            text1: '${leaveELBalance?.data?.lClBal ?? 0} / ${leaveELBalance?.data?.totalYrBal ?? 0}',
+                            subTitle: '0.5',
+                            iconButton: IconButton(
+                              onPressed: () {
+                                controllerEL.fetchEarnedLeaveUpdate;
+                              },
+                              icon: Icon(Icons.refresh_outlined),
+                            ),
+                          )
                         ],
                       ),
                       const SizedBox(height: 5),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const CustomHomeCard(icon: Icons.done_outline, text: 'Compensatory\nLeave', text1: '', subTitle: '0.5'),
-                          CustomHomeCard(icon: Icons.home_outlined, text: 'Work From\nHome', text1: '${leaveBalance?.data?.lOpBal ?? 0} / ${leaveBalance?.data?.lClBal ?? 0}', subTitle: '0.5', iconButton: IconButton(onPressed: (){
-                            leaveBalanceController.fetchLeaveBalanceUpdate;
-                          }, icon: Icon(Icons.refresh_outlined)),)
+                          const CustomHomeCard(
+                            icon: Icons.done_outline,
+                            text: 'Compensatory\nLeave',
+                            text1: '',
+                            subTitle: '0.5',
+                          ),
+                          CustomHomeCard(
+                            icon: Icons.home_outlined,
+                            text: 'Work From\nHome',
+                            text1: '${leaveBalance?.data?.lOpBal ?? 0} / ${leaveBalance?.data?.lClBal ?? 0}',
+                            subTitle: '0.5',
+                            iconButton: IconButton(
+                              onPressed: () {
+                                leaveBalanceController.fetchLeaveBalanceUpdate;
+                              },
+                              icon: Icon(Icons.refresh_outlined),
+                            ),
+                          )
                         ],
                       ),
                       const SizedBox(height: 5),
@@ -247,8 +291,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 5),
                       SizedBox(
                         height: 210,
-                        child: controllerNewHire.newHireList.isEmpty ? Center(child: Image.asset(noData1),) : ListView.builder(
-                          scrollDirection: Axis.horizontal, // Scroll horizontally
+                        child: controllerNewHire.newHireList.isEmpty
+                            ? Center(child: Image.asset(noData1))
+                            : ListView.builder(
+                          scrollDirection: Axis.horizontal,
                           itemCount: controllerNewHire.newHireList.length,
                           itemBuilder: (context, index) {
                             final newHires = controllerNewHire.newHireList[index];
@@ -258,27 +304,27 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(2.0),
                                   child: Container(
-                                      width: 180,
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(8),
-                                          border: Border.all(color: AppColors.white70, width: 2)
+                                    width: 180,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: AppColors.white70, width: 2),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 45,
+                                            backgroundImage: NetworkImage(newHires.photo!),
+                                          ),
+                                          Text(newHires.date ?? '', style: AppTextStyles.kSmall10SemiBoldTextStyle),
+                                          const SizedBox(height: 2),
+                                          Text(newHires.name ?? "", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor)),
+                                          const SizedBox(height: 2),
+                                          Text("${newHires.day} (${newHires.timeago})")
+                                        ],
                                       ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          children: [
-                                            CircleAvatar(
-                                              radius: 45,
-                                              backgroundImage: NetworkImage(newHires.photo!),
-                                            ),
-                                            Text(newHires.date ?? '', style: AppTextStyles.kSmall10SemiBoldTextStyle),
-                                            const SizedBox(height: 2),
-                                            Text(newHires.name ?? "", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor)),
-                                            const SizedBox(height: 2),
-                                            Text("${newHires.day} (${newHires.timeago})")
-                                          ],
-                                        ),
-                                      )
+                                    ),
                                   ),
                                 ),
                               ),
@@ -291,7 +337,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 5),
                       SizedBox(
                         height: 210,
-                        child: controller.birthdayList.isEmpty ? Center(child: Image.asset(noData1),) : ListView.builder(
+                        child: controller.birthdayList.isEmpty
+                            ? Center(child: Image.asset(noData1))
+                            : ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: controller.birthdayList.length,
                           itemBuilder: (context, index) {
@@ -302,27 +350,27 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(2.0),
                                   child: Container(
-                                      width: 180,
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(8),
-                                          border: Border.all(color: AppColors.white70, width: 2)
+                                    width: 180,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: AppColors.white70, width: 2),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 45,
+                                            backgroundImage: NetworkImage(item.photo!),
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(item.date ?? "", style: AppTextStyles.kSmall10SemiBoldTextStyle),
+                                          Text(item.name ?? "", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor)),
+                                          const SizedBox(height: 2),
+                                          Center(child: Text(item.department ?? ""))
+                                        ],
                                       ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          children: [
-                                            CircleAvatar(
-                                              radius: 45,
-                                              backgroundImage: NetworkImage(item.photo!),
-                                            ),
-                                            const SizedBox(height: 2),
-                                            Text(item.date ?? "", style: AppTextStyles.kSmall10SemiBoldTextStyle),
-                                            Text(item.name ?? "", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor)),
-                                            const SizedBox(height: 2),
-                                            Center(child: Text(item.department ?? ""))
-                                          ],
-                                        ),
-                                      )
+                                    ),
                                   ),
                                 ),
                               ),
@@ -334,40 +382,41 @@ class _HomeScreenState extends State<HomeScreen> {
                       const12TextBold("Work Anniversary"),
                       const SizedBox(height: 5),
                       SizedBox(
-                        height: 200,
-                        child: controllerWA.wAList.isEmpty ? Center(child: Image.asset(noData1),) : ListView.builder(
-                          scrollDirection: Axis.horizontal, // Scroll horizontally
+                        height: 210,
+                        child: controllerWA.wAList.isEmpty
+                            ? Center(child: Image.asset(noData1))
+                            : ListView.builder(
+                          scrollDirection: Axis.horizontal,
                           itemCount: controllerWA.wAList.length,
                           itemBuilder: (context, index) {
-                            final workAList = controllerWA.wAList[index];
+                            final wa = controllerWA.wAList[index];
                             return Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 2.0),
                               child: ClipRRect(
                                 child: Padding(
                                   padding: const EdgeInsets.all(2.0),
                                   child: Container(
-                                      width: 180,
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(8),
-                                          border: Border.all(color: AppColors.white70, width: 2)
+                                    width: 180,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: AppColors.white70, width: 2),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 45,
+                                            backgroundImage: NetworkImage(wa.photo!),
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(wa.date ?? "", style: AppTextStyles.kSmall10SemiBoldTextStyle),
+                                          Text(wa.name ?? "", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor)),
+                                          const SizedBox(height: 2),
+                                          Center(child: Text(wa.department ?? ""))
+                                        ],
                                       ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          children: [
-                                            CircleAvatar(
-                                              radius: 45,
-                                              backgroundImage: NetworkImage(workAList.photo!),
-                                            ),
-                                            const SizedBox(height: 7),
-                                            Text(workAList.date ?? '', style: AppTextStyles.kSmall10SemiBoldTextStyle),
-                                            const SizedBox(height: 2),
-                                            Text(workAList.name ?? "", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor)),
-                                            const SizedBox(height: 2),
-                                            Text(workAList.department ?? '')
-                                          ],
-                                        ),
-                                      )
+                                    ),
                                   ),
                                 ),
                               ),
@@ -414,7 +463,6 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
   }
-
   Future<bool?> showExitConfirmationDialog(BuildContext context) {
     return showDialog<bool>(
       context: context,
@@ -437,3 +485,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+

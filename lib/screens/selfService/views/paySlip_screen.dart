@@ -13,7 +13,7 @@ class PayslipScreen extends StatefulWidget {
 }
 
 class _PayslipScreenState extends State<PayslipScreen> {
-  int selectedMonth = 2; // Default to February (2)
+  int selectedMonth = 2;
   int selectedYear = 2025;
   List<String> monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -43,7 +43,7 @@ class _PayslipScreenState extends State<PayslipScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  width: 80,
+                  width: 75,
                   height: 40,
                   color: AppColors.primaryColor,
                   child: Center(
@@ -104,7 +104,7 @@ class _PayslipScreenState extends State<PayslipScreen> {
                   ),
                 ),
                 SizedBox(
-                  width: 100,
+                  width: 90,
                   child: RoundButton(
                     title: "Generate",
                     onTap: () {

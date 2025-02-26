@@ -26,6 +26,10 @@ const String apiHolidayEvent = "$baseUrl/event";  // Done
 const String apiAttendanceStatistics = "$baseUrl/dashboard/attendance-statistics";  // Done
 const String apiCopyMail = "$baseUrl/leave/fetchEMP";  // Done
 const String apiPayslip= "$baseUrl/empPayslip/view";  // Done
+const String apiProfileView = "$baseUrl/dashboard/profile";  // Done
+const String apiSop = "$baseUrl/sop/view";  // Done
+const String apiHierarchy = "$baseUrl/hierarchy/orgchart/children/view";  // Done
+
 // Apply Leave List
 const String apiLeave = "$baseUrl/leave/getBalance";  //Done
 const String apiLeaveCalculation = "$baseUrl/leave/getBalance/";

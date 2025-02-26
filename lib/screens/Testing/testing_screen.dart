@@ -1,108 +1,70 @@
+// // profile_view.dart
 // import 'package:flutter/material.dart';
-// import 'package:flutter_pdfview/flutter_pdfview.dart';
 // import 'package:get/get.dart';
 // import 'package:ms_ess_portal/screens/Testing/testing_controller.dart';
+// import 'package:ms_ess_portal/screens/dashboard/contoller/profile_view_controller.dart';
 //
-// class ReportScreen extends StatelessWidget {
-//   final ReportController controller = Get.put(ReportController());
+// class ProfileView extends StatefulWidget {
+//   @override
+//   _ProfileViewState createState() => _ProfileViewState();
+// }
+//
+// class _ProfileViewState extends State<ProfileView> {
+//   final ProfileViewController controller = Get.put(ProfileViewController());
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     // Fetch the profile data when the view is initialized
+//     controller.fetchProfileData();
+//   }
 //
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
 //       appBar: AppBar(
-//         title: Text('Attendance PDF Viewer'),
+//         title: Text("Profile View"),
 //       ),
-//       body: Padding(
-//         padding: const EdgeInsets.all(16.0),
-//         child: Obx(() {
-//           // Check if loading
-//           if (controller.isLoading.value) {
-//             return Center(child: CircularProgressIndicator());
-//           }
+//       body: Obx(() {
+//         // Observe the loading and error states
+//         if (controller.isLoading.value) {
+//           return Center(child: CircularProgressIndicator()); // Show loading
+//         }
 //
-//           // Check if there's an error
-//           if (controller.errorMessage.isNotEmpty) {
-//             return Center(child: Text(controller.errorMessage.value));
-//           }
+//         if (controller.isError.value) {
+//           return Center(child: Text("Error fetching profile data"));
+//         }
 //
-//           // Check if PDF path is available
-//           if (controller.pdfPath.value.isNotEmpty) {
-//             return PDFViewPage(filePath: controller.pdfPath.value);
-//           }
+//         final profile = controller.profile.value;
 //
-//           // Default UI: Show a button to fetch the PDF
+//         if (profile != null) {
 //           return Center(
-//             child: ElevatedButton(
-//               onPressed: () {
-//                 controller.fetchPDF();
-//               },
-//               child: Text('Download Attendance PDF'),
+//             child: Column(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               crossAxisAlignment: CrossAxisAlignment.center,
+//               children: [
+//                 CircleAvatar(
+//                   radius: 50,
+//                   backgroundImage: NetworkImage(profile.photo),
+//                 ),
+//                 SizedBox(height: 20),
+//                 Text(
+//                   profile.name?? "",
+//                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+//                 ),
+//                 SizedBox(height: 10),
+//                 Text(
+//                   'Employee Code: ${profile.code}',
+//                   style: TextStyle(fontSize: 18),
+//                 ),
+//               ],
 //             ),
 //           );
-//         }),
-//       ),
+//         } else {
+//           return Center(child: Text("No data available"));
+//         }
+//       }),
 //     );
 //   }
 // }
 //
-// class PDFViewPage extends StatelessWidget {
-//   final String filePath;
-//
-//   PDFViewPage({required this.filePath});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text('PDF Viewer')),
-//       body: PDFView(
-//         filePath: filePath,  // Path to the saved PDF file
-//       ),
-//     );
-//   }
-// }
-
-
-
-// ui/user_page.dart
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'testing_controller.dart';
-
-class UserPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // Get the controller
-    final UserController userController = Get.put(UserController());
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("User Info"),
-      ),
-      body: Center(
-        child: Obx(
-              () {
-            // Checking if user data is available
-            if (userController.user.value.userName.isNotEmpty) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundImage: NetworkImage(userController.user.value.photo),
-                  ),
-                  SizedBox(height: 20),
-                  Text(
-                    userController.user.value.userName,
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              );
-            } else {
-              return CircularProgressIndicator();
-            }
-          },
-        ),
-      ),
-    );
-  }
-}

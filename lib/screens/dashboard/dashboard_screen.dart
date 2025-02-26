@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:ms_ess_portal/common/widget/round_button.dart';
 import 'package:ms_ess_portal/const/image_strings.dart';
+import 'package:ms_ess_portal/screens/Testing/testing_controller.dart';
+import 'package:ms_ess_portal/screens/dashboard/contoller/profile_view_controller.dart';
 import 'package:ms_ess_portal/screens/dashboard/views/attendance_screen.dart';
 import 'package:ms_ess_portal/screens/dashboard/views/leave_screen.dart';
 import 'package:ms_ess_portal/service/logInApi.dart';
@@ -21,6 +23,7 @@ class DashboardScreen extends StatefulWidget {
 }
 class _DashboardScreenState extends State<DashboardScreen> {
   final _pageController = PageController(initialPage: 0);
+  final ProfileViewController controllerProfileView = Get.put(ProfileViewController());
   final NotchBottomBarController _controller = NotchBottomBarController(index: 0);
   int maxCount = 5;
   int _selectedIndex = 0;
@@ -29,6 +32,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+
+  @override
+  void initState(){
+    super.initState();
+    controllerProfileView.fetchProfileData();
+    controllerProfileView.fetchProfileData;
+
   }
 
   void _onPageChanged(int index) {
@@ -75,6 +87,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           return const Center(child: CircularProgressIndicator(),);
         } else {
           final logInResponse = controllerLogIn.logInData.value;
+          final profile = controllerProfileView.profile.value;
         return Drawer(
           backgroundColor: AppColors.white,
           child: ListView(
@@ -91,12 +104,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         decoration: const BoxDecoration(
                             color: AppColors.white
                         ),
-                        accountName: Text('${logInResponse?.data?.userName}',style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.white100),),
-                        accountEmail: Text(logInResponse?.data?.designation ?? "", style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white100),),
+                        accountName: Text('${profile?.name}',style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.white100),),
+                        accountEmail: Text(profile?.designation.toString() ?? "", style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white100),),
                         currentAccountPicture: CircleAvatar(
                           radius: 40,
                           backgroundImage: NetworkImage(
-                              logInResponse?.data?.photo??"No Img"),
+                             profile?.photo ?? "No Img"),
                         ),
                       ),
                       _buildDrawerItem(
@@ -131,7 +144,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             _buildDrawerSubItem('Payslip', onTap: () {
                               Get.toNamed(ApplicationPages.paySlipScreen);
                             }),
-                          ]),
+                          ]
+                      ),
 
                       _buildDrawerItem(icon: Icons.keyboard_alt_outlined, text: 'Peripheral', onTap: (){
                         Get.toNamed(ApplicationPages.peripheralScreen);
@@ -139,9 +153,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       _buildDrawerItem(icon: Icons.snippet_folder_outlined, text: 'Documents', onTap: (){
                         Get.toNamed(ApplicationPages.documentsScreen);
                       }),
-                      _buildDrawerItem(icon: Icons.dangerous, text: 'For Testing', onTap: (){
-                        Get.toNamed(ApplicationPages.testingScreen);
-                      }),
+                      // _buildDrawerItem(icon: Icons.dangerous, text: 'For Testing', onTap: (){
+                      //   Get.toNamed(ApplicationPages.testingScreen);
+                      // }),
                       _buildDrawerItem(icon: Icons.auto_graph_outlined, text: 'Attendance Statistics', onTap: (){
                         Get.toNamed(ApplicationPages.statisticsScreen);
 
@@ -162,7 +176,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           );
          }
        }
-      ),
+       ),
       bottomNavigationBar: (bottomBarPages.length <= maxCount)
           ?
       AnimatedNotchBottomBar(
@@ -238,7 +252,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         onTap: (index) {
           debugPrint('current selected index $index');
           _pageController.jumpToPage(index);
-          _onPageChanged(index); // Update the index on bottom bar tap
+          _onPageChanged(index);
         },
         kIconSize: 24.0,
       )

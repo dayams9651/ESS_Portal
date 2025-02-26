@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:ms_ess_portal/const/api_url.dart';
 import 'package:ms_ess_portal/screens/documents/models/document_sop_model.dart';
 import 'dart:convert';
 
@@ -26,7 +27,8 @@ class SOPController extends GetxController {
     }
     try {
       isLoading(true);
-      final response = await http.get(Uri.parse('https://esstest.mscorpres.net/sop'),
+      // final response = await http.get(Uri.parse('https://esstest.mscorpres.net/sop'),
+      final response = await http.post(Uri.parse(apiSop),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

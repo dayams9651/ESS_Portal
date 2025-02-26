@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:ms_ess_portal/service/logInApi.dart';
+import 'package:ms_ess_portal/screens/dashboard/contoller/profile_view_controller.dart';
 import 'package:ms_ess_portal/style/color.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../common/widget/const_shimmer_effects.dart';
@@ -17,7 +17,15 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final UserLogInService controller = Get.put(UserLogInService());
+  final ProfileViewController controller = Get.put(ProfileViewController());
+  // final UserLogInService controller = Get.put(UserLogInService());
+  @override
+  void initState() {
+    super.initState();
+    // Fetch the profile data when the view is initialized
+    controller.fetchProfileData();
+    controller.fetchProfileData;
+  }
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
@@ -37,7 +45,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
         }
         else {
-          final profileData = controller.logInData.value;
+          final profile = controller.profile.value;
+          // final profileData = controller.logInData.value;
           return SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -49,11 +58,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         CircleAvatar(
                           radius: 70,
-                          backgroundImage: NetworkImage(profileData?.data?.photo??"No Img"),
+                          backgroundImage: NetworkImage(profile?.photo ??"No Img"),
                         ),
                         SizedBox(height: 5,),
-                        const12TextBold("${profileData?.data?.userName}"),
-                        const12Text("${profileData?.data?.designation}")
+                        const12TextBold("${profile?.name}"),
+                        const12Text("${profile?.designation ?? ""}")
                       ],
                     ),
                   ),
