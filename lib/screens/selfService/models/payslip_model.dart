@@ -2,7 +2,7 @@
 class Payslip {
   final String name;
   final String code;
-  final String designation;
+  final String? designation;
   final String lastSalary;
   final List<Earning> earnings;
   final List<Deduction> deductions;
@@ -11,7 +11,7 @@ class Payslip {
   Payslip({
     required this.name,
     required this.code,
-    required this.designation,
+    this.designation,
     required this.lastSalary,
     required this.earnings,
     required this.deductions,

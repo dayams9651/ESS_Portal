@@ -40,6 +40,7 @@ class ApplicationPages {
   static const statisticsScreen = '/statisticsScreen';
   static const lockScreenScreen = '/lockScreenScreen';
   static const testingScreen = '/testingScreen';
+  static const termsAndConditionScreen = '/termsAndConditionScreen';
 
   static List<GetPage>? getApplicationPages() => [
 
@@ -125,6 +126,11 @@ class ApplicationPages {
     GetPage(
         name: lockScreenScreen,
         page: ()=>  LockScreenPage(),
+    ),
+
+    GetPage(
+      name: termsAndConditionScreen,
+      page: ()=>  LockScreenPage(),
     ),
 
     // GetPage(

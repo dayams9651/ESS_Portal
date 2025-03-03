@@ -15,7 +15,7 @@ class HolidayScreen extends StatefulWidget {
 }
 
 class _HolidayEventPageState extends State<HolidayScreen> {
-  String selectedMonth = 'February';
+  String selectedMonth = '';
   int selectedYear = 2025;
   Map<String, int> monthNames = {
     'January': 1,
@@ -37,6 +37,9 @@ class _HolidayEventPageState extends State<HolidayScreen> {
   @override
   void initState() {
     super.initState();
+    DateTime now = DateTime.now();
+    selectedMonth = monthNames.keys.elementAt(now.month - 1);
+    selectedYear = now.year;
     controller.fetchEvents(selectedYear, monthNames[selectedMonth]!);
   }
 
@@ -45,7 +48,7 @@ class _HolidayEventPageState extends State<HolidayScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Center(child: Text("Holiday & Event", style: AppTextStyles.kPrimaryTextStyle,)),
+        title: Center(child: Text("Holiday & Event", style: AppTextStyles.kPrimaryTextStyle)),
         backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, size: 24),
@@ -54,11 +57,10 @@ class _HolidayEventPageState extends State<HolidayScreen> {
           },
         ),
       ),
-      body: Obx((){
-        if(controller.isLoading.value){
+      body: Obx(() {
+        if (controller.isLoading.value) {
           return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
-        }
-        else {
+        } else {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -83,8 +85,7 @@ class _HolidayEventPageState extends State<HolidayScreen> {
                             setState(() {
                               selectedYear = value!;
                             });
-                            controller.fetchEvents(
-                                selectedYear, monthNames[selectedMonth]!);
+                            controller.fetchEvents(selectedYear, monthNames[selectedMonth]!);
                           },
                         ),
                       ),
@@ -99,39 +100,32 @@ class _HolidayEventPageState extends State<HolidayScreen> {
                             icon: const Icon(Icons.keyboard_arrow_left_sharp),
                             onPressed: () {
                               setState(() {
-                                int currentMonthIndex = monthNames[selectedMonth]! -
-                                    1;
+                                int currentMonthIndex = monthNames[selectedMonth]! - 1;
                                 if (currentMonthIndex == 0) {
                                   selectedMonth = 'December';
                                 } else {
-                                  selectedMonth = monthNames.keys.elementAt(
-                                      currentMonthIndex - 1);
+                                  selectedMonth = monthNames.keys.elementAt(currentMonthIndex - 1);
                                 }
                               });
-                              controller.fetchEvents(
-                                  selectedYear, monthNames[selectedMonth]!);
+                              controller.fetchEvents(selectedYear, monthNames[selectedMonth]!);
                             },
                           ),
                           Text(
                             selectedMonth,
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           IconButton(
                             icon: const Icon(Icons.keyboard_arrow_right_sharp),
                             onPressed: () {
                               setState(() {
-                                int currentMonthIndex = monthNames[selectedMonth]! -
-                                    1;
+                                int currentMonthIndex = monthNames[selectedMonth]! - 1;
                                 if (currentMonthIndex == 11) {
                                   selectedMonth = 'January';
                                 } else {
-                                  selectedMonth = monthNames.keys.elementAt(
-                                      currentMonthIndex + 1);
+                                  selectedMonth = monthNames.keys.elementAt(currentMonthIndex + 1);
                                 }
                               });
-                              controller.fetchEvents(
-                                  selectedYear, monthNames[selectedMonth]!);
+                              controller.fetchEvents(selectedYear, monthNames[selectedMonth]!);
                             },
                           ),
                         ],
@@ -147,8 +141,7 @@ class _HolidayEventPageState extends State<HolidayScreen> {
                     }
 
                     if (controller.events.isEmpty) {
-                      return Center(child: Image.asset(noData1)
-                      );
+                      return Center(child: Image.asset(noData1));
                     }
 
                     return ListView.builder(
@@ -167,47 +160,42 @@ class _HolidayEventPageState extends State<HolidayScreen> {
                               ),
                               margin: const EdgeInsets.symmetric(vertical: 5),
                               child: ListTile(
-                                title: Text(event.title, style: AppTextStyles
-                                    .kSmall12SemiBoldTextStyle),
+                                title: Text(event.title, style: AppTextStyles.kSmall12SemiBoldTextStyle),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text('${eventDate.day}-${eventDate
-                                            .month}-${eventDate.year}',
-                                            style: AppTextStyles
-                                                .kSmall10SemiBoldTextStyle),
-                                        const SizedBox(width: 15),
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              showDescription =
-                                              !showDescription;
-                                            });
-                                          },
-                                          child: CircleAvatar(
-                                            radius: 12,
-                                            backgroundColor: Colors.green,
-                                            child: Icon(
-                                              showDescription
-                                                  ? Icons.remove
-                                                  : Icons.add,
-                                              color: Colors.white,
-                                            ),
-                                          ),
+                                        Text(
+                                          '${eventDate.day}-${eventDate.month}-${eventDate.year}',
+                                          style: AppTextStyles.kSmall10SemiBoldTextStyle,
                                         ),
+                                        const SizedBox(width: 15),
+
                                       ],
                                     ),
                                     if (showDescription)
                                       Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 8.0),
-                                        child: Text(event.description,
-                                            style: AppTextStyles
-                                                .kSmall10RegularTextStyle),
+                                        padding: const EdgeInsets.only(top: 8.0),
+                                        child: Text(event.description, style: AppTextStyles.kSmall10RegularTextStyle),
                                       ),
                                   ],
+                                ),
+                                trailing:   GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      showDescription = !showDescription;
+                                    });
+                                  },
+                                  child: CircleAvatar(
+                                    radius: 15,
+                                    backgroundColor: showDescription ? Colors.red : Colors.green,
+                                    child: Icon(
+                                      showDescription ? Icons.remove : Icons.add,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                 ),
                               ),
                             );
@@ -221,8 +209,8 @@ class _HolidayEventPageState extends State<HolidayScreen> {
             ),
           );
         }
-       }
-      ),
+      }),
     );
   }
 }
+

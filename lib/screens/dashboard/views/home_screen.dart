@@ -8,15 +8,12 @@ import 'package:ms_ess_portal/common/widget/const_text_with_styles.dart';
 import 'package:ms_ess_portal/const/image_strings.dart';
 import 'package:ms_ess_portal/noInternet/no_internet_controller.dart';
 import 'package:ms_ess_portal/noInternet/no_internet_screen.dart';
-import 'package:ms_ess_portal/screens/Testing/testing_controller.dart';
-import 'package:ms_ess_portal/screens/dashboard/contoller/attendance_controller.dart';
 import 'package:ms_ess_portal/screens/dashboard/contoller/earned_leave_controller.dart';
 import 'package:ms_ess_portal/screens/dashboard/contoller/home_controller.dart';
 import 'package:ms_ess_portal/screens/dashboard/contoller/profile_view_controller.dart';
 import 'package:ms_ess_portal/screens/dashboard/contoller/sick_leave_controller.dart';
 import 'package:ms_ess_portal/screens/dashboard/contoller/wfh_leave_controller.dart';
 import 'package:ms_ess_portal/screens/notification/view/notification_screen.dart';
-import 'package:ms_ess_portal/service/logInApi.dart';
 import 'package:ms_ess_portal/style/color.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../common/widget/const_shimmer_effects.dart';
@@ -62,6 +59,9 @@ class _HomeScreenState extends State<HomeScreen> {
     controllerNewHire.fetchNewHireListData();
     controllerWA.fetchNewHireListData();
     controllerWA.fetchNewHireListData();
+    controllerSL.fetchSickLeaveBalance();
+    controllerEL.fetchEarnedLeave();
+    controllerWFH.fetchLeaveBalance();
     // attendController.fetchAttendanceData('2025-02-01', '2026-05-28');
   }
 
@@ -172,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  height: height / 8.5,
+                  height: height < 600 ? height /5 : height/8.5,
                   decoration: const BoxDecoration(
                     color: AppColors.primaryColor2,
                     borderRadius: BorderRadius.only(
@@ -203,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Card(
                         color: AppColors.primaryColor2,
                         child: SizedBox(
-                          height: height / 8,
+                          height: height < 600 ? height/3.5 : height/8,
                           width: width,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -239,15 +239,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           CustomHomeCard(
                             icon: Icons.medical_information_outlined,
                             text: 'Sick Leave',
-                            text1: '${sickLeave?.data?.lClBal ?? 0} / ${sickLeave?.data?.totalYrBal ?? 0}',
-                            subTitle: '0.666',
+                            // Show updated values if available, or fallback to the initial values
+                            text1: '${controllerSL.sickLeaveBalance.value?.data?.lClBal ?? 0} / ${controllerSL.sickLeaveBalance.value?.data?.totalYrBal ?? 0}',
+                            subTitle: '0.666', // You can adjust this as needed
                             iconButton: IconButton(
                               onPressed: () {
-                                controllerSL.leaveUpdateBalance;
+                                // Call fetchSickLeaveBalance which will also trigger fetchSickLeaveBalanceUpdate inside
+                                controllerSL.fetchSickLeaveBalance(); // This will trigger both the fetch and update
                               },
                               icon: Icon(Icons.refresh_outlined),
                             ),
                           ),
+
                           CustomHomeCard(
                             icon: Icons.currency_exchange,
                             text: 'Earned Leave',
@@ -255,13 +258,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             subTitle: '0.5',
                             iconButton: IconButton(
                               onPressed: () {
-                                controllerEL.fetchEarnedLeaveUpdate;
+                                controllerEL.fetchEarnedLeaveUpdate();
                               },
                               icon: Icon(Icons.refresh_outlined),
                             ),
-                          )
+                          ),
                         ],
                       ),
+
                       const SizedBox(height: 5),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -275,7 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           CustomHomeCard(
                             icon: Icons.home_outlined,
                             text: 'Work From\nHome',
-                            text1: '${leaveBalance?.data?.lOpBal ?? 0} / ${leaveBalance?.data?.lClBal ?? 0}',
+                            text1: '${leaveBalance?.data?.lClBal ?? 0} / ${leaveBalance?.data?.lOpBal ?? 0}',
                             subTitle: '0.5',
                             iconButton: IconButton(
                               onPressed: () {
@@ -292,7 +296,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(
                         height: 210,
                         child: controllerNewHire.newHireList.isEmpty
-                            ? Center(child: Image.asset(noData1))
+                            ? Center(child: Image.asset(noContent))
                             : ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: controllerNewHire.newHireList.length,
@@ -313,9 +317,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                       padding: const EdgeInsets.all(8.0),
                                       child: Column(
                                         children: [
+                                          // Conditional image or icon
                                           CircleAvatar(
                                             radius: 45,
-                                            backgroundImage: NetworkImage(newHires.photo!),
+                                            backgroundImage: newHires.photo != null
+                                                ? NetworkImage(newHires.photo!)
+                                                : null,
+                                            child: newHires.photo == null
+                                                ? Icon(
+                                              Icons.account_circle,
+                                              size: 50,
+                                              color: AppColors.primaryColor,
+                                            )
+                                                : null,
                                           ),
                                           Text(newHires.date ?? '', style: AppTextStyles.kSmall10SemiBoldTextStyle),
                                           const SizedBox(height: 2),
@@ -332,13 +346,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                         ),
                       ),
+
                       const SizedBox(height: 5),
                       const12TextBold("Birthday Bash"),
                       const SizedBox(height: 5),
                       SizedBox(
                         height: 210,
                         child: controller.birthdayList.isEmpty
-                            ? Center(child: Image.asset(noData1))
+                            ? Center(child: Image.asset(noContent))
                             : ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: controller.birthdayList.length,
@@ -384,7 +399,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(
                         height: 210,
                         child: controllerWA.wAList.isEmpty
-                            ? Center(child: Image.asset(noData1))
+                            ? Center(child: Image.asset(noContent))
                             : ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: controllerWA.wAList.length,
@@ -429,7 +444,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 5),
                       SizedBox(
                         height: 250,
-                        child:leaveController.leaveRequests.isEmpty  ? Center(child: Image.asset(noData1, )) :ListView.builder(
+                        child:leaveController.leaveRequests.isEmpty  ? Center(child: Image.asset(noContent, )) :ListView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: leaveController.leaveRequests.length,
@@ -453,6 +468,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                         ),
                       ),
+
                     ],
                   ),
                 ),

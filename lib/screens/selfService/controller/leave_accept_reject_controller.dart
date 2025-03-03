@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:ms_ess_portal/common/widget/snackbar_helper.dart';
 import 'package:ms_ess_portal/const/api_url.dart';
+import 'package:ms_ess_portal/style/color.dart';
 
 class ApproveRequestController extends GetxController {
   var isLoading = false.obs;
@@ -36,20 +37,20 @@ class ApproveRequestController extends GetxController {
         var responseJson = json.decode(response.body);
         if (responseJson['status'] == 'success') {
           responseMessage('Success: ${responseJson['message']}');
-          showCustomSnackbar('Successfully', '${responseJson['message']}');
+          showCustomSnackbar('Successfully', '${responseJson['message']}', backgroundColor: AppColors.success40);
         } else {
           responseMessage('Failed : ${responseJson['message']['msg']}');
-          showCustomSnackbar('Failed', '${responseJson['message']['msg']}');
+          showCustomSnackbar('Failed', '${responseJson['message']['msg']}', backgroundColor: AppColors.error20);
         }
       } else {
         responseMessage('Error: ${response.statusCode}');
-        showCustomSnackbar('Failed', 'An unexpected error occurred');
+        showCustomSnackbar('Failed', 'An unexpected error occurred', backgroundColor: AppColors.error20);
         debugPrint("Error : ${response.body}");
       }
     } catch (e) {
       debugPrint("Exception : $e");
       responseMessage('Exception: $e');
-      showCustomSnackbar('Error', 'An error occurred: $e');
+      showCustomSnackbar('Error1', 'An error occurred: $e', backgroundColor: AppColors.error20);
     } finally {
       isLoading(false);
     }
@@ -79,14 +80,15 @@ class ApproveRequestController extends GetxController {
         var responseJson = json.decode(response.body);
         if (responseJson['status'] == 'success') {
           responseMessage('Success: ${responseJson['message']}');
-          showCustomSnackbar('Successfully', '${responseJson['message']}');
+          showCustomSnackbar('Successfully', '${responseJson['message']}', backgroundColor: AppColors.success40);
         } else {
           responseMessage('Failed : ${responseJson['message']['msg']}');
-          showCustomSnackbar('Failed', '${responseJson['message']['msg']}');
+          debugPrint(response.body);
+          showCustomSnackbar('Failed', '${responseJson['message']['msg']}', backgroundColor: AppColors.error20);
         }
       } else {
         responseMessage('Error: ${response.statusCode}');
-        showCustomSnackbar('Failed', 'An unexpected error occurred');
+        showCustomSnackbar('Failed', 'An unexpected error occurred', backgroundColor: AppColors.error20);
         debugPrint("Error : ${response.body}");
       }
     } catch (e) {

@@ -1,7 +1,7 @@
 class SickLeaveModel {
   int? code;
   Data? data;
-  Null? compBal;
+  String? compBal;
 
   SickLeaveModel({this.code, this.data, this.compBal});
 

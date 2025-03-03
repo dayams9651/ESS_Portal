@@ -32,6 +32,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
   String? _selectedLeaveType;
   String? _selectedSessionStartValue;
   String? _selectedSessionEndValue;
+  bool _isLoading = false; // To handle button loading state
 
   @override
   Widget build(BuildContext context) {
@@ -75,10 +76,10 @@ class _LeaveScreenState extends State<LeaveScreen> {
                       ),
                     ),
                     const SizedBox(height: 3),
+                    // Start Date and Session
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Start Date and Session
                         Expanded(
                           child: GestureDetector(
                             onTap: () => _selectDate(context, isStartDate: true),
@@ -89,7 +90,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
                                   Text("Start Date", style: AppTextStyles.kPrimaryTextStyle),
                                   const SizedBox(height: 2),
                                   SizedBox(
-                                    height: 48,
+                                    height: 50,
                                     child: TextFormField(
                                       controller: _startDateController,
                                       decoration: const InputDecoration(
@@ -97,6 +98,12 @@ class _LeaveScreenState extends State<LeaveScreen> {
                                         hintText: 'Select Date',
                                         border: OutlineInputBorder(),
                                       ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please select start date';
+                                        }
+                                        return null;
+                                      },
                                     ),
                                   ),
                                 ],
@@ -105,7 +112,6 @@ class _LeaveScreenState extends State<LeaveScreen> {
                           ),
                         ),
                         const SizedBox(width: 7),
-                        // Start Session Dropdown
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,8 +122,8 @@ class _LeaveScreenState extends State<LeaveScreen> {
                                 height: 48,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: AppColors.white40),
-                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: AppColors.white80),
+                                    borderRadius: BorderRadius.circular(5),
                                   ),
                                   child: Obx(() {
                                     return DropdownButtonFormField<String>(
@@ -136,6 +142,11 @@ class _LeaveScreenState extends State<LeaveScreen> {
                                           ),
                                         );
                                       }).toList(),
+                                      hint: Text(" Select Session"), // Add hint text
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none, //
+                                      ),
+                                      icon: SizedBox.shrink(),
                                     );
                                   }),
                                 ),
@@ -145,6 +156,8 @@ class _LeaveScreenState extends State<LeaveScreen> {
                         ),
                       ],
                     ),
+
+                    // End Date and Session
                     const SizedBox(height: 5),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -163,10 +176,16 @@ class _LeaveScreenState extends State<LeaveScreen> {
                                     child: TextFormField(
                                       controller: _endDateController,
                                       decoration: const InputDecoration(
-                                        hintText: "Select Date",
+                                        hintText: " Select Date",
                                         suffixIcon: Icon(Icons.calendar_month_outlined),
                                         border: OutlineInputBorder(),
                                       ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please select end date';
+                                        }
+                                        return null;
+                                      },
                                     ),
                                   ),
                                 ],
@@ -178,42 +197,56 @@ class _LeaveScreenState extends State<LeaveScreen> {
                         // End Session Dropdown
                         Expanded(
                           child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Session", style: AppTextStyles.kPrimaryTextStyle),
-                                const SizedBox(height: 2),
-                                SizedBox(
-                                  height: 48,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: AppColors.white40),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Obx(() {
-                                      return DropdownButtonFormField<String>(
-                                        value: _selectedSessionEndValue,
-                                        onChanged: (String? newValue) {
-                                          setState(() {
-                                            _selectedSessionEndValue = newValue;
-                                          });
-                                        },
-                                        items: controller.leaveOptions.map<DropdownMenuItem<String>>((Options option) {
-                                          return DropdownMenuItem<String>(
-                                            value: option.value.toString(),
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(left: 1.0, right: 1),
-                                              child: Text(option.label ?? ''),
-                                            ),
-                                          );
-                                        }).toList(),
-                                      );
-                                    }),
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Session", style: AppTextStyles.kPrimaryTextStyle),
+                              const SizedBox(height: 2),
+                              SizedBox(
+                                height: 50,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: AppColors.white80),
+                                    borderRadius: BorderRadius.circular(5),
                                   ),
+                                  child: Obx(() {
+                                    return DropdownButtonFormField<String>(
+                                      value: _selectedSessionEndValue,
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          _selectedSessionEndValue = newValue;
+                                        });
+                                      },
+                                      items: controller.leaveOptions.map<DropdownMenuItem<String>>((Options option) {
+                                        return DropdownMenuItem<String>(
+                                          value: option.value.toString(),
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(left: 1.0, right: 1),
+                                            child: Text(option.label ?? ''),
+                                          ),
+                                        );
+                                      }).toList(),
+                                      hint: Text(" Select Session"), // Add hint text
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none, //
+                                      ),
+                                      icon: SizedBox.shrink(),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Select session';
+                                        }
+                                        return null;
+                                      },
+                                    );
+                                  }),
                                 ),
-                              ]),
-                        )
+                              )
+
+                            ],
+                          ),
+                        ),
                       ],
                     ),
+
                     const SizedBox(height: 10),
                     Text("Reason", style: AppTextStyles.kPrimaryTextStyle),
                     const SizedBox(height: 5),
@@ -293,16 +326,17 @@ class _LeaveScreenState extends State<LeaveScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     SizedBox(
-                        width: 160,
+                      // width: 160,
                         child: RoundButton(
-                          title: 'Request',
+                          title: '    Request    ',
                           onTap: _applyLeave,
+                          // isLoading: _isLoading, // Pass the loading state to the button
                         )),
                     SizedBox(
-                        width: 160,
+                      // width: 160,
                         height: 40,
                         child: ConstButton(
-                          title: 'Cancel',
+                          title: '    Cancel    ',
                           onTap: () {
                             _resetAllFields();
                           },
@@ -340,23 +374,70 @@ class _LeaveScreenState extends State<LeaveScreen> {
   }
 
   void _applyLeave() async {
-    if (_formKey.currentState!.validate()) {
-      if (_selectedLeaveType == null || _selectedSessionStartValue == null || _selectedSessionEndValue == null) {
-        return;
-      }
 
-      final body = {
-        "type": _selectedLeaveType,
-        "startDate": _startDateController.text,
-        "startSession": _selectedSessionStartValue,
-        "endDate": _endDateController.text,
-        "endSession": _selectedSessionEndValue,
-        "reason": _reasonController.text,
-        "email_cc": [],
-        "comp_date": null,
-      };
-      await leaveApplyController.applyLeave(body);
+    bool? confirm = await _showRequestConfirmationDialog(context);
+    if (confirm == true) {
+
+      setState(() {
+        _isLoading = true;
+      });
+      if (_formKey.currentState!.validate()) {
+        if (_selectedLeaveType == null || _selectedSessionStartValue == null || _selectedSessionEndValue == null) {
+          return;
+        }
+
+        final body = {
+          "type": _selectedLeaveType,
+          "startDate": _startDateController.text,
+          "startSession": _selectedSessionStartValue,
+          "endDate": _endDateController.text,
+          "endSession": _selectedSessionEndValue,
+          "reason": _reasonController.text,
+          "email_cc": [],
+          "comp_date": null,
+        };
+        await leaveApplyController.applyLeave(body);
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
+  }
+
+  Future<bool?> _showRequestConfirmationDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+          title: const Text('Request'),
+          content: Text('Are you sure you want to submit the leave request?', style: AppTextStyles.kSmall12SemiBoldTextStyle,),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: SizedBox(
+                width: 70,
+                  child: RoundButton(title: "Yes", onTap: (){
+                    Navigator.of(context).pop(true);
+                  },)),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: SizedBox(
+                  width: 70,
+                  child: RoundButton(title: "No", onTap: (){
+                    Get.back();
+                  }, color: AppColors.error40,)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _showBottomSheet() {
@@ -413,3 +494,5 @@ class _LeaveScreenState extends State<LeaveScreen> {
     });
   }
 }
+
+

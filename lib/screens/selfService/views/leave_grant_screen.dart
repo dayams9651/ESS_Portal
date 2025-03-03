@@ -10,11 +10,19 @@ import '../../../common/widget/round_button.dart';
 import '../../../style/color.dart';
 import '../../../style/text_style.dart';
 
-class LeaveGrantScreen extends GetView<LeaveGrantController> {
+
+class LeaveGrantScreen extends StatefulWidget {
   LeaveGrantScreen({super.key});
+
+  @override
+  _LeaveGrantScreenState createState() => _LeaveGrantScreenState();
+}
+
+class _LeaveGrantScreenState extends State<LeaveGrantScreen> {
   final LeaveGrantController controller1 = Get.put(LeaveGrantController());
   final ApproveRequestController rejectRequestController = Get.put(ApproveRequestController());
-  bool _isLoading = true;
+  bool _isLoading = false;  // Loading state
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,13 +37,12 @@ class LeaveGrantScreen extends GetView<LeaveGrantController> {
           },
         ),
       ),
-      body: Obx((){
-        if(controller1.isLoading.value){
+      body: Obx(() {
+        if(controller1.isLoading.value) {
           return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
-        }  else if(controller1.leaveRequestsData.isEmpty) {
-          return Center(child: Image.asset(noData1),);
-        }
-        else {
+        } else if(controller1.leaveRequestsData.isEmpty) {
+          return Center(child: Image.asset(noContent),);
+        } else {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -82,7 +89,7 @@ class LeaveGrantScreen extends GetView<LeaveGrantController> {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  showPopUp(context, index); // Trigger the pop-up on icon tap
+                                  showBottomSheet(context, index);
                                 },
                                 child: Container(
                                   height: 55,
@@ -107,103 +114,127 @@ class LeaveGrantScreen extends GetView<LeaveGrantController> {
             ],
           );
         }
-      })
+      }),
     );
   }
-  void showPopUp(BuildContext context, index) {
-    showDialog(
+
+  void showBottomSheet(BuildContext context, int index) {
+    final leaveRequest = controller1.leaveRequestsData[index];
+    showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)),
+      ),
+      backgroundColor: Colors.white,
       builder: (BuildContext context) {
-        final leaveRequest = controller1.leaveRequestsData[index];
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(0),
-          ),
-          backgroundColor: Colors.white,
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Align(
-                  alignment: Alignment.topRight,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Icon(
-                      Icons.cancel_outlined,
-                      color: AppColors.primaryColor,
-                      size: 30,
-                    ),
+        return Container(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Text(
+                  leaveRequest.leavetype,
+                  style: AppTextStyles.kCaption14SemiBoldTextStyle,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const12TextBold('Date'),
+                      Row(
+                        children: [
+                          Icon(Icons.calendar_month, color: AppColors.white60,),
+                          Text(leaveRequest.regdate, style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50)),
+                        ],
+                      )
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const12TextBold('Days'),
+                      Row(
+                        children: [
+                          Icon(Icons.watch_later_outlined , color: AppColors.white60, ),
+                          Text(leaveRequest.totalday, style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50)),
+                        ],
+                      )
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text("${leaveRequest.empname} ( ${leaveRequest.empcode} )", style: AppTextStyles.kSmall12SemiBoldTextStyle),
+              const SizedBox(height: 7),
+              Text("Reason", style: AppTextStyles.kCaption13SemiBoldTextStyle,),
+              SizedBox(height: 5,),
+              Container(
+                height: 200,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.white40),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    leaveRequest.remark ?? "",
+                    style: TextStyle(fontSize: 16, color: AppColors.white60),
                   ),
                 ),
-                const SizedBox(height: 10),
-                Text("${leaveRequest.empname} ( ${leaveRequest.empcode} )", style: AppTextStyles.kSmall12SemiBoldTextStyle),
-                const SizedBox(height: 3),
-                const10Text(" as ${leaveRequest.designation}"),
-                const SizedBox(height: 7),
-                Text("${leaveRequest.leavetype} For ${leaveRequest.totalday}", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor)),
-                const10Text("Request date : ${leaveRequest.regago}"),
-                const SizedBox(height: 7),
-                const10TextBold("Reason"),
-                const10Text(leaveRequest.remark??""),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const12TextBold('Date'),
-                        Text(leaveRequest.regdate, style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50)),
-                      ],
+              ),
+              const SizedBox(height: 15),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  SizedBox(
+                    width: 100,
+                    child: RoundButton(
+                      title: 'Accept',
+                      onTap: () async {
+                        setState(() {
+                          _isLoading = true;
+                        });
+                        await rejectRequestController.acceptRequest(leaveRequest.trackid);
+                        setState(() {
+                          _isLoading = false;
+                        });
+                        Navigator.pop(context);
+                      },
+                      color: AppColors.primaryColor,
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const12TextBold('Days'),
-                        Text(leaveRequest.totalday, style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50)),
-                      ],
+                  ),
+                  // Reject Button
+                  SizedBox(
+                    width: 100,
+                    child: RoundButton(
+                      title: 'Reject',
+                      onTap: () async {
+                        setState(() {
+                          _isLoading = true;
+                        });
+                        await rejectRequestController.rejectRequest(leaveRequest.trackid);
+                        setState(() {
+                          _isLoading = false;
+                        });
+                        Navigator.pop(context);
+                      },
+                      color: AppColors.error40,
                     ),
-                  ],
-                ),
-                const SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SizedBox(
-                      width: 100,
-                      child: RoundButton(
-                        title: 'Accept',
-                        onTap: () async {
-                          await rejectRequestController.acceptRequest(leaveRequest.trackid);
-                        },
-                        // loading: _isLoading,
-                        color: AppColors.primaryColor,
-                      ),
-                    ),
-                    // Reject Button
-                    SizedBox(
-                      width: 100,
-                      child: RoundButton(
-                        title: 'Reject',
-                        // loading: _isLoading,
-                        onTap: () async {
-                          await rejectRequestController.rejectRequest(leaveRequest.trackid);
-                        },
-                        color: AppColors.error40,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+              _isLoading ? Center(child: CircularProgressIndicator()) : Container(),
+            ],
           ),
         );
       },
     );
   }
-
 }

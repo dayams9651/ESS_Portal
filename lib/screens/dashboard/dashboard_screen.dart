@@ -90,91 +90,107 @@ class _DashboardScreenState extends State<DashboardScreen> {
           final profile = controllerProfileView.profile.value;
         return Drawer(
           backgroundColor: AppColors.white,
-          child: ListView(
-            padding: EdgeInsets.zero,
+          child: Column(
             children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
+              // Non-scrollable UserAccountsDrawerHeader
+              UserAccountsDrawerHeader(
+                currentAccountPictureSize: Size(78, 78),
+                decoration: const BoxDecoration(color: AppColors.white),
+                accountName: Text(
+                  '${profile?.name}',
+                  style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.white100),
+                ),
+                accountEmail: Text(
+                  profile?.designation.toString() ?? "",
+                  style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white100),
+                ),
+                currentAccountPicture: CircleAvatar(
+                  radius: 40,
+                  backgroundImage: NetworkImage(profile?.photo ?? "No Img"),
+                ),
+              ),
+
+              // Scrollable content inside the drawer
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
                     children: [
-                      UserAccountsDrawerHeader(
-                        currentAccountPictureSize: Size(78, 78),
-                        decoration: const BoxDecoration(
-                            color: AppColors.white
-                        ),
-                        accountName: Text('${profile?.name}',style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.white100),),
-                        accountEmail: Text(profile?.designation.toString() ?? "", style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white100),),
-                        currentAccountPicture: CircleAvatar(
-                          radius: 40,
-                          backgroundImage: NetworkImage(
-                             profile?.photo ?? "No Img"),
-                        ),
+                      _buildDrawerItem(
+                        icon: Icons.home_outlined,
+                        text: 'Home',
+                        onTap: () {},
+                        subItems: [
+                          _buildDrawerSubItem('Announcement', onTap: () {
+                            Get.toNamed(ApplicationPages.announcementScreen);
+                          }),
+                          _buildDrawerSubItem('Hierarchy', onTap: () {
+                            Get.toNamed(ApplicationPages.hierarchyScreen);
+                          }),
+                        ],
                       ),
                       _buildDrawerItem(
-                          icon: Icons.home_outlined,
-                          text: 'Home',
-                          onTap: () {},
-                          subItems: [
-                            _buildDrawerSubItem('Announcement', onTap: () {
-                              Get.toNamed(ApplicationPages.announcementScreen);
-                            }),
-                            _buildDrawerSubItem('Hierarchy', onTap: () {
-                              Get.toNamed(ApplicationPages.hierarchyScreen);
-                            }),
-                          ]),
-                      _buildDrawerItem(icon: Icons.festival_outlined, text: 'Holiday / Event', onTap: (){
-                        Get.toNamed(ApplicationPages.holidayScreen);
-                      }),
-                      _buildDrawerItem(
-                          icon: Icons.self_improvement_outlined,
-                          text: 'Self Service',
-                          onTap: () {},
-                          subItems: [
-                            _buildDrawerSubItem('Leave Status', onTap: () {
-                              Get.toNamed(ApplicationPages.leaveStatusScreen);
-                            }),
-                            _buildDrawerSubItem('Leave Grant', onTap: () {
-                              Get.toNamed(ApplicationPages.leaveGrantScreen);
-                            }),
-                            // _buildDrawerSubItem('WFH Update', onTap: () {
-                            //   Get.toNamed(ApplicationPages.leaveWFHScreen);
-                            // }),
-                            _buildDrawerSubItem('Payslip', onTap: () {
-                              Get.toNamed(ApplicationPages.paySlipScreen);
-                            }),
-                          ]
+                        icon: Icons.festival_outlined,
+                        text: 'Holiday / Event',
+                        onTap: () {
+                          Get.toNamed(ApplicationPages.holidayScreen);
+                        },
                       ),
-
-                      _buildDrawerItem(icon: Icons.keyboard_alt_outlined, text: 'Peripheral', onTap: (){
-                        Get.toNamed(ApplicationPages.peripheralScreen);
-                      }),
-                      _buildDrawerItem(icon: Icons.snippet_folder_outlined, text: 'Documents', onTap: (){
-                        Get.toNamed(ApplicationPages.documentsScreen);
-                      }),
-                      // _buildDrawerItem(icon: Icons.dangerous, text: 'For Testing', onTap: (){
-                      //   Get.toNamed(ApplicationPages.testingScreen);
-                      // }),
-                      _buildDrawerItem(icon: Icons.auto_graph_outlined, text: 'Attendance Statistics', onTap: (){
-                        Get.toNamed(ApplicationPages.statisticsScreen);
-
-                      }),
+                      _buildDrawerItem(
+                        icon: Icons.self_improvement_outlined,
+                        text: 'Self Service',
+                        onTap: () {},
+                        subItems: [
+                          _buildDrawerSubItem('Leave Status', onTap: () {
+                            Get.toNamed(ApplicationPages.leaveStatusScreen);
+                          }),
+                          _buildDrawerSubItem('Leave Grant', onTap: () {
+                            Get.toNamed(ApplicationPages.leaveGrantScreen);
+                          }),
+                          _buildDrawerSubItem('Payslip', onTap: () {
+                            Get.toNamed(ApplicationPages.paySlipScreen);
+                          }),
+                        ],
+                      ),
+                      _buildDrawerItem(
+                        icon: Icons.keyboard_alt_outlined,
+                        text: 'Peripheral',
+                        onTap: () {
+                          Get.toNamed(ApplicationPages.peripheralScreen);
+                        },
+                      ),
+                      _buildDrawerItem(
+                        icon: Icons.snippet_folder_outlined,
+                        text: 'Documents',
+                        onTap: () {
+                          Get.toNamed(ApplicationPages.documentsScreen);
+                        },
+                      ),
+                      _buildDrawerItem(
+                        icon: Icons.auto_graph_outlined,
+                        text: 'Attendance Statistics',
+                        onTap: () {
+                          Get.toNamed(ApplicationPages.statisticsScreen);
+                        },
+                      ),
+                      const SizedBox(height: 2),
+                      Padding(
+                        padding: const EdgeInsets.all(80.0),
+                        child: RoundButton(
+                          title: 'Logout',
+                          onTap: () {
+                            showLogOutConfirmation(context);
+                          },
+                        ),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 2,),
-                  Padding(
-                    padding: const EdgeInsets.all(80.0),
-                    child: RoundButton(title: 'Logout', onTap: () {
-                      showLogOutConfirmation(context);
-                    },),
-                  )
-                ],
+                ),
               ),
             ],
           ),
-          );
-         }
+        );
+        }
        }
        ),
       bottomNavigationBar: (bottomBarPages.length <= maxCount)
@@ -224,13 +240,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           BottomBarItem(
             inActiveItem: Icon(
-              Icons.settings,
+              Icons.sunny,
               size: 30,
               color: Colors.white70,
             ),
             activeItem: Icon(
               size: 30,
-              Icons.settings,
+              Icons.sunny,
               color: Colors.white,
             ),
             itemLabel: 'Leave',
@@ -333,24 +349,25 @@ Future<bool?> showLogOutConfirmation(BuildContext context) {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 15,),
-            Align(
-              alignment: Alignment.topRight,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pop(); // Close the pop-up
-                },
-                child: const Icon(
-                  Icons.cancel_outlined,
-                  color: AppColors.primaryColor,
-                  size: 30,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Logout", style: AppTextStyles.kBody16SemiBoldTextStyle.copyWith(color: AppColors.error80)),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop(); // Close the pop-up
+                  },
+                  child: const Icon(
+                    Icons.cancel_outlined,
+                    color: AppColors.primaryColor,
+                    size: 30,
+                  ),
                 ),
-              ),
+              ],
             ),
             const SizedBox(height: 10,),
-            Text("Logout", style: AppTextStyles.kCaption14SemiBoldTextStyle.copyWith(color: AppColors.error80)),
-            const SizedBox(height: 10,),
             Text("Are you sure you want to Logout", style: AppTextStyles.kSmall12RegularTextStyle,),
-            const SizedBox(height: 20,),
+            const SizedBox(height: 30,),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -371,7 +388,9 @@ Future<bool?> showLogOutConfirmation(BuildContext context) {
                 SizedBox(width:70, height: 38,
                   child: RoundButton(title: "No", onTap: (){
                   Get.back();
-                }),),
+                }, color: AppColors.error40
+                    ,),
+                ),
               ],
             )
           ],

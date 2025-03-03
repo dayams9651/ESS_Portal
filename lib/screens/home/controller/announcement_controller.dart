@@ -14,6 +14,7 @@ class AnnouncementController extends GetxController {
   void onInit() {
     super.onInit();
     fetchAnnouncements();
+    fetchAnnouncements;
   }
   final box = GetStorage();
 

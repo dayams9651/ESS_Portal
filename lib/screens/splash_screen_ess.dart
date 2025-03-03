@@ -4,6 +4,7 @@ import 'package:ms_ess_portal/routes/routes.dart';
 import 'package:ms_ess_portal/screens/signIn/welcome_screen.dart';
 import '../const/image_strings.dart';
 import '../service/logInApi.dart';
+import 'signUp/signUp_screen.dart';
 
 class SplashScreenEss extends StatefulWidget {
   const SplashScreenEss({super.key});
@@ -21,15 +22,18 @@ class _SplashScreenEssState extends State<SplashScreenEss> {
   void navigateToNextScreen() async {
     await Future.delayed(const Duration(seconds: 3));
     try {
-      final loggedIn =  box.read('token') != null;
-      debugPrint("box.read('token') loggedIn==$loggedIn ${ await box.read('token')}");
-      if (loggedIn) {
-        debugPrint("loggedIn $loggedIn");
-        // Get.to(LockScreenPage());
-        Get.offNamed(ApplicationPages.lockScreenScreen);
-      } else {
-        debugPrint("loggedIn $loggedIn");
+      final token = box.read('token');
+      final tokenExpiry = box.read('tokenExpiry');
+      final currentTime = DateTime.now().millisecondsSinceEpoch;
+
+      if (token == null) {
         Get.to(const WelcomeScreen());
+      } else if (tokenExpiry != null && currentTime > tokenExpiry) {
+        debugPrint("Token has expired, redirecting to SignupScreen");
+        Get.to(const SignupScreen());
+      } else {
+        debugPrint("Token is valid, navigating to lock screen");
+        Get.offNamed(ApplicationPages.lockScreenScreen);
       }
     } catch (e) {
       debugPrint("Error checking login status: $e");
@@ -43,11 +47,12 @@ class _SplashScreenEssState extends State<SplashScreenEss> {
       color: Colors.white,
       child: SizedBox(
         child: Image.asset(
-          splashGif,
-          fit: BoxFit.cover,
+          logo,
+          // fit: BoxFit.cover,
           filterQuality: FilterQuality.high,
         ),
       ),
     );
   }
 }
+

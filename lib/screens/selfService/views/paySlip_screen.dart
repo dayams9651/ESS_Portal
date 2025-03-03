@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ms_ess_portal/common/widget/const_shimmer_effects.dart';
 import 'package:ms_ess_portal/common/widget/round_button.dart';
+import 'package:ms_ess_portal/const/image_strings.dart';
 import 'package:ms_ess_portal/screens/selfService/controller/paylip_controller.dart';
 import 'package:ms_ess_portal/style/color.dart';
 import 'package:ms_ess_portal/style/text_style.dart';
@@ -104,7 +105,7 @@ class _PayslipScreenState extends State<PayslipScreen> {
                   ),
                 ),
                 SizedBox(
-                  width: 90,
+                  width: 100,
                   child: RoundButton(
                     title: "Generate",
                     onTap: () {
@@ -127,7 +128,7 @@ class _PayslipScreenState extends State<PayslipScreen> {
                   );
                 }
                 if (controller.payslip.value == null) {
-                  return Text('No data available');
+                  return Image.asset(noContent);
                 }
                 final payslip = controller.payslip.value!;
                 return Padding(
@@ -193,12 +194,14 @@ class _PayslipScreenState extends State<PayslipScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Total Deductions:', style: AppTextStyles.kBody16SemiBoldTextStyle.copyWith(color: AppColors.error40)),
-                          Text('${payslip.total.deductions}', style: AppTextStyles.kBody16SemiBoldTextStyle.copyWith(color: AppColors.error20)),
+                          Text('Total Deductions:', style: AppTextStyles.kBody16SemiBoldTextStyle.copyWith(color: AppColors.error60)),
+                          Text('${payslip.total.deductions}', style: AppTextStyles.kBody16SemiBoldTextStyle.copyWith(color: AppColors.error60)),
                         ],
                       ),
                       SizedBox(height: 25),
-                      RoundButton(title: "Download", onTap: () {})
+                      RoundButton(title: "Download", onTap: () {
+
+                      })
                     ],
                   ),
                 );

@@ -48,15 +48,12 @@ class EmployeeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Use ValueNotifier to manage expansion state
     ValueNotifier<bool> _isExpanded = ValueNotifier(false);
-
     return Card(
       color: AppColors.white,
       elevation: 15,
       child: ExpansionTile(
         onExpansionChanged: (bool expanded) {
-          // Update the expansion state
           _isExpanded.value = expanded;
         },
         title: Text(
@@ -70,18 +67,20 @@ class EmployeeTile extends StatelessWidget {
         leading: CircleAvatar(
           backgroundImage: NetworkImage(employee.imageUrl.isNotEmpty ? employee.imageUrl : "empty"),
         ),
-        trailing: ValueListenableBuilder<bool>(
+        trailing: employee.children.isNotEmpty
+            ? ValueListenableBuilder<bool>(
           valueListenable: _isExpanded,
           builder: (context, isExpanded, child) {
             return CircleAvatar(
-              backgroundColor: AppColors.success40,
+              backgroundColor: isExpanded ? AppColors.error20 : AppColors.success40,
               child: Icon(
                 isExpanded ? Icons.remove : Icons.add,
                 size: 24,
               ),
             );
           },
-        ),
+        )
+            : SizedBox.shrink(),
         children: employee.children.map((child) {
           return EmployeeTile(employee: child);
         }).toList(),
@@ -89,4 +88,7 @@ class EmployeeTile extends StatelessWidget {
     );
   }
 }
+
+
+
 

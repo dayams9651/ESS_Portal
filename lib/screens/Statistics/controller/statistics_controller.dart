@@ -36,11 +36,11 @@ class AttendanceStaticsController extends GetxController {
         var jsonData = json.decode(response.body);
         attendanceData.value = AttendanceStatistics.fromJson(jsonData);
       } else {
-        print('Failed to load data. Status code: ${response.statusCode}');
-        print('Response body: ${response.body}');
+        debugPrint('Failed to load data. Status code: ${response.statusCode}');
+        debugPrint('Response body: ${response.body}');
       }
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
     }
   }
 

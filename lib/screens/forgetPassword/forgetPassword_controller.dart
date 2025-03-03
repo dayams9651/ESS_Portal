@@ -17,7 +17,7 @@ class AuthController extends GetxController {
       final response = await http.post(
         resetPassword,
         body: empId,
-        headers: {'Content-Type': 'application/json'}, // Ensure the content type is set
+        headers: {'Content-Type': 'application/json'},
       );
 
       debugPrint("Status Code: ${response.statusCode}");

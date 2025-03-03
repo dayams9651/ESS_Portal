@@ -1,9 +1,13 @@
 class LeaveBalanceModel {
   int? code;
   Data? data;
-  Null? compBal;
+  String? compBal;
 
-  LeaveBalanceModel({this.code, this.data, this.compBal});
+  LeaveBalanceModel({
+    this.code,
+    this.data,
+    this.compBal
+  });
 
   LeaveBalanceModel.fromJson(Map<String, dynamic> json) {
     code = json['code'];

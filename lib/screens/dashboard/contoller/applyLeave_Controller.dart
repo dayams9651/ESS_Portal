@@ -33,25 +33,31 @@ class LeaveApplyController extends GetxController {
         },
         body: jsonEncode(body),
       );
-      debugPrint('Response Status Code: ${response.statusCode}');
+      debugPrint('Response Status Code : ${response.statusCode}');
       debugPrint('Response Body: ${response.body}');
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
         if (jsonResponse['status'] == "success") {
           String msg = jsonResponse['message'];
-          Get.snackbar('Success', msg, backgroundColor: AppColors.success40);
+          Get.snackbar('Success', msg, backgroundColor: AppColors.success20);
         } else {
           String errorMsg = jsonResponse['message']['msg'];
-          Get.snackbar('Failed', errorMsg, backgroundColor: AppColors.error20, );
+          Get.snackbar('Failed', errorMsg, backgroundColor: AppColors.error20);
         }
+      } else if (response.statusCode == 400) {
+        // Handle Bad Request (400)
+        Get.snackbar('Bad Request', 'The request is invalid or malformed.', backgroundColor: AppColors.error20);
+      } else if (response.statusCode == 500) {
+        // Handle Internal Server Error (500)
+        Get.snackbar('Server Error', 'Something went wrong on the server. Please try again later.', backgroundColor: AppColors.error20);
+      } else {
+        // Handle other status codes
+        Get.snackbar('Error', 'Unexpected error occurred: ${response.statusCode}', backgroundColor: AppColors.error20);
       }
-      else {
-        errorMessage('Failed to apply leave. Status Code: ${response.statusCode}');
-        Get.snackbar('Error', 'Failed to apply leave. Status Code: ');
-      }
+
     } catch (e) {
       errorMessage('An error occurred: $e');
-      Get.snackbar('Error', 'An error occurred: $e');
+      // Get.snackbar('Error', 'An error occurred: $e');
     } finally {
       isLoading(false);
     }

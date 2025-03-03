@@ -18,6 +18,7 @@ class EventController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    fetchEvents;
   }
 
   Future<void> fetchEvents(int year, int month) async {

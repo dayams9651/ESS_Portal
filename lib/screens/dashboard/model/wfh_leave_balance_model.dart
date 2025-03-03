@@ -1,7 +1,7 @@
 class LeaveBalanceModel1 {
   int? code;
   Data? data;
-  Null? compBal;
+  String? compBal;
 
   LeaveBalanceModel1({this.code, this.data, this.compBal});
 

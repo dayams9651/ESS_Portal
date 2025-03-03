@@ -147,114 +147,152 @@ class LeaveStatusScreen extends GetView<LeaveStatusController> {
     );
   }
 
-  void _showBottomSheet(BuildContext context, index) {
+  void _showBottomSheet(BuildContext context, int index) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (BuildContext context) {
         final leaveRequest = controller.leaveStatus[index];
         return Container(
-          // height: 700,
           decoration: BoxDecoration(
             color: AppColors.white,
             borderRadius: BorderRadius.circular(25),
           ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 10,),
-                // Center(child: Text("Leave Without Payment", style: AppTextStyles.kCaption14SemiBoldTextStyle,)),
-                const SizedBox(height: 20,),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const12TextBold("Start Date"),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              const Icon(Icons.calendar_month, size: 28, color: AppColors.white50,),
-                              const SizedBox(width: 7,),
-                              Text(leaveRequest.todt, style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color:AppColors.white50),)
-                            ],
-                          )
-                        ],
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 10),
+                  Center(
+                    child: Text(
+                      "${leaveRequest.leavetype}",
+                      style: AppTextStyles.kCaption14SemiBoldTextStyle,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const12TextBold("Start Date"),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                const Icon(
+                                  Icons.calendar_month,
+                                  size: 28,
+                                  color: AppColors.white50,
+                                ),
+                                const SizedBox(width: 7),
+                                Text(
+                                  leaveRequest.todt,
+                                  style: AppTextStyles.kSmall12RegularTextStyle.copyWith(
+                                      color: AppColors.white50),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const12TextBold("End Date"),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.calendar_month,
+                                  size: 28,
+                                  color: AppColors.white50,
+                                ),
+                                const SizedBox(width: 7),
+                                Text(
+                                  leaveRequest.fromdt,
+                                  style: AppTextStyles.kSmall12RegularTextStyle.copyWith(
+                                      color: AppColors.white50),
+                                ),
+                              ],
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.only(),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.info_outline,
+                          color: AppColors.error60,
+                          size: 27,
+                        ),
+                        const SizedBox(width: 5),
+                        const10TextBold("Reporting to ${leaveRequest.reportto} for ${leaveRequest.totalday}"),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text("Reason", style: AppTextStyles.kPrimaryTextStyle),
+                  const SizedBox(height: 5),
+                  Container(
+                    height: 200,
+                    width: double.infinity, // Use full width for responsiveness
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.white40),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        leaveRequest.remark ?? "",
+                        style: TextStyle(fontSize: 16, color: AppColors.white60),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const12TextBold("End Date"),
-                          Row(
-                            children: [
-                              const Icon(Icons.calendar_month, size: 28, color: AppColors.white50,),
-                              const SizedBox(width: 7,),
-                              Text(leaveRequest.fromdt, style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color:AppColors.white50),)
-                            ],
-                          )
-                        ],
-                      )
-                    ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10,),
-                Padding(
-                  padding: const EdgeInsets.only(),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.info_outline, color: AppColors.error60, size: 27,),
-                      const SizedBox(width: 5,),
-                      const10TextBold("Reporting to ${leaveRequest.reportto} for ${leaveRequest.totalday}", )
-                    ],
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        SizedBox(
+                          // width: 160,
+                            child: RoundButton(
+                              title: '  Withdraw  ',
+                              onTap: () {
+                                controllerwithdraw.rejectLeaveRequest(leaveRequest.trackid);
+                                Get.back();
+                              },
+                            )),
+                        SizedBox(
+                          // width: 150,
+                            height: 42,
+                            child: ConstButton(
+                              title: '  Cancel  ',
+                              onTap: () {
+                                Get.back();
+                              },
+                            ))
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10,),
-                Text("Reason",style: AppTextStyles.kPrimaryTextStyle, ),
-                const SizedBox(height: 5,),
-                Container(
-                  height: 150,
-                  width: 400,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.white40),
-                    borderRadius: BorderRadius.circular(15),
-
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text("${leaveRequest.remark??""}", style: TextStyle(fontSize: 16, color: AppColors.white60),),
-                  ),
-                ),
-                const SizedBox(height: 15,),
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                          width: 180,
-                          child: RoundButton(title: 'Withdraw', onTap:(){
-                            controllerwithdraw.rejectLeaveRequest(leaveRequest.trackid);
-                            Get.back();
-
-                          } )),
-                      SizedBox(
-                          width: 180,
-                          height: 42,
-                          child: ConstButton(title: 'Cancel', onTap: (){}))
-                    ],
-                  ),
-                )
-              ]
+                  SizedBox(height: 20,),
+                ],
+              ),
             ),
-          )
+          ),
         );
       },
     );
   }
+
 
   void _showBottomFilter(BuildContext context) {
     showModalBottomSheet(

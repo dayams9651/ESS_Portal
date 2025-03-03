@@ -22,7 +22,7 @@ enum AttendanceStatus { P, HLD, A, SRT, WO, HD, MIS }
 
 class _AttendanceScreenState extends State<AttendanceScreen> {
   int selectedYear = 2025;
-  int selectedMonth = 2;
+  int selectedMonth = 3;
 
   List<AttendanceStatus> attendance = [];
   final List<int> years = [2023, 2024, 2025];
@@ -32,7 +32,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   ];
   final List<String> daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   DateTime currentDate = DateTime.now();
-
   final ShiftController controller = Get.put(ShiftController());
   final ShiftController controllerShift = Get.put(ShiftController());
   final AttendanceController attendController = Get.put(AttendanceController());
@@ -42,8 +41,15 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   @override
   void initState() {
     super.initState();
-    controllerShift.fetchShiftData;
-    attendController.fetchAttendanceData('2025-02-01', '2026-05-28');
+    // Initial fetching of data for the current month
+    _fetchAttendanceDataForMonth();
+  }
+
+  void _fetchAttendanceDataForMonth() {
+    attendController.fetchAttendanceData(
+      '$selectedYear-${selectedMonth.toString().padLeft(2, '0')}-01',
+      '$selectedYear-${selectedMonth.toString().padLeft(2, '0')}-${getDaysInMonth(selectedYear, selectedMonth)}',
+    );
   }
 
   int getDaysInMonth(int year, int month) {
@@ -106,10 +112,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       } else {
         selectedMonth--;
       }
-      attendController.fetchAttendanceData(
-        '$selectedYear-${selectedMonth.toString().padLeft(2, '0')}-01',
-        '$selectedYear-${selectedMonth.toString().padLeft(2, '0')}-${getDaysInMonth(selectedYear, selectedMonth)}',
-      );
+      _fetchAttendanceDataForMonth();
     });
   }
 
@@ -121,10 +124,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       } else {
         selectedMonth++;
       }
-      attendController.fetchAttendanceData(
-        '$selectedYear-${selectedMonth.toString().padLeft(2, '0')}-01',
-        '$selectedYear-${selectedMonth.toString().padLeft(2, '0')}-${getDaysInMonth(selectedYear, selectedMonth)}',
-      );
+      _fetchAttendanceDataForMonth();
     });
   }
 
@@ -133,6 +133,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         selectedMonth == currentDate.month &&
         day == currentDate.day;
   }
+
   int getSRTCount(List<Attendance> attendanceList) {
     return attendanceList.where((attendance) => attendance.title == "SRT").length;
   }
@@ -152,7 +153,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         }
         return await showExitConfirmationDialog(context) ?? false;
       },
-      // backgroundColor: Colors.white,
       child: Obx(() {
         if (attendController.isLoading.value) {
           return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
@@ -178,7 +178,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                   children: [
                     Container(
                       color: AppColors.white30,
-                      // width: 150,
                       height: 40,
                       child: Row(
                         children: [
@@ -207,20 +206,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                           onChanged: (newYear) {
                             setState(() {
                               selectedYear = newYear!;
-                              attendController.fetchAttendanceData(
-                                '$selectedYear-${selectedMonth.toString().padLeft(2, '0')}-01',
-                                '$selectedYear-${selectedMonth.toString().padLeft(2, '0')}-${getDaysInMonth(selectedYear, selectedMonth)}',
-                              );
+                              _fetchAttendanceDataForMonth();
                             });
                           },
                           items: years.map((year) {
-                            return DropdownMenuItem<int>(
-                              value: year,
-                              child: Text(
-                                year.toString(),
-                                style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.white90),
-                              ),
-                            );
+                            return DropdownMenuItem<int>(value: year, child: Text(year.toString(), style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.white90)));
                           }).toList(),
                         ),
                       ),
@@ -230,7 +220,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       backgroundColor: AppColors.error20,
                       child: IconButton(onPressed: () {
                         showPunchInDetails(context);
-                      }, icon: const Icon(Icons.info_outline,)),
+                      }, icon: const Icon(Icons.info_outline)),
                     ),
                   ],
                 ),
@@ -240,34 +230,24 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                   children: [
                     Column(
                       children: [
-                        Text(
-                          "${attendController.totalPresent}",
-                          style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor),
-                        ),
+                        Text("${attendController.totalPresent}", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.primaryColor)),
                         Text("Present", style: AppTextStyles.kSmall12RegularTextStyle),
                       ],
                     ),
                     Column(
                       children: [
-                        Text(
-                          "${attendController.totalMissPunch}",
-                          style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.misPunch1Color),
-                        ),
+                        Text("${attendController.totalMissPunch}", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.misPunch1Color)),
                         Text("MisPunch", style: AppTextStyles.kSmall12RegularTextStyle),
                       ],
                     ),
                     Column(
                       children: [
-                        Text(
-                          "${getSRTCount(fetchedAttendanceData)}", // Show the count of "SRT"
-                          style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.short1Color),
-                        ),
+                        Text("${getSRTCount(fetchedAttendanceData)}", style: AppTextStyles.kSmall12SemiBoldTextStyle.copyWith(color: AppColors.short1Color)),
                         Text("Short", style: AppTextStyles.kSmall12RegularTextStyle),
                       ],
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 15),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -288,27 +268,15 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                   child: GridView.builder(
                     shrinkWrap: false,
                     physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 7,
-                    ),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
                     itemCount: totalCells,
                     itemBuilder: (context, index) {
                       if (index < firstDayOfMonth) {
                         int prevMonthDay = previousMonthDays - (firstDayOfMonth - index - 1);
                         return Container(
                           margin: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade300,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Center(
-                            child: Text(
-                              prevMonthDay.toString(),
-                              style: const TextStyle(
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ),
+                          decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(5)),
+                          child: Center(child: Text(prevMonthDay.toString(), style: const TextStyle(color: Colors.grey))),
                         );
                       } else if (index < firstDayOfMonth + daysInMonth) {
                         int day = index - firstDayOfMonth + 1;
@@ -329,10 +297,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                             child: Center(
                               child: Text(
                                 day.toString(),
-                                style: TextStyle(
-                                  color: today ? Colors.white : Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: TextStyle(color: today ? Colors.white : Colors.black, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
@@ -341,17 +306,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         int nextMonthDay = index - firstDayOfMonth - daysInMonth + 1;
                         return Container(
                           margin: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade300,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                          decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(8)),
                           child: Center(
-                            child: Text(
-                              nextMonthDay.toString(),
-                              style: const TextStyle(
-                                color: Colors.grey,
-                              ),
-                            ),
+                            child: Text(nextMonthDay.toString(), style: const TextStyle(color: Colors.grey)),
                           ),
                         );
                       }
@@ -397,7 +354,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CustomContainer(icon: Icons.watch_later_outlined, text: 'Worked Hours', subTitle: shift.totalHour.isEmpty ? "0"  : shift.totalHour),
+                          CustomContainer(icon: Icons.watch_later_outlined, text: 'Worked Hours', subTitle: shift.totalHour.isEmpty ? "0"  : shift.totalHour.toString()),
                           const SizedBox(width: 10),
                           CustomContainer(icon: Icons.calendar_month, text: 'Shift Code ', subTitle: shift.division)
                         ],
@@ -414,6 +371,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       }),
     );
   }
+
   Future<bool?> showExitConfirmationDialog(BuildContext context) {
     return showDialog<bool>(
       context: context,
@@ -421,16 +379,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         title: const Text('Exit'),
         content: const Text('Are you sure you want to exit?'),
         actions: [
-          TextButton(
-            onPressed: () {
-              SystemNavigator.pop();
-            },
-            child: const Text('Yes'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('No'),
-          ),
+          TextButton(onPressed: () { SystemNavigator.pop(); }, child: const Text('Yes')),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('No')),
         ],
       ),
     );
@@ -441,19 +391,19 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       case "P":
         return AppColors.success60;
       case "WO":
-        return AppColors.absentColor;
+        return AppColors.info20;
       case "HLD":
-        return AppColors.warning60;
+        return AppColors.warning40;
       case "A":
         return AppColors.error80;
       case "SRT":
         return AppColors.error20;
       case "MIS":
-        return AppColors.error40;
+        return AppColors.warning20;
       case "HD":
-        return AppColors.success80;
+        return AppColors.info60;
       default:
-        return AppColors.error80;
+        return AppColors.error20;
     }
   }
 }
@@ -467,89 +417,63 @@ Future<bool?> showPunchInDetails(BuildContext context) {
         ),
         backgroundColor: Colors.white,
         child: Container(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(12),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop(); // Close the pop-up
-                  },
-                  child: const Icon(
-                    Icons.cancel_outlined,
-                    color: AppColors.primaryColor,
-                    size: 30,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Colors Index", style: AppTextStyles.kCaption13SemiBoldTextStyle.copyWith(color: AppColors.primaryColor),),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop(); // Close the pop-up
+                    },
+                    child: Icon(
+                      Icons.cancel_outlined,
+                      color: AppColors.primaryColor,
+                      size: 30,
+                    ),
                   ),
-                ),
+                ],
               ),
-              const SizedBox(height: 20,),
+              SizedBox(height: 20,),
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Row(
+                      Column(
+                        spacing: 5,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("SRT", style: AppTextStyles.kSmall12SemiBoldTextStyle,),
-                          const SizedBox(width: 7,),
-                          const CircleAvatar(radius: 12, backgroundColor: AppColors.error20,)
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text("MIS", style: AppTextStyles.kSmall12SemiBoldTextStyle,),
-                          const SizedBox(width: 7,),
-                          const CircleAvatar(radius: 12,backgroundColor: AppColors.error40,)
-                        ],
-                      ),
-                      Row(
-                        children: [
+                          Text("Short", style: AppTextStyles.kSmall12SemiBoldTextStyle,),
+                          Text("MisPunch", style: AppTextStyles.kSmall12SemiBoldTextStyle,),
                           Text("WOH", style: AppTextStyles.kSmall12SemiBoldTextStyle,),
-                          const SizedBox(width: 7,),
-                          const CircleAvatar(radius: 12, backgroundColor: AppColors.absentColor)
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text("HLD", style: AppTextStyles.kSmall12SemiBoldTextStyle,),
-                          const SizedBox(width: 7,),
-                          const CircleAvatar(radius: 12, backgroundColor: AppColors.warning60,)
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Row(
-                        children: [
-                          Text("P",style: AppTextStyles.kSmall12SemiBoldTextStyle,),
-                          const SizedBox(width: 7,),
-                          const CircleAvatar(radius: 12, backgroundColor: AppColors.success60,)
-                        ],
-                      ),
-                      Row(
-                        children: [
+                          Text("Holiday", style: AppTextStyles.kSmall12SemiBoldTextStyle,),
+                          Text("Present",style: AppTextStyles.kSmall12SemiBoldTextStyle,),
                           Text("WO", style: AppTextStyles.kSmall12SemiBoldTextStyle,),
-                          const SizedBox(width: 7,),
-                          const CircleAvatar(radius: 12, backgroundColor: AppColors.absentColor,)
+                          Text("Absence", style: AppTextStyles.kSmall12SemiBoldTextStyle,),
                         ],
                       ),
-                      Row(
+                      Column(
+                        spacing: 4,
                         children: [
-                          Text("A", style: AppTextStyles.kSmall12SemiBoldTextStyle,),
-                          const SizedBox(width: 7,),
+                          const CircleAvatar(radius: 12, backgroundColor: AppColors.error20,),
+                          const CircleAvatar(radius: 12,backgroundColor: AppColors.error40,),
+                          const CircleAvatar(radius: 12, backgroundColor: AppColors.absentColor),
+                          const CircleAvatar(radius: 12, backgroundColor: AppColors.warning60,),
+                          const CircleAvatar(radius: 12, backgroundColor: AppColors.success60,),
+                          const CircleAvatar(radius: 12, backgroundColor: AppColors.absentColor,),
                           const CircleAvatar(radius: 12, backgroundColor: AppColors.error80,)
                         ],
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
+
             ],
           ),
         ),

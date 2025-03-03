@@ -45,6 +45,9 @@ dependencies:
 #  flutter_widget_from_html: ^0.15.2
   flutter_pdfview: ^1.0.0
 
+#  document_viewer: ^0.0.1
+#  easy_image_viewer: ^1.5.1
+
   get_storage: ^2.1.1
   shimmer: ^3.0.0
 #  connectivity_plus: ^6.1.0
@@ -54,6 +57,7 @@ dependencies:
   json_serializable: ^6.1.4
   connectivity_plus: ^4.0.2
   circle_nav_bar: ^2.2.0
+
 
 dev_dependencies:
   flutter_test:

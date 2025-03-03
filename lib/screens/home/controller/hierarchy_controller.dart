@@ -15,8 +15,10 @@ class EmployeeController extends GetxController {
   @override
   void onInit() {
     fetchEmployeeData();
+    fetchEmployeeData;
     super.onInit();
   }
+
   final box = GetStorage();
   Future<void> fetchEmployeeData() async {
     try {

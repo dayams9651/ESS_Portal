@@ -1,21 +1,21 @@
 class LeaveStatusModel {
-  final String leavetype;
+  final String ?leavetype;
   final String fromdt;
   final String todt;
-  final String totalday;
+  final String? totalday;
   final String trackid;
   final String status;
   final String regdate;
   final String regago;
   final String reportto;
-  final String code;
+  final String ?code;
   final String remark;
 
   LeaveStatusModel({
-    required this.leavetype,
+    this.leavetype,
     required this.fromdt,
     required this.todt,
-    required this.totalday,
+    this.totalday,
     required this.trackid,
     required this.status,
     required this.regdate,

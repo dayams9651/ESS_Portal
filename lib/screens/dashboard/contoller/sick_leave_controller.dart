@@ -9,15 +9,16 @@ import '../../../const/api_url.dart';
 
 class SickLeaveBalanceController extends GetxController {
   var isLoading = false.obs;
-  var sickLeaveBalance = Rxn<SickLeaveModel>();
-  var leaveUpdateBalance = Rxn<LeaveUpdateModel>();
+  var sickLeaveBalance = Rxn<SickLeaveModel>(); // Used for initial sick leave data
+  var leaveUpdateBalance = Rxn<LeaveUpdateModel>(); // Used for updated sick leave data
+
+  final box = GetStorage();
 
   @override
   void onInit() {
     super.onInit();
     fetchSickLeaveBalance();
   }
-  final box = GetStorage();
 
   Future<void> fetchSickLeaveBalance() async {
     isLoading.value = true;
@@ -26,16 +27,19 @@ class SickLeaveBalanceController extends GetxController {
       if (token == null || token.isEmpty) {
         throw Exception('Token not found. Please log in first.');
       }
+
       final response = await http.post(Uri.parse(sickLeaveApi),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
       );
+
       if (response.statusCode == 200) {
         var decodedResponse = json.decode(response.body);
         debugPrint("Sick Leave API Response: $decodedResponse");
-        sickLeaveBalance.value = SickLeaveModel.fromJson(decodedResponse);
+        sickLeaveBalance.value = SickLeaveModel.fromJson(decodedResponse); // Store the initial data
+        await fetchSickLeaveBalanceUpdate(); // Call the update API to get the latest balance
       } else {
         debugPrint('Failed to load data. Status Code: ${response.statusCode}');
       }
@@ -46,6 +50,7 @@ class SickLeaveBalanceController extends GetxController {
     }
   }
 
+  // Fetch updated sick leave balance data (this will be called inside fetchSickLeaveBalance)
   Future<void> fetchSickLeaveBalanceUpdate() async {
     isLoading.value = true;
     try {
@@ -53,17 +58,29 @@ class SickLeaveBalanceController extends GetxController {
       if (token == null || token.isEmpty) {
         throw Exception('Token not found. Please log in first.');
       }
+
       final response = await http.post(Uri.parse(apiLeaveUpdateSL),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
       );
+
       if (response.statusCode == 200) {
-        debugPrint("Daya Kumar");
         var decodedResponse = json.decode(response.body);
         debugPrint("Sick Leave Update API Response: $decodedResponse");
+
+        // Store the updated leave data in leaveUpdateBalance
         leaveUpdateBalance.value = LeaveUpdateModel.fromJson(decodedResponse);
+
+        // Now update the sickLeaveBalance with the new data from fetchSickLeaveBalanceUpdate
+        sickLeaveBalance.value = SickLeaveModel.fromJson(decodedResponse); // Update sickLeaveBalance with the new data
+
+        // Print updated values to the terminal
+        if (leaveUpdateBalance.value != null) {
+          debugPrint('Updated Sick Leave Balance: ${leaveUpdateBalance.value!.data?.lClBal}');
+          debugPrint('Updated Total Year Balance: ${leaveUpdateBalance.value!.data?.totalYrBal}');
+        }
       } else {
         debugPrint('Failed to load data. Status Code: ${response.statusCode}');
       }
@@ -73,6 +90,6 @@ class SickLeaveBalanceController extends GetxController {
       isLoading.value = false;
     }
   }
-
-
 }
+
+

@@ -26,8 +26,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween, // Change this to start to avoid spacing between widgets
           children: [
             Column(
-              // mainAxisAlignment: MainAxisAlignment.center,
-              // crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(height: 100), // Add some space if needed
                 Center(

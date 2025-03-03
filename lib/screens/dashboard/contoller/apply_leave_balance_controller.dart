@@ -4,7 +4,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:ms_ess_portal/const/api_url.dart';
 import 'dart:convert';
-
 import 'package:ms_ess_portal/screens/dashboard/model/apply_leave_balance_model.dart';
 
 class LeaveApplyBalanceControllerEL extends GetxController {
@@ -42,13 +41,14 @@ class LeaveApplyBalanceControllerEL extends GetxController {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
-        body: json.encode(body),  // Pass the body with type
+        body: json.encode(body),
       );
 
       debugPrint("API call completed with status code: ${response.statusCode}");
 
       if (response.statusCode == 200) {
-        debugPrint("API Response: ${response.body}");
+
+        debugPrint('------- Api Response From  $key : ${response.body}');
         var data = json.decode(response.body);
         leaveBalance.value = LeaveResponseModel.fromJson(data);
 

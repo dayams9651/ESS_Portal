@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:ms_ess_portal/common/widget/snackbar_helper.dart';
+import 'package:ms_ess_portal/style/color.dart';
 import 'dart:convert';
 import '../../../const/api_url.dart';
 
@@ -36,11 +37,11 @@ class LeaveWithdrawController extends GetxController {
         if (responseJson['code'] == 200) {
           debugPrint("Success : ${response.body}");
           responseMessage('Success: ${response.body}');
-          showCustomSnackbar('Successfully', '$responseMessage["message"]');
+          showCustomSnackbar('Successfully', 'Withdraw your applied leave', backgroundColor: AppColors.success20);
         } else if (responseJson['status'] == 'error' && responseJson['message']['msg'] == 'leave has already withdrawn, no further action required') {
-          showCustomSnackbar("Failed", "Leave has already withdrawn, no further action required.");
+          showCustomSnackbar("Failed", "Leave has already withdrawn, no further action required.", backgroundColor: AppColors.error20,);
         } else {
-          showCustomSnackbar("Failed", "Leave has already been approved, so you can't reject it.");
+          showCustomSnackbar("Failed", "Leave has already been approved, so you can't reject it.", backgroundColor: AppColors.error20);
           debugPrint("Error : ${response.body}");
         }
       } else {

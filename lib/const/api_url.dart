@@ -1,8 +1,8 @@
 
 // const String baseUrl = "https://esstest.mscorpres.net";  // local Url
-const String baseUrl = "https://essv2.mscorpres.net";  // local Url
+// const String baseUrl = "https://essv2.mscorpres.net";  // local Url
 // const String baseUrl = "http://192.168.68.110:3005";  // local Url
-// const String baseUrl = "https://login.mscorpres.online";  // Live Url
+const String baseUrl = "https://login.mscorpres.online";  // Live Url
 
 const String logInApi = "$baseUrl/login/login";  // Done
 const String announcementApi = "$baseUrl/timeline";   // Done
@@ -15,7 +15,7 @@ const String shiftApi = "$baseUrl/attendance/view/shift";  // Done
 const String wfhLeaveApi = "$baseUrl/dashboard/leave/WFH";  // Done
 const String sickLeaveApi = "$baseUrl/dashboard/leave/SL";   //Done
 const String apiUrlPunch = "$baseUrl/attendance/view/punch/";  // Done
-const String apiPeripheral = "$baseUrl/assets";
+const String apiPeripheral = "$baseUrl/assets";    // Done
 const String apiEvents = "$baseUrl/event/?start=&end=";  // done
 const String apiLeaveGrant = "$baseUrl/leave/getLeaveList";   //Done
 const String apiLeaveStatus = "$baseUrl/leave/getEmpLeaveList";  // Done
@@ -33,8 +33,8 @@ const String apiHierarchy = "$baseUrl/hierarchy/orgchart/children/view";  // Don
 // Apply Leave List
 const String apiLeave = "$baseUrl/leave/getBalance";  //Done
 const String apiLeaveCalculation = "$baseUrl/leave/getBalance/";
-const String apiApplyLeave = "$baseUrl/leave/sendELLeaveRequest";
-const String apiResetPassword = "$baseUrl/auth/reset";
+const String apiApplyLeave = "$baseUrl/leave/sendELLeaveRequest";  // Done
+const String apiResetPassword = "$baseUrl/login/reset";
 
 
 // Leave balance Update
