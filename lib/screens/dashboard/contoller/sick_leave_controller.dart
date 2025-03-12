@@ -9,8 +9,8 @@ import '../../../const/api_url.dart';
 
 class SickLeaveBalanceController extends GetxController {
   var isLoading = false.obs;
-  var sickLeaveBalance = Rxn<SickLeaveModel>(); // Used for initial sick leave data
-  var leaveUpdateBalance = Rxn<LeaveUpdateModel>(); // Used for updated sick leave data
+  var sickLeaveBalance = Rxn<SickLeaveModel>();
+  var leaveUpdateBalance = Rxn<LeaveUpdateModel>();
 
   final box = GetStorage();
 
@@ -38,8 +38,8 @@ class SickLeaveBalanceController extends GetxController {
       if (response.statusCode == 200) {
         var decodedResponse = json.decode(response.body);
         debugPrint("Sick Leave API Response: $decodedResponse");
-        sickLeaveBalance.value = SickLeaveModel.fromJson(decodedResponse); // Store the initial data
-        await fetchSickLeaveBalanceUpdate(); // Call the update API to get the latest balance
+        sickLeaveBalance.value = SickLeaveModel.fromJson(decodedResponse);
+        await fetchSickLeaveBalanceUpdate();
       } else {
         debugPrint('Failed to load data. Status Code: ${response.statusCode}');
       }
@@ -50,7 +50,6 @@ class SickLeaveBalanceController extends GetxController {
     }
   }
 
-  // Fetch updated sick leave balance data (this will be called inside fetchSickLeaveBalance)
   Future<void> fetchSickLeaveBalanceUpdate() async {
     isLoading.value = true;
     try {
@@ -69,14 +68,8 @@ class SickLeaveBalanceController extends GetxController {
       if (response.statusCode == 200) {
         var decodedResponse = json.decode(response.body);
         debugPrint("Sick Leave Update API Response: $decodedResponse");
-
-        // Store the updated leave data in leaveUpdateBalance
         leaveUpdateBalance.value = LeaveUpdateModel.fromJson(decodedResponse);
-
-        // Now update the sickLeaveBalance with the new data from fetchSickLeaveBalanceUpdate
-        sickLeaveBalance.value = SickLeaveModel.fromJson(decodedResponse); // Update sickLeaveBalance with the new data
-
-        // Print updated values to the terminal
+        sickLeaveBalance.value = SickLeaveModel.fromJson(decodedResponse);
         if (leaveUpdateBalance.value != null) {
           debugPrint('Updated Sick Leave Balance: ${leaveUpdateBalance.value!.data?.lClBal}');
           debugPrint('Updated Total Year Balance: ${leaveUpdateBalance.value!.data?.totalYrBal}');
@@ -90,6 +83,14 @@ class SickLeaveBalanceController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  // New method to refresh sick leave balance and print to terminal
+  void refreshSickLeaveBalance() {
+    fetchSickLeaveBalance().then((_) {
+      debugPrint('Sick Leave Balance refreshed: ${sickLeaveBalance.value?.data?.lClBal}');
+    });
+  }
 }
+
 
 

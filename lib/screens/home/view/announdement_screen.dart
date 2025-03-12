@@ -47,6 +47,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                   itemBuilder: (context, index) {
                     var announcement = controller.announcements[index];
                     return Padding(
+
                       padding: const EdgeInsets.all(1.0),
                       child: Card(
                         color: AppColors.white,

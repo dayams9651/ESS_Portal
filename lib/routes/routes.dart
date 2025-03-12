@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:ms_ess_portal/LockAuth/lockScreen_page.dart';
 import 'package:ms_ess_portal/screens/Statistics/bindings/statistics_bindings.dart';
+import 'package:ms_ess_portal/screens/Testing/testing_screen.dart';
 import 'package:ms_ess_portal/screens/dashboard/dashboard_screen.dart';
 import 'package:ms_ess_portal/screens/documents/views/documents_page_screen.dart';
 import 'package:ms_ess_portal/screens/holiday&event/bindings/holidays_bindings.dart';
@@ -133,10 +134,10 @@ class ApplicationPages {
       page: ()=>  LockScreenPage(),
     ),
 
-    // GetPage(
-    //     name: testingScreen,
-    //     page: ()=>  ProfileView(),
-    //     // binding: TestingBindings()
-    // ),
+    GetPage(
+        name: testingScreen,
+        page: ()=>  ReportUI(),
+        // binding: TestingBindings()
+    ),
   ];
 }

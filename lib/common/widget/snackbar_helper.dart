@@ -6,13 +6,13 @@ void showCustomSnackbar(
     String title,
     String message, {
       SnackPosition position = SnackPosition.TOP,
-      Color backgroundColor = Colors.white70, // Default background color
+      Color backgroundColor = Colors.white70,
     })
 {
   Get.snackbar(
     title,
     message,
     snackPosition: position,
-    backgroundColor: backgroundColor, // Apply the background color
+    backgroundColor: backgroundColor,
   );
 }

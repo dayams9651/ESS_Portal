@@ -1,11 +1,14 @@
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:ms_ess_portal/const/api_url.dart';
 import 'package:ms_ess_portal/screens/documents/models/document_sop_model.dart';
 import 'dart:convert';
+
+import 'package:ms_ess_portal/style/color.dart';
 
 
 class SOPController extends GetxController {
@@ -27,7 +30,6 @@ class SOPController extends GetxController {
     }
     try {
       isLoading(true);
-      // final response = await http.get(Uri.parse('https://esstest.mscorpres.net/sop'),
       final response = await http.post(Uri.parse(apiSop),
         headers: {
           'Authorization': 'Bearer $token',
@@ -50,6 +52,28 @@ class SOPController extends GetxController {
       hasError(true);
     } finally {
       isLoading(false);
+    }
+  }
+
+  Icon getFileTypeIcon(String filePath) {
+    String fileExtension = filePath.split('.').last.toLowerCase();
+    switch (fileExtension) {
+      case 'pdf':
+        return Icon(Icons.picture_as_pdf, color: AppColors.error80, size: 30,);
+      case 'doc':
+      case 'docx':
+        return Icon(Icons.description);
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+        return Icon(Icons.image_outlined, size: 30, color: AppColors.warning40,);
+      case 'xls':
+      case 'xlsx':
+        return Icon(Icons.table_chart, size: 30,);
+      case 'txt':
+        return Icon(Icons.text_fields, size: 30,);
+      default:
+        return Icon(Icons.insert_drive_file, size: 30,);
     }
   }
 }

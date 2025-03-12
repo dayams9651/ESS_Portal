@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
 import 'package:ms_ess_portal/screens/Terms&Condition/screen/term_and_condition_screen.dart';
-import 'package:ms_ess_portal/screens/dashboard/dashboard_screen.dart';
 import '../common/widget/snackbar_helper.dart';
 import '../const/api_url.dart';
 import '../screens/signUp/model/loginIn_response_model.dart';
@@ -61,7 +60,6 @@ class UserLogInService extends GetxController {
     }
   }
 
-  // To retrieve the saved token
   String getToken() {
     return box.read('token') ?? '';
   }

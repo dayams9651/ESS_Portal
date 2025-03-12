@@ -3,7 +3,7 @@ description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.0.0+1
+version: 17.0.0+1
 
 environment:
   sdk: ^3.6.1
@@ -29,7 +29,9 @@ dependencies:
   animated_notch_bottom_bar: ^1.0.3
   permission_handler: ^10.0.0
   path_provider: ^2.0.7
+
   pdf: ^3.6.0
+  open_file: ^3.5.10
   dio:
 
   # ------- Pie chart ------------
@@ -57,6 +59,13 @@ dependencies:
   json_serializable: ^6.1.4
   connectivity_plus: ^4.0.2
   circle_nav_bar: ^2.2.0
+  flutter_local_notifications: ^18.0.1
+  flashy_tab_bar2: ^0.0.10
+  onesignal_flutter: ^5.3.0
+  shared_preferences: ^2.4.0
+  upgrader: ^11.3.1
+  awesome_dialog: ^3.2.1
+
 
 
 dev_dependencies:

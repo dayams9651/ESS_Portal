@@ -23,6 +23,7 @@ class _TermAndConditionScreenState extends State<TermAndConditionScreen> {
         title: Text("Important - Cyber Alert & Prevention", style: AppTextStyles.kCaption14SemiBoldTextStyle,),
       ),
       body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: Padding(
           padding: const EdgeInsets.only(left: 8.0, right: 8),
           child: Column(
@@ -265,6 +266,7 @@ class _TermAndConditionScreenState extends State<TermAndConditionScreen> {
                   Get.to(DashboardScreen());
                 }),
               ),
+              SizedBox(height: 20,)
             ],
           ),
         ),

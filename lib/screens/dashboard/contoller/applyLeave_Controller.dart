@@ -1,8 +1,11 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:ms_ess_portal/style/color.dart';
+import 'package:ms_ess_portal/style/text_style.dart';
 import 'dart:convert';
 import '../../../const/api_url.dart';
 
@@ -39,19 +42,89 @@ class LeaveApplyController extends GetxController {
         final jsonResponse = jsonDecode(response.body);
         if (jsonResponse['status'] == "success") {
           String msg = jsonResponse['message'];
-          Get.snackbar('Success', msg, backgroundColor: AppColors.success20);
+          AwesomeDialog(
+            titleTextStyle: AppTextStyles.kCaption14SemiBoldTextStyle,
+            context: Get.context!,
+            dialogType: DialogType.success,
+            buttonsTextStyle: AppTextStyles.kSmall12SemiBoldTextStyle,
+            btnOkColor: AppColors.success20,
+            title: 'Successfully',
+            desc: '$msg',
+            btnOkOnPress: () {
+              // Optional: You can do something when the "OK" button is pressed.
+            },
+            headerAnimationLoop: false,
+            customHeader: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.success40,
+              ),
+              child: Icon(
+                Icons.check_circle_outline, // Error icon
+                color: Colors.white, // Icon color
+                size: 80, // Icon size
+              ),
+            ),
+          ).show();
+          // Get.snackbar('Success', msg, backgroundColor: AppColors.success20);
         } else {
           String errorMsg = jsonResponse['message']['msg'];
-          Get.snackbar('Failed', errorMsg, backgroundColor: AppColors.error20);
+          AwesomeDialog(
+            titleTextStyle: AppTextStyles.kCaption14SemiBoldTextStyle,
+            context: Get.context!,
+            dialogType: DialogType.error,
+            buttonsTextStyle: AppTextStyles.kSmall12SemiBoldTextStyle,
+            btnOkColor: AppColors.error20,
+            title: 'Failed',
+            desc: '$errorMsg',
+            btnOkOnPress: () {
+              // Optional: You can do something when the "OK" button is pressed.
+            },
+            headerAnimationLoop: false,
+            customHeader: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.red,
+              ),
+              child: Icon(
+                Icons.error, // Error icon
+                color: Colors.white, // Icon color
+                size: 80, // Icon size
+              ),
+            ),
+          ).show();
+          // Get.snackbar('Failed', errorMsg, backgroundColor: AppColors.error20);
         }
       } else if (response.statusCode == 400) {
-        // Handle Bad Request (400)
         Get.snackbar('Bad Request', 'The request is invalid or malformed.', backgroundColor: AppColors.error20);
       } else if (response.statusCode == 500) {
-        // Handle Internal Server Error (500)
-        Get.snackbar('Server Error', 'Something went wrong on the server. Please try again later.', backgroundColor: AppColors.error20);
+        AwesomeDialog(
+          titleTextStyle: AppTextStyles.kCaption14SemiBoldTextStyle,
+          context: Get.context!,
+          dialogType: DialogType.error,
+          buttonsTextStyle: AppTextStyles.kSmall12SemiBoldTextStyle,
+          btnOkColor: AppColors.error20,
+          title: 'Server Error',
+          desc: 'Something went wrong on the server. Please try again later.',
+          btnOkOnPress: () {
+            // Optional: You can do something when the "OK" button is pressed.
+          },
+          headerAnimationLoop: false,
+          customHeader: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.red,
+            ),
+            child: Icon(
+              Icons.error, // Error icon
+              color: Colors.white, // Icon color
+              size: 80, // Icon size
+            ),
+          ),
+        ).show();
+
+        // Get.snackbar('Server Error', 'Something went wrong on the server. Please try again later.', backgroundColor: AppColors.error20);
       } else {
-        // Handle other status codes
         Get.snackbar('Error', 'Unexpected error occurred: ${response.statusCode}', backgroundColor: AppColors.error20);
       }
 

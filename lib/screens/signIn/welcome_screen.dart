@@ -5,6 +5,7 @@ import 'package:ms_ess_portal/const/image_strings.dart';
 import 'package:ms_ess_portal/screens/signUp/signUp_screen.dart';
 import 'package:ms_ess_portal/style/color.dart';
 import 'package:ms_ess_portal/style/text_style.dart';
+import 'package:upgrader/upgrader.dart';
 
 
 class WelcomeScreen extends StatefulWidget {
@@ -17,47 +18,49 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(9.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween, // Change this to start to avoid spacing between widgets
-          children: [
-            Column(
-              children: [
-                SizedBox(height: 100), // Add some space if needed
-                Center(
-                  child: Image.asset(
-                    logo,
-                    height: 130,
+    return UpgradeAlert(
+      child: Scaffold(
+        backgroundColor: AppColors.white,
+        body: Padding(
+          padding: const EdgeInsets.all(9.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                children: [
+                  SizedBox(height: 100),
+                  Center(
+                    child: Image.asset(
+                      logo,
+                      height: 130,
+                    ),
                   ),
-                ),
-                Text("ESS", style: AppTextStyles.kBody24SemiBoldTextStyle)
-              ],
-            ),
-            // SizedBox(height: 400,),
-            Column(
-              children: [
-                SizedBox(
-                  height: 50,
-                  child: RoundButton(
-                    title: 'Login',
-                    onTap: () {
-                      Get.to(() => SignupScreen());
-                    },
+                  Text("ESS", style: AppTextStyles.kBody24SemiBoldTextStyle)
+                ],
+              ),
+              // SizedBox(height: 400,),
+              Column(
+                children: [
+                  SizedBox(
+                    height: 50,
+                    child: RoundButton(
+                      title: 'Login',
+                      onTap: () {
+                        Get.to(() => SignupScreen());
+                      },
+                    ),
                   ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'Manage your work profile and access all features',
-                  style: AppTextStyles.kSmall12RegularTextStyle,
-                ),
-                SizedBox(height: 40)
-              ],
-            ),
-          ],
+                  SizedBox(height: 8),
+                  Text(
+                    'Manage your work profile and access all features',
+                    style: AppTextStyles.kSmall12RegularTextStyle,
+                  ),
+                  SizedBox(height: 40)
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

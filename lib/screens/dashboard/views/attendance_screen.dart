@@ -289,16 +289,23 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         return GestureDetector(
                           onTap: () => toggleAttendance(day - 1),
                           child: Container(
-                            margin: const EdgeInsets.all(4),
+                            margin: const EdgeInsets.all(2),
                             decoration: BoxDecoration(
                               color: today ? AppColors.primaryColor : dayColor,
-                              borderRadius: BorderRadius.circular(5),
+                              borderRadius: BorderRadius.circular(3),
                             ),
                             child: Center(
-                              child: Text(
-                                day.toString(),
-                                style: TextStyle(color: today ? Colors.white : Colors.black, fontWeight: FontWeight.bold),
-                              ),
+                              child: Column(
+                                children: [
+                                  SizedBox(height: 4,),
+                                  Text(
+                                    day.toString(),
+                                    style: TextStyle(color: today ? Colors.white : Colors.black, fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(attendanceForDay.title, style: AppTextStyles.kSmall10SemiBoldTextStyle.copyWith(color: AppColors.white10
+                                  ),)
+                                ],
+                              )
                             ),
                           ),
                         );

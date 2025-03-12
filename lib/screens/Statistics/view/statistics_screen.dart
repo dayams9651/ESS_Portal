@@ -9,6 +9,7 @@ import '../../../style/text_style.dart';
 
 class StatisticsScreen extends GetView<AttendanceStaticsController> {
   final AttendanceStaticsController _controller = Get.put(AttendanceStaticsController());
+
   StatisticsScreen({super.key});
 
   @override
@@ -53,8 +54,8 @@ class StatisticsScreen extends GetView<AttendanceStaticsController> {
                     child: Container(
                       height: 42,
                       width: 150,
-                      decoration : BoxDecoration(
-                       color: AppColors.success20
+                      decoration: BoxDecoration(
+                        color: AppColors.success20,
                       ),
                       child: Center(
                         child: DropdownButton<int>(
@@ -93,12 +94,8 @@ class StatisticsScreen extends GetView<AttendanceStaticsController> {
           ],
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     _controller.fetchData();
-      //   },
-      //   child: Icon(Icons.refresh),
-      // ),
     );
   }
 }
+
+

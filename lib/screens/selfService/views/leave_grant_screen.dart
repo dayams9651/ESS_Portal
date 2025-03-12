@@ -196,36 +196,24 @@ class _LeaveGrantScreenState extends State<LeaveGrantScreen> {
                   SizedBox(
                     width: 100,
                     child: RoundButton(
+                      color: AppColors.primaryColor,
                       title: 'Accept',
-                      onTap: () async {
-                        setState(() {
-                          _isLoading = true;
-                        });
-                        await rejectRequestController.acceptRequest(leaveRequest.trackid);
-                        setState(() {
-                          _isLoading = false;
-                        });
+                      onTap: ()  {
+                        rejectRequestController.acceptRequest(leaveRequest.trackid.toString());
                         Navigator.pop(context);
                       },
-                      color: AppColors.primaryColor,
                     ),
                   ),
                   // Reject Button
                   SizedBox(
                     width: 100,
                     child: RoundButton(
+                      color: AppColors.error40,
                       title: 'Reject',
-                      onTap: () async {
-                        setState(() {
-                          _isLoading = true;
-                        });
-                        await rejectRequestController.rejectRequest(leaveRequest.trackid);
-                        setState(() {
-                          _isLoading = false;
-                        });
+                      onTap: ()  {
+                         rejectRequestController.rejectRequest(leaveRequest.trackid.toString());
                         Navigator.pop(context);
                       },
-                      color: AppColors.error40,
                     ),
                   ),
                 ],

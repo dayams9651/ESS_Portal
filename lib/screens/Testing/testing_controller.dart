@@ -1,56 +1,96 @@
-//
-// import 'package:flutter/cupertino.dart';
-// import 'package:get/get.dart';
-// import 'package:get_storage/get_storage.dart';
-// import 'package:http/http.dart' as http;
-// import 'package:ms_ess_portal/screens/Testing/testing_model.dart';
-// import 'dart:convert';
-//
-// import '../../const/api_url.dart';
-//
-// class ProfileViewController extends GetxController {
-//   var profile = Rxn<ProfileViewModel>();
-//   var isLoading = true.obs;
-//   var isError = false.obs;
-//   var errorMessage = ''.obs;
-//   final box = GetStorage();
-//
-//   Future<void> fetchProfileData() async {
-//     try {
-//       String? token = box.read('token');
-//       if (token == null || token.isEmpty) {
-//         errorMessage.value = 'Token not found. Please log in first.';
-//         debugPrint("Token not found");
-//         throw Exception('Token not found');
-//       }
-//       isLoading(true);
-//       debugPrint("Making API request...");
-//       final response = await http.get(
-//         Uri.parse(apiProfileView),
-//         headers: {
-//           'Authorization': 'Bearer $token',
-//           'Content-Type': 'application/json',
-//         },
-//       );
-//
-//       debugPrint("Response Status: ${response.statusCode}");
-//       debugPrint("Response Body: ${response.body}");
-//
-//       if (response.statusCode == 200) {
-//         final data = json.decode(response.body)['data'][0];
-//         profile.value = ProfileViewModel.fromJson(data);
-//         isError(false);
-//       } else {
-//         isError(true);
-//         errorMessage.value = 'Failed to fetch profile data.';
-//       }
-//     } catch (e) {
-//       debugPrint("Error: $e");
-//       isError(true); // Error caught
-//       errorMessage.value = e.toString();
-//     } finally {
-//       isLoading(false);
-//     }
-//   }
-// }
-//
+import 'dart:convert';
+import 'dart:typed_data';
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:http/http.dart' as http;
+import 'package:permission_handler/permission_handler.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:open_file/open_file.dart';
+
+class ReportController extends GetxController {
+  var selectedPeriod = '2025-01'.obs;
+  final box = GetStorage();
+  var isLoading = false.obs;
+
+  Future<void> downloadReport() async {
+    try {
+      isLoading.value = true;
+
+      String? token = box.read('token');
+      if (token == null || token.isEmpty) {
+        throw Exception('Token not found. Please log in first.');
+      }
+
+      var url = Uri.parse('https://login.mscorpres.online/attendance/download');
+      var headers = {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      };
+      var payload = {'period': selectedPeriod.value};
+
+      final response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(payload),
+      );
+
+      if (response.statusCode == 200) {
+        Uint8List fileBytes = response.bodyBytes;
+        String fileName = 'report_${selectedPeriod.value}.pdf';
+        await saveFile(fileBytes, fileName);
+        Get.snackbar('Success', 'Report downloaded and saved successfully!');
+        openFile(fileName); // Open the file after saving it
+      } else {
+        debugPrint('Failed to download report. Status Code: ${response.statusCode}');
+        Get.snackbar('Error', 'Failed to download report. Status Code: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint("Error: $e");
+      Get.snackbar('Error', 'An error occurred: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> saveFile(Uint8List fileBytes, String fileName) async {
+    try {
+      // Request storage permission if not already granted
+      PermissionStatus status = await Permission.storage.request();
+      if (!status.isGranted) {
+        throw Exception('Storage permission not granted.');
+      }
+
+      // Get the downloads directory
+      final directory = await getDownloadsDirectory();
+      if (directory != null) {
+        final file = File('${directory.path}/$fileName');
+        await file.writeAsBytes(fileBytes);
+        debugPrint('File saved to ${file.path}');
+      } else {
+        throw Exception('Could not access downloads directory.');
+      }
+    } catch (e) {
+      debugPrint("Error saving file: $e");
+      throw Exception('Failed to save file: $e');
+    }
+  }
+
+  // Function to open the file after saving
+  Future<void> openFile(String fileName) async {
+    try {
+      final directory = await getDownloadsDirectory();
+      if (directory != null) {
+        final filePath = '${directory.path}/$fileName';
+        final result = await OpenFile.open(filePath);
+        debugPrint('File open result: $result');
+      } else {
+        debugPrint('Could not access downloads directory.');
+      }
+    } catch (e) {
+      debugPrint("Error opening file: $e");
+      throw Exception('Failed to open file: $e');
+    }
+  }
+}

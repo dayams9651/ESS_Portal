@@ -85,7 +85,7 @@ class PeripheralScreen extends GetView<AssetController> {
                                                 ),
                                                 child: InteractiveViewer(
                                                   child: Image.network(
-                                                    asset.images[imgIndex],
+                                                    asset.images[imgIndex] ,
                                                     fit: BoxFit.cover,
                                                   ),
                                                 ),
@@ -161,7 +161,6 @@ class PeripheralScreen extends GetView<AssetController> {
                       IconButton(
                         icon: Icon(Icons.arrow_forward_ios, size: 30, color: AppColors.primaryColor),
                         onPressed: () {
-                          // Go to next page (if available)
                           if (_pageController.page != null && _pageController.page! < assetController.assets.length - 1) {
                             _pageController.nextPage(
                               duration: Duration(milliseconds: 300),
@@ -186,14 +185,15 @@ class PeripheralScreen extends GetView<AssetController> {
       context: context,
       builder: (context) {
         return Dialog(
+          backgroundColor: Colors.transparent,
           child: InteractiveViewer(
-            panEnabled: true, // Allow pan/dragging the image
-            boundaryMargin: EdgeInsets.all(3),
+            panEnabled: true,
+            boundaryMargin: EdgeInsets.all(1),
             minScale: 0.1,
             maxScale: 2.0,
             child: Image.network(
               imageUrl,
-              fit: BoxFit.contain,
+              fit: BoxFit.cover,
             ),
           ),
         );

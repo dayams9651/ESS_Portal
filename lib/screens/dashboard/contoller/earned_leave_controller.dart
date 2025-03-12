@@ -18,7 +18,6 @@ class EarnedLeaveController extends GetxController {
     fetchEarnedLeave();
   }
   final box = GetStorage();
-
   Future<void> fetchEarnedLeave() async {
     isLoading.value = true;
     try {

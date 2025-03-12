@@ -32,7 +32,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
   String? _selectedLeaveType;
   String? _selectedSessionStartValue;
   String? _selectedSessionEndValue;
-  bool _isLoading = false; // To handle button loading state
+  bool _isLoading = false; 
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +76,6 @@ class _LeaveScreenState extends State<LeaveScreen> {
                       ),
                     ),
                     const SizedBox(height: 3),
-                    // Start Date and Session
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -100,7 +99,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
                                       ),
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
-                                          return 'Please select start date';
+                                          return 'Select Start Date';
                                         }
                                         return null;
                                       },
@@ -142,7 +141,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
                                           ),
                                         );
                                       }).toList(),
-                                      hint: Text(" Select Session"), // Add hint text
+                                      hint: Text(" Select Session"), 
                                       decoration: InputDecoration(
                                         border: InputBorder.none, //
                                       ),
@@ -156,7 +155,6 @@ class _LeaveScreenState extends State<LeaveScreen> {
                         ),
                       ],
                     ),
-
                     // End Date and Session
                     const SizedBox(height: 5),
                     Row(
@@ -182,7 +180,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
                                       ),
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
-                                          return 'Please select end date';
+                                          return 'Select end date';
                                         }
                                         return null;
                                       },
@@ -202,10 +200,9 @@ class _LeaveScreenState extends State<LeaveScreen> {
                               Text("Session", style: AppTextStyles.kPrimaryTextStyle),
                               const SizedBox(height: 2),
                               SizedBox(
-                                height: 50,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: AppColors.white80),
+                                    border: Border.all(),
                                     borderRadius: BorderRadius.circular(5),
                                   ),
                                   child: Obx(() {
@@ -225,28 +222,20 @@ class _LeaveScreenState extends State<LeaveScreen> {
                                           ),
                                         );
                                       }).toList(),
-                                      hint: Text(" Select Session"), // Add hint text
+                                      hint: Text(" Select Session"),
                                       decoration: InputDecoration(
-                                        border: InputBorder.none, //
+                                        border: InputBorder.none
                                       ),
                                       icon: SizedBox.shrink(),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Select session';
-                                        }
-                                        return null;
-                                      },
                                     );
                                   }),
                                 ),
                               )
-
                             ],
                           ),
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 10),
                     Text("Reason", style: AppTextStyles.kPrimaryTextStyle),
                     const SizedBox(height: 5),
@@ -326,14 +315,11 @@ class _LeaveScreenState extends State<LeaveScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     SizedBox(
-                      // width: 160,
                         child: RoundButton(
                           title: '    Request    ',
                           onTap: _applyLeave,
-                          // isLoading: _isLoading, // Pass the loading state to the button
                         )),
                     SizedBox(
-                      // width: 160,
                         height: 40,
                         child: ConstButton(
                           title: '    Cancel    ',
@@ -374,10 +360,8 @@ class _LeaveScreenState extends State<LeaveScreen> {
   }
 
   void _applyLeave() async {
-
     bool? confirm = await _showRequestConfirmationDialog(context);
     if (confirm == true) {
-
       setState(() {
         _isLoading = true;
       });
@@ -385,7 +369,6 @@ class _LeaveScreenState extends State<LeaveScreen> {
         if (_selectedLeaveType == null || _selectedSessionStartValue == null || _selectedSessionEndValue == null) {
           return;
         }
-
         final body = {
           "type": _selectedLeaveType,
           "startDate": _startDateController.text,
@@ -397,6 +380,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
           "comp_date": null,
         };
         await leaveApplyController.applyLeave(body);
+        _resetAllFields();
         setState(() {
           _isLoading = false;
         });
@@ -432,7 +416,8 @@ class _LeaveScreenState extends State<LeaveScreen> {
                   width: 70,
                   child: RoundButton(title: "No", onTap: (){
                     Get.back();
-                  }, color: AppColors.error40,)),
+                  }, color: AppColors.error40,)
+              ),
             ),
           ],
         );

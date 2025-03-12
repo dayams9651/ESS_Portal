@@ -1,39 +1,56 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:ms_ess_portal/style/color.dart';
+import 'package:ms_ess_portal/style/text_style.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
-import '../../../style/text_style.dart';
+class NotificationScreen extends StatelessWidget {
+  const NotificationScreen({super.key});
 
-class NotificationScreen extends StatefulWidget {
-  @override
-  _NotificationScreenState createState() => _NotificationScreenState();
-}
+  void onInitState(){
+    OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+    OneSignal.initialize("77d4afee-a29f-4dfd-8b18-11e0384bffc1");
+    OneSignal.Notifications.requestPermission(true);
+  }
+  String getTimeAgo(DateTime timestamp) {
+    final now = DateTime.now();
+    final difference = now.difference(timestamp);
 
-class _NotificationScreenState extends State<NotificationScreen> {
-  final List<NotificationItem> notifications = [
-    NotificationItem(
-      icon: Icons.notifications,
-      title: 'New Message',
-      subtitle: 'You have a new message from John',
-      time: '12:30 PM',
-    ),
-    NotificationItem(
-      icon: Icons.event,
-      title: 'Event Reminder',
-      subtitle: 'Don\'t forget about your meeting at 2 PM',
-      time: '11:45 AM',
-    ),
-    NotificationItem(
-      icon: Icons.update,
-      title: 'App Update Available',
-      subtitle: 'New update for the app is available!',
-      time: '10:00 AM',
-    ),
-  ];
+    if (difference.inDays > 0) {
+      return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours} hour${difference.inHours > 1 ? 's' : ''} ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes} min${difference.inMinutes > 1 ? 's' : ''} ago';
+    } else {
+      return 'Just now';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final String? msgTitle = GetStorage().read('msg_title');
+    final String? msgDis = GetStorage().read('msg_dis');
+    final String? timestampStr = GetStorage().read('msg_timestamp');
+
+    String displayMessage = "No title available";
+    String displayDescription = "No description available";
+    String timeAgo = '';
+
+    if (msgTitle != null && timestampStr != null) {
+      DateTime timestamp = DateTime.parse(timestampStr);
+      if (DateTime.now().difference(timestamp).inDays <= 2) {
+        displayMessage = msgTitle;
+        displayDescription = msgDis ?? "No description available";
+        timeAgo = getTimeAgo(timestamp);
+      } else {
+        GetStorage().remove('msg_title');
+        GetStorage().remove('msg_timestamp');
+        GetStorage().remove('msg_dis');
+      }
+    }
+
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
@@ -42,55 +59,30 @@ class _NotificationScreenState extends State<NotificationScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, size: 24),
           onPressed: () {
-            Navigator.pop(context); // Use Navigator instead of Get.back() for stateful widgets
+            Get.back();
           },
         ),
       ),
-      body: ListView.builder(
-        itemCount: notifications.length,
-        itemBuilder: (context, index) {
-          final notification = notifications[index];
-          return Padding(
-            padding: const EdgeInsets.all(3.0),
-            child: Card(
-              color: AppColors.white,
-              elevation: 12.0,
-              child: ListTile(
-                leading: Icon(notification.icon),
-                title: Text(notification.title, style: AppTextStyles.kSmall12SemiBoldTextStyle,),
-                subtitle: Text(notification.subtitle, style: AppTextStyles.kSmall10RegularTextStyle,),
-                trailing: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      notification.time,
-                      style: const TextStyle(
-                        fontSize: 12.0,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
+      body: Column(
+        children: [
+          Card(
+            color: AppColors.white10,
+            elevation: 7,
+            child: ListTile(
+              title: Text(
+                displayMessage,
+                style: AppTextStyles.kSmall12SemiBoldTextStyle,
               ),
+              subtitle: Text(
+                displayDescription,
+                style: AppTextStyles.kSmall10RegularTextStyle,
+              ),
+              leading: Icon(Icons.notifications_outlined, size: 30),
+              trailing: Text(timeAgo),
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
-}
-
-class NotificationItem {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final String time;
-
-  NotificationItem({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.time,
-  });
 }

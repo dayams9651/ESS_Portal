@@ -16,3 +16,12 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+
+/* splits {
+        abi {
+            enable true
+            reset() // Reset splits if previously enabled
+            include 'arm64-v8a' // Only include arm64-v8a, exclude others like x86, x86_64, armeabi-v7a
+            universalApk false // Set to false to avoid generating a universal APK
+        }
+    }*/

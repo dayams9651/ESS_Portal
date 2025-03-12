@@ -7,7 +7,8 @@ class ConstButton extends StatelessWidget {
   final VoidCallback onTap;
   final bool loading;
   final Color? color;
-  const ConstButton({super.key,
+  const ConstButton({
+    super.key,
     required this.title,
     required this.onTap,
     this.loading = false,

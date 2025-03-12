@@ -10,28 +10,7 @@ import '../../../style/text_style.dart';
 class DocumentsPageScreen extends GetView<SOPController> {
   final SOPController sopController = Get.put(SOPController());
    DocumentsPageScreen({super.key});
-  Icon _getFileTypeIcon(String filePath) {
-    String fileExtension = filePath.split('.').last.toLowerCase();
 
-    switch (fileExtension) {
-      case 'pdf':
-        return Icon(Icons.picture_as_pdf, color: AppColors.error80, size: 30,);
-      case 'doc':
-      case 'docx':
-        return Icon(Icons.description);
-      case 'jpg':
-      case 'jpeg':
-      case 'png':
-        return Icon(Icons.image_outlined, size: 30, color: AppColors.warning40,);
-      case 'xls':
-      case 'xlsx':
-        return Icon(Icons.table_chart, size: 30,);
-      case 'txt':
-        return Icon(Icons.text_fields, size: 30,);
-      default:
-        return Icon(Icons.insert_drive_file, size: 30,);
-    }
-  }
 
   Future<void> _launchURL(String url) async {
     try {
@@ -70,6 +49,7 @@ class DocumentsPageScreen extends GetView<SOPController> {
           itemCount: sopController.sopList.length,
           itemBuilder: (context, index) {
             final sop = sopController.sopList[index];
+            final sopIcons = sopController.getFileTypeIcon(sop.path);
             return Card(
               color: AppColors.white,
               shape: RoundedRectangleBorder(
@@ -84,7 +64,7 @@ class DocumentsPageScreen extends GetView<SOPController> {
                     child: ListTile(
                       title: Text(sop.name.isNotEmpty?sop.name:"Null", style: AppTextStyles.kSmall10SemiBoldTextStyle),
                       subtitle: Text("${sop.fileSize} | ${sop.datetime}"),
-                      leading: _getFileTypeIcon(sop.path),
+                      leading: sopIcons,
                     ),
                   ),
                   InkWell(
@@ -96,7 +76,6 @@ class DocumentsPageScreen extends GetView<SOPController> {
                         _launchURL(sop.path);
                       },
                           icon: Icon(Icons.file_download_outlined)),
-                      // child: Icon(Icons.file_download_outlined, color: AppColors.primaryColor, size: 30,),
                     ),
                   ),
                   SizedBox(width: 8,),

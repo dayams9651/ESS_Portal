@@ -32,6 +32,7 @@ class LeaveController extends GetxController {
       );
 
       if (response.statusCode == 200) {
+        debugPrint("Leave List Response ${response.body}");
         var data = json.decode(response.body);
         debugPrint('Leave List Response : $data');
         var fetchLeaveList = (data['data'] as List)
@@ -50,4 +51,3 @@ class LeaveController extends GetxController {
   }
 
 }
-

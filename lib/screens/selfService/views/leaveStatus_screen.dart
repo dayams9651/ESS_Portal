@@ -7,7 +7,6 @@ import 'package:ms_ess_portal/screens/selfService/controller/leaveStatus_control
 import 'package:ms_ess_portal/screens/selfService/controller/leave_withdraw_controller.dart';
 import 'package:ms_ess_portal/style/color.dart';
 import 'package:shimmer/shimmer.dart';
-import '../../../common/widget/const_button.dart';
 import '../../../common/widget/round_button.dart';
 import '../../../style/text_style.dart';
 
@@ -17,12 +16,7 @@ class LeaveStatusScreen extends GetView<LeaveStatusController> {
   @override
   final LeaveStatusController controller = Get.put(LeaveStatusController());
   final LeaveWithdrawController controllerwithdraw = Get.put(LeaveWithdrawController());
-  final List<String> _items = [
-    'EL',
-    'SL',
-    'On Duty',
-    'WFH'
-  ];
+  final List<String> _items = ['EL', 'SL', 'On Duty', 'WFH'];
   String? _selectedLeaveType;
 
   @override
@@ -39,120 +33,103 @@ class LeaveStatusScreen extends GetView<LeaveStatusController> {
           },
         ),
       ),
-       body: Obx(() {
-      if (controller.isLoading.value) {
-        return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
-      } else if(controller.leaveStatus.isEmpty) {
-        return Center(child: Image.asset(noData1),);
-      }
-      else {
-        final filteredLeaveStatus = _selectedLeaveType == null
-            ? controller.leaveStatus
-            : controller.leaveStatus.where((leave) {
-          return leave.leavetype == _selectedLeaveType;  // Assuming leaveType is a property of leaveRequest
-        }).toList();
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return Shimmer.fromColors(baseColor: baseColor, highlightColor: highLightColor, child: loadSke());
+        } else if (controller.leaveStatus.isEmpty) {
+          return Center(child: Image.asset(noData1));
+        } else {
+          final filteredLeaveStatus = _selectedLeaveType == null
+              ? controller.leaveStatus
+              : controller.leaveStatus.where((leave) {
+            return leave.leavetype == _selectedLeaveType;
+          }).toList();
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(6.0),
-              child: GestureDetector(
-                onTap: () {
-                  _showBottomFilter(context); // Pass context here
-                },
-                child: AbsorbPointer(
-                  // child: SizedBox(
-                  //   height: 45,
-                  //   child: TextFormField(
-                  //     controller: _filterController,
-                  //     decoration: const InputDecoration(
-                  //       hintText: "Select Leave",
-                  //       border: OutlineInputBorder(),
-                  //       suffixIcon: Icon(Icons.keyboard_arrow_down_outlined, size: 30),
-                  //     ),
-                  //   ),
-                  // ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: filteredLeaveStatus.length, // Use the filtered list here
-                itemBuilder: (context, index) {
-                  final leaveRequest = filteredLeaveStatus[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Container(
-                      height: 110,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: AppColors.white70),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  height: 30,
-                                  width: 80,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.warning11,
-                                    border: Border.all(color: AppColors.white70),
-                                    borderRadius: BorderRadius.circular(7),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: filteredLeaveStatus.length,
+                  itemBuilder: (context, index) {
+                    final leaveRequest = filteredLeaveStatus[index];
+                    final statusColor = controller.getStatusColor(leaveRequest.status.toString());
+                    return Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Container(
+                        height: 110,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: AppColors.white70),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    height: 30,
+                                    width: 80,
+                                    decoration: BoxDecoration(
+                                      color: statusColor,
+                                      border: Border.all(color: AppColors.white70),
+                                      borderRadius: BorderRadius.circular(7),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        leaveRequest.status.toString(),
+                                        style: AppTextStyles.kSmall10SemiBoldTextStyle.copyWith(color: AppColors.white),
+                                      ),
+                                    ),
                                   ),
-                                  child: Center(child: const10TextBold(leaveRequest.status)),
-                                ),
-                                const SizedBox(height: 7),
-                                Text("${leaveRequest.todt} - ${leaveRequest.fromdt}", style: AppTextStyles.kSmall12SemiBoldTextStyle),
-                                const SizedBox(height: 3),
-                                Text(leaveRequest.trackid, style: AppTextStyles.kSmall12RegularTextStyle),
-                              ],
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                _showBottomSheet(context, index); // Pass context here
-                              },
-                              child: AbsorbPointer(
-                                child: Container(
-                                  height: 35,
-                                  width: 35,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primaryColor,
-                                    borderRadius: BorderRadius.circular(7),
-                                  ),
-                                  child: const Center(
-                                    child: Icon(Icons.keyboard_arrow_down_outlined, color: AppColors.white, size: 35),
+                                  const SizedBox(height: 7),
+                                  Text("${leaveRequest.todt} - ${leaveRequest.fromdt}", style: AppTextStyles.kSmall12SemiBoldTextStyle),
+                                  const SizedBox(height: 3),
+                                  Text(leaveRequest.trackid.toString(), style: AppTextStyles.kSmall12RegularTextStyle),
+                                ],
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  _showBottomSheet(context, index);
+                                },
+                                child: AbsorbPointer(
+                                  child: Container(
+                                    height: 35,
+                                    width: 35,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primaryColor,
+                                      borderRadius: BorderRadius.circular(7),
+                                    ),
+                                    child: const Center(
+                                      child: Icon(Icons.keyboard_arrow_down_outlined, color: AppColors.white, size: 35),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
-        );
-      }
-    })
-
+            ],
+          );
+        }
+      }),
     );
   }
 
   void _showBottomSheet(BuildContext context, int index) {
+    final leaveRequest = controller.leaveStatus[index];
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
-        final leaveRequest = controller.leaveStatus[index];
         return Container(
           decoration: BoxDecoration(
             color: AppColors.white,
@@ -191,9 +168,8 @@ class LeaveStatusScreen extends GetView<LeaveStatusController> {
                                 ),
                                 const SizedBox(width: 7),
                                 Text(
-                                  leaveRequest.todt,
-                                  style: AppTextStyles.kSmall12RegularTextStyle.copyWith(
-                                      color: AppColors.white50),
+                                  leaveRequest.todt.toString(),
+                                  style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),
                                 ),
                               ],
                             )
@@ -212,9 +188,8 @@ class LeaveStatusScreen extends GetView<LeaveStatusController> {
                                 ),
                                 const SizedBox(width: 7),
                                 Text(
-                                  leaveRequest.fromdt,
-                                  style: AppTextStyles.kSmall12RegularTextStyle.copyWith(
-                                      color: AppColors.white50),
+                                  leaveRequest.fromdt.toString(),
+                                  style: AppTextStyles.kSmall12RegularTextStyle.copyWith(color: AppColors.white50),
                                 ),
                               ],
                             )
@@ -243,7 +218,7 @@ class LeaveStatusScreen extends GetView<LeaveStatusController> {
                   const SizedBox(height: 5),
                   Container(
                     height: 200,
-                    width: double.infinity, // Use full width for responsiveness
+                    width: double.infinity,
                     decoration: BoxDecoration(
                       border: Border.all(color: AppColors.white40),
                       borderRadius: BorderRadius.circular(15),
@@ -257,32 +232,44 @@ class LeaveStatusScreen extends GetView<LeaveStatusController> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        SizedBox(
-                          // width: 160,
-                            child: RoundButton(
-                              title: '  Withdraw  ',
-                              onTap: () {
-                                controllerwithdraw.rejectLeaveRequest(leaveRequest.trackid);
-                                Get.back();
-                              },
-                            )),
-                        SizedBox(
-                          // width: 150,
-                            height: 42,
-                            child: ConstButton(
-                              title: '  Cancel  ',
-                              onTap: () {
-                                Get.back();
-                              },
-                            ))
-                      ],
-                    ),
-                  ),
+                  // Show buttons only if status is "PEN"
+                  if (leaveRequest.status.toString() == 'PEN')
+                    Obx(() {
+                      if (controllerwithdraw.isLoading.value) {
+                        return Center(child: CircularProgressIndicator());
+                      } else {
+                        return Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              if (!controllerwithdraw.isLoading.value)
+                                SizedBox(
+                                  width: 100,
+                                  child: RoundButton(
+                                    title: " Close ",
+                                    onTap: () {
+                                      Get.back();
+                                    },
+                                    color: AppColors.error40,
+                                  ),
+                                ),
+                              SizedBox(
+                                child: RoundButton(
+                                  color: AppColors.success40,
+                                  title: '  Withdraw  ',
+                                  onTap: () {
+                                    controllerwithdraw.rejectLeaveRequest(leaveRequest.trackid.toString());
+                                    Get.back();
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    }),
+
                   SizedBox(height: 20,),
                 ],
               ),
@@ -292,7 +279,6 @@ class LeaveStatusScreen extends GetView<LeaveStatusController> {
       },
     );
   }
-
 
   void _showBottomFilter(BuildContext context) {
     showModalBottomSheet(
@@ -321,5 +307,6 @@ class LeaveStatusScreen extends GetView<LeaveStatusController> {
       },
     );
   }
-
 }
+
+
