@@ -32,7 +32,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
   String? _selectedLeaveType;
   String? _selectedSessionStartValue;
   String? _selectedSessionEndValue;
-  bool _isLoading = false; 
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
                       onTap: _showBottomSheet,
                       child: AbsorbPointer(
                         child: SizedBox(
-                          height: 50,
+                          height: 65,
                           child: TextFormField(
                             controller: _textController,
                             decoration: const InputDecoration(
@@ -75,7 +75,6 @@ class _LeaveScreenState extends State<LeaveScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 3),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -89,7 +88,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
                                   Text("Start Date", style: AppTextStyles.kPrimaryTextStyle),
                                   const SizedBox(height: 2),
                                   SizedBox(
-                                    height: 50,
+                                    height: 70,
                                     child: TextFormField(
                                       controller: _startDateController,
                                       decoration: const InputDecoration(
@@ -118,12 +117,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
                               Text("Session", style: AppTextStyles.kPrimaryTextStyle),
                               const SizedBox(height: 2),
                               SizedBox(
-                                height: 48,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: AppColors.white80),
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
+                                height: 70,
                                   child: Obx(() {
                                     return DropdownButtonFormField<String>(
                                       value: _selectedSessionStartValue,
@@ -141,22 +135,30 @@ class _LeaveScreenState extends State<LeaveScreen> {
                                           ),
                                         );
                                       }).toList(),
-                                      hint: Text(" Select Session"), 
+                                      hint: Text(" Select Session"),
                                       decoration: InputDecoration(
-                                        border: InputBorder.none, //
+                                        hintText: "Select Session",
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(3.0),
+                                          borderSide: BorderSide(color: Colors.blue, width: 1.5),
+                                        ),
                                       ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Select Session';
+                                        }
+                                        return null;
+                                      },
                                       icon: SizedBox.shrink(),
                                     );
                                   }),
                                 ),
-                              ),
+                              // ),
                             ],
                           ),
                         ),
                       ],
                     ),
-                    // End Date and Session
-                    const SizedBox(height: 5),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -170,7 +172,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
                                   Text("End Date", style: AppTextStyles.kPrimaryTextStyle),
                                   const SizedBox(height: 2),
                                   SizedBox(
-                                    height: 48,
+                                    height: 70,
                                     child: TextFormField(
                                       controller: _endDateController,
                                       decoration: const InputDecoration(
@@ -200,11 +202,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
                               Text("Session", style: AppTextStyles.kPrimaryTextStyle),
                               const SizedBox(height: 2),
                               SizedBox(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(),
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
+                                height: 70,
                                   child: Obx(() {
                                     return DropdownButtonFormField<String>(
                                       value: _selectedSessionEndValue,
@@ -224,21 +222,29 @@ class _LeaveScreenState extends State<LeaveScreen> {
                                       }).toList(),
                                       hint: Text(" Select Session"),
                                       decoration: InputDecoration(
-                                        border: InputBorder.none
+                                        hintText: "Select Session",
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(3.0),
+                                          borderSide: BorderSide(color: Colors.blue, width: 1.5),
+                                        ),
                                       ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Select Session';
+                                        }
+                                        return null;
+                                      },
                                       icon: SizedBox.shrink(),
                                     );
                                   }),
                                 ),
-                              )
                             ],
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
                     Text("Reason", style: AppTextStyles.kPrimaryTextStyle),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 1),
                     TextFormField(
                       controller: _reasonController,
                       maxLines: 5,
@@ -255,7 +261,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
                       },
                       textInputAction: TextInputAction.newline,
                     ),
-                    const SizedBox(height: 7),
+                    const SizedBox(height: 2),
                     Text("Copy Mail", style: AppTextStyles.kPrimaryTextStyle),
                     const SizedBox(height: 5),
                     SizedBox(
@@ -403,7 +409,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
                 Navigator.of(context).pop(true);
               },
               child: SizedBox(
-                width: 70,
+                  width: 70,
                   child: RoundButton(title: "Yes", onTap: (){
                     Navigator.of(context).pop(true);
                   },)),
@@ -479,5 +485,4 @@ class _LeaveScreenState extends State<LeaveScreen> {
     });
   }
 }
-
 

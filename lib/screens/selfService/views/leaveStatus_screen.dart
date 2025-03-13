@@ -12,11 +12,9 @@ import '../../../style/text_style.dart';
 
 class LeaveStatusScreen extends GetView<LeaveStatusController> {
   LeaveStatusScreen({super.key});
-  final TextEditingController _filterController = TextEditingController();
   @override
   final LeaveStatusController controller = Get.put(LeaveStatusController());
   final LeaveWithdrawController controllerwithdraw = Get.put(LeaveWithdrawController());
-  final List<String> _items = ['EL', 'SL', 'On Duty', 'WFH'];
   String? _selectedLeaveType;
 
   @override
@@ -232,7 +230,6 @@ class LeaveStatusScreen extends GetView<LeaveStatusController> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  // Show buttons only if status is "PEN"
                   if (leaveRequest.status.toString() == 'PEN')
                     Obx(() {
                       if (controllerwithdraw.isLoading.value) {
@@ -269,39 +266,10 @@ class LeaveStatusScreen extends GetView<LeaveStatusController> {
                         );
                       }
                     }),
-
                   SizedBox(height: 20,),
                 ],
               ),
             ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _showBottomFilter(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          height: 300,
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(25),
-          ),
-          child: ListView.builder(
-            itemCount: _items.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Center(child: Text(_items[index])),
-                onTap: () {
-                  _filterController.text = _items[index];
-                  _selectedLeaveType = _items[index];  // Set selected leave type
-                  Navigator.pop(context);
-                },
-              );
-            },
           ),
         );
       },

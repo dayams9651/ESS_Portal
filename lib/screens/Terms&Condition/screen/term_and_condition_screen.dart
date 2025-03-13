@@ -4,10 +4,8 @@ import 'package:ms_ess_portal/common/widget/round_button.dart';
 import 'package:ms_ess_portal/screens/dashboard/dashboard_screen.dart';
 import 'package:ms_ess_portal/style/color.dart';
 import 'package:ms_ess_portal/style/text_style.dart';
-
 class TermAndConditionScreen extends StatefulWidget {
   const TermAndConditionScreen({super.key});
-
   @override
   State<TermAndConditionScreen> createState() => _TermAndConditionScreenState();
 }
@@ -28,10 +26,10 @@ class _TermAndConditionScreenState extends State<TermAndConditionScreen> {
           padding: const EdgeInsets.only(left: 8.0, right: 8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 5,
             children: [
               Divider(),
               Text(" Cybersecurity Measures",style: AppTextStyles.kSmall12RegularTextStyle,),
-              SizedBox(height: 5,),
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 7),
                 child: Column(
@@ -46,7 +44,6 @@ class _TermAndConditionScreenState extends State<TermAndConditionScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 5,),
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 7),
                 child: Column(
@@ -61,7 +58,6 @@ class _TermAndConditionScreenState extends State<TermAndConditionScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 5,),
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 7),
                 child: Column(
@@ -76,7 +72,6 @@ class _TermAndConditionScreenState extends State<TermAndConditionScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 5,),
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 7),
                 child: Column(
@@ -91,7 +86,6 @@ class _TermAndConditionScreenState extends State<TermAndConditionScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 5,),
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 7),
                 child: Column(
@@ -106,9 +100,7 @@ class _TermAndConditionScreenState extends State<TermAndConditionScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 5,),
               Text(" Why Android Updates are Important ",style: AppTextStyles.kSmall12RegularTextStyle,),
-              SizedBox(height: 5,),
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 7),
                 child: Column(
@@ -123,7 +115,6 @@ class _TermAndConditionScreenState extends State<TermAndConditionScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 5,),
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 7),
                 child: Column(
@@ -138,7 +129,6 @@ class _TermAndConditionScreenState extends State<TermAndConditionScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 5,),
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 7),
                 child: Column(
@@ -153,7 +143,6 @@ class _TermAndConditionScreenState extends State<TermAndConditionScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 5,),
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 7),
                 child: Column(
@@ -173,7 +162,6 @@ class _TermAndConditionScreenState extends State<TermAndConditionScreen> {
                 child: Text("In essence, keeping your Windows system up-to-date is essential for protecting your data, ensuring smooth operation, and taking advantage of the latest improvements."
                 ,style: AppTextStyles.kSmall10RegularTextStyle,),
               ),
-              SizedBox(height: 5,),
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 7),
                 child: Column(
@@ -188,7 +176,6 @@ class _TermAndConditionScreenState extends State<TermAndConditionScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 5,),
               Text(" Benefits of Windows Backup",style: AppTextStyles.kSmall12RegularTextStyle,),
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 7),
@@ -204,7 +191,6 @@ class _TermAndConditionScreenState extends State<TermAndConditionScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 5,),
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 7),
                 child: Column(
@@ -219,7 +205,6 @@ class _TermAndConditionScreenState extends State<TermAndConditionScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 5,),
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 7),
                 child: Column(
@@ -234,7 +219,6 @@ class _TermAndConditionScreenState extends State<TermAndConditionScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 5,),
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 7),
                 child: Column(

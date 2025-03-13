@@ -12,7 +12,8 @@ import 'package:upgrader/upgrader.dart';
 
 void main() async {
   await GetStorage.init();
-  await Upgrader.clearSavedSettings();
+  // await Upgrader.clearSavedSettings();
+
   Get.put(ConnectivityService());
   OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
   OneSignal.initialize("77d4afee-a29f-4dfd-8b18-11e0384bffc1");

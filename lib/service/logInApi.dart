@@ -32,7 +32,6 @@ class UserLogInService extends GetxController {
       if (response.statusCode == 200) {
         debugPrint("$response.statusCode");
         debugPrint("LogIn Api Response : ${response.body}");
-
         if (responseData['success'] == true) {
           String token = responseData['data']['token'];
           box.write('token', token);
@@ -40,7 +39,6 @@ class UserLogInService extends GetxController {
           debugPrint("LogIn Api Response : ${response.body}");
           showCustomSnackbar('LogIn', '${responseData['message']}', backgroundColor: AppColors.success20);
           Get.to(TermAndConditionScreen());
-
           var decodedResponse = json.decode(response.body);
           logInData.value = LoginResponse.fromJson(decodedResponse);
         } else {

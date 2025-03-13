@@ -12,17 +12,16 @@ import '../../../style/text_style.dart';
 
 
 class LeaveGrantScreen extends StatefulWidget {
-  LeaveGrantScreen({super.key});
+  const LeaveGrantScreen({super.key});
 
   @override
-  _LeaveGrantScreenState createState() => _LeaveGrantScreenState();
+  LeaveGrantScreenState createState() => LeaveGrantScreenState();
 }
 
-class _LeaveGrantScreenState extends State<LeaveGrantScreen> {
+class LeaveGrantScreenState extends State<LeaveGrantScreen> {
   final LeaveGrantController controller1 = Get.put(LeaveGrantController());
   final ApproveRequestController rejectRequestController = Get.put(ApproveRequestController());
-  bool _isLoading = false;  // Loading state
-
+  final bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,13 +47,12 @@ class _LeaveGrantScreenState extends State<LeaveGrantScreen> {
             children: [
               Expanded(
                 child: ListView.builder(
-                  itemCount: controller1.leaveRequestsData.length, // Number of items in the list
+                  itemCount: controller1.leaveRequestsData.length,
                   itemBuilder: (context, index) {
                     final leaveRequest = controller1.leaveRequestsData[index];
                     return Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: Container(
-                        // height: 140,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: AppColors.white70),
@@ -184,7 +182,7 @@ class _LeaveGrantScreenState extends State<LeaveGrantScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    leaveRequest.remark ?? "",
+                    leaveRequest.remark ,
                     style: TextStyle(fontSize: 16, color: AppColors.white60),
                   ),
                 ),
