@@ -261,7 +261,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
                       },
                       textInputAction: TextInputAction.newline,
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 1),
                     Text("Copy Mail", style: AppTextStyles.kPrimaryTextStyle),
                     const SizedBox(height: 5),
                     SizedBox(

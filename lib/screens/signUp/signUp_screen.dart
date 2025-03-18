@@ -9,7 +9,6 @@ import '../../style/text_style.dart';
 import 'package:flutter/services.dart';
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
-
   @override
   State<SignupScreen> createState() => _SignupScreenState();
 }
@@ -82,7 +81,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       const SizedBox(height: 20),
                       TextFormField(
                         controller: passwordController,
-                        obscureText: !_isPasswordVisible, // Toggle visibility
+                        obscureText: !_isPasswordVisible,
                         decoration: InputDecoration(
                           hintText: 'Password',
                           suffixIcon: IconButton(

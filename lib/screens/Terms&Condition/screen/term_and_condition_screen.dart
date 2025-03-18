@@ -250,7 +250,7 @@ class _TermAndConditionScreenState extends State<TermAndConditionScreen> {
                   Get.to(DashboardScreen());
                 }),
               ),
-              SizedBox(height: 20,)
+              SizedBox(height: 50,)
             ],
           ),
         ),

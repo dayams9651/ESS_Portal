@@ -56,13 +56,10 @@ class ReportController extends GetxController {
 
   Future<void> saveFile(Uint8List fileBytes, String fileName) async {
     try {
-      // Request storage permission if not already granted
       PermissionStatus status = await Permission.storage.request();
       if (!status.isGranted) {
         throw Exception('Storage permission not granted.');
       }
-
-      // Get the downloads directory
       final directory = await getDownloadsDirectory();
       if (directory != null) {
         final file = File('${directory.path}/$fileName');
@@ -76,8 +73,6 @@ class ReportController extends GetxController {
       throw Exception('Failed to save file: $e');
     }
   }
-
-  // Function to open the file after saving
   Future<void> openFile(String fileName) async {
     try {
       final directory = await getDownloadsDirectory();
